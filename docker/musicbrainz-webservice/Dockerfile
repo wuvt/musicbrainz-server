@@ -3,7 +3,7 @@ FROM ubuntu:xenial
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install --no-install-suggests --no-install-recommends -y sudo wget && \
+    apt-get install --no-install-suggests --no-install-recommends -y runit sudo wget && \
     rm -rf /var/lib/apt/lists/*
 
 RUN useradd --create-home --shell /bin/bash musicbrainz
@@ -37,6 +37,6 @@ RUN mkdir -p /home/musicbrainz/musicbrainz-server && \
     chown -R musicbrainz:musicbrainz /home/musicbrainz/musicbrainz-server && \
     ln -s /data/config/DBDefs.pm /home/musicbrainz/musicbrainz-server/lib/DBDefs.pm
 
-COPY docker/musicbrainz-webservice/consul-template.conf /etc/
-
 COPY docker/scripts/start_musicbrainz_server.sh /usr/local/bin/
+
+CMD ["/usr/local/bin/start_musicbrainz_server.sh"]
