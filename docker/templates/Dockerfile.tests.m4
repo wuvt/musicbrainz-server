@@ -2,27 +2,54 @@ m4_include(`server_base.m4')m4_dnl
 
 install_javascript_and_templates()
 
-RUN apt_install(`libexpat1 libexpat1-dev libxml2 libxml2-dev') && \
+RUN apt_install(`build-essential libexpat1 libexpat1-dev libxml2 libxml2-dev') && \
     cpanm TAP::Harness::JUnit && \
     apt_purge(`libexpat1-dev libxml2-dev')
 
-RUN apt_install(`git') && \
-    cd /home/musicbrainz && \
+RUN cd /tmp && \
+    curl -sLO https://dl.google.com/linux/direct/CHROME_DEB && \
+    apt_install(`./CHROME_DEB') && \
+    rm CHROME_DEB && \
+    cd -
+
+RUN cd /tmp && \
+    curl -sLO http://chromedriver.storage.googleapis.com/2.33/CHROME_DRIVER && \
+    apt_install(`unzip') && \
+    unzip CHROME_DRIVER -d /usr/local/bin && \
+    rm CHROME_DRIVER && \
+    cd -
+
+RUN cd /home/musicbrainz && \
     git clone https://github.com/metabrainz/mmd-schema
 
 ENV MMDSCHEMA /home/musicbrainz/mmd-schema
 
 copy_common_mbs_files
 
+COPY \
+    docker/musicbrainz-tests/chrome.service \
+    /etc/service/chrome/run
+COPY \
+    docker/musicbrainz-tests/template-renderer.service \
+    /etc/service/template-renderer/run
+COPY \
+    docker/musicbrainz-tests/website.service \
+    /etc/service/website/run
+RUN chmod 755 \
+        /etc/service/chrome/run \
+        /etc/service/template-renderer/run \
+        /etc/service/website/run
+
+git_info
+
 COPY docker/musicbrainz-tests/DBDefs.pm lib/
 
 # Depends on DBDefs.pm.
-RUN sudo_mb(`carton exec -- ./script/compile_resources.sh')
+RUN sudo_mb(`carton exec -- ./script/compile_resources.sh default web-tests')
 
 COPY docker/musicbrainz-tests/run_tests.sh /usr/local/bin/
 COPY script/ script/
 COPY t/ t/
-
-RUN touch /etc/service/consul-template/down
+COPY .flowconfig .perlcriticrc ./
 
 ENTRYPOINT ["run_tests.sh"]

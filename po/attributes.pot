@@ -245,6 +245,13 @@ msgctxt "series_type"
 msgid "A recurring festival, usually happening annually in the same location."
 msgstr ""
 
+#: DB:place_type/description:7
+msgctxt "place_type"
+msgid ""
+"A school, university or other similar educational institution (especially, "
+"but not only, one where music is taught)"
+msgstr ""
+
 #: DB:series_type/description:6
 msgctxt "series_type"
 msgid "A series of events."
@@ -1010,6 +1017,11 @@ msgstr ""
 #: DB:work_attribute_type_allowed_value/value:607
 msgctxt "work_attribute_type_allowed_value"
 msgid "Bozlak"
+msgstr ""
+
+#: DB:instrument_alias_type/name:3
+msgctxt "alias_type"
+msgid "Brand name"
 msgstr ""
 
 #: DB:release_group_primary_type/name:12
@@ -1782,6 +1794,11 @@ msgctxt "medium_format"
 msgid "Edison Diamond Disc"
 msgstr ""
 
+#: DB:place_type/name:7
+msgctxt "place_type"
+msgid "Educational institution"
+msgstr ""
+
 #: DB:instrument_type/name:4
 msgctxt "instrument_type"
 msgid "Electronic instrument"
@@ -2542,6 +2559,31 @@ msgstr ""
 #: DB:work_attribute_type_allowed_value/value:109
 msgctxt "work_attribute_type_allowed_value"
 msgid "Hēmavati"
+msgstr ""
+
+#: DB:work_attribute_type/name:29
+msgctxt "work_attribute_type"
+msgid "ICE ID"
+msgstr ""
+
+#: DB:work_attribute_type/description:28
+msgctxt "work_attribute_type"
+msgid "ID for the Belgian rights society SABAM"
+msgstr ""
+
+#: DB:work_attribute_type/description:29
+msgctxt "work_attribute_type"
+msgid "ID for the International Copyright Enterprise"
+msgstr ""
+
+#: DB:work_attribute_type/description:27
+msgctxt "work_attribute_type"
+msgid "ID for the Mexican rights society SACM"
+msgstr ""
+
+#: DB:work_attribute_type/description:30
+msgctxt "work_attribute_type"
+msgid "ID for the Polish rights society ZAiKS"
 msgstr ""
 
 #: DB:work_attribute_type/name:14
@@ -4383,6 +4425,11 @@ msgctxt "work_attribute_type_allowed_value"
 msgid "Rūpaka"
 msgstr ""
 
+#: DB:work_attribute_type/name:28
+msgctxt "work_attribute_type"
+msgid "SABAM ID"
+msgstr ""
+
 #: DB:medium_format/name:3
 msgctxt "medium_format"
 msgid "SACD"
@@ -4391,6 +4438,11 @@ msgstr ""
 #: DB:work_attribute_type/name:21
 msgctxt "work_attribute_type"
 msgid "SACEM ID"
+msgstr ""
+
+#: DB:work_attribute_type/name:27
+msgctxt "work_attribute_type"
+msgid "SACM ID"
 msgstr ""
 
 #: DB:work_attribute_type/name:24
@@ -5397,6 +5449,11 @@ msgstr ""
 #: DB:work_attribute_type_allowed_value/value:779
 msgctxt "work_attribute_type_allowed_value"
 msgid "Yürüksofyan"
+msgstr ""
+
+#: DB:work_attribute_type/name:30
+msgctxt "work_attribute_type"
+msgid "ZAiKS ID"
 msgstr ""
 
 #: DB:work_attribute_type_allowed_value/value:780

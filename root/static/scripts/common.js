@@ -1,16 +1,23 @@
-const global = require('./global');
+const DBDefs = require('./common/DBDefs');
+const MB = require('./common/MB');
 
-global.aclass = require("aclass");
-global.ko = require("knockout");
-global.L = require("../lib/leaflet/leaflet-src");
-global._ = require("lodash");
-global.$ = global.jQuery = require("jquery");
+if (DBDefs.DEVELOPMENT_SERVER) {
+  // Used by the Selenium tests under /t/selenium/ to make sure that no errors
+  // occurred on the page.
+  MB.js_errors = [];
+  window.onerror = function (err) {
+    MB.js_errors.push(err);
+  };
+}
 
-require("jquery.browser");
+require('./common/raven');
+
+window.ko = require("knockout");
+window._ = require("lodash");
+window.$ = window.jQuery = require("jquery");
+
 require("../lib/jquery.ui/ui/jquery-ui.custom");
 
-require("./common/DBDefs");
-require("./common/MB");
 require("./common/i18n");
 require("./common/text-collapse");
 require("./common/artworkViewer");
@@ -27,7 +34,3 @@ require("./common/tagger");
 require("./common/coverart");
 require("./common/banner");
 require("./common/components/TagEditor");
-
-if (typeof phantom === 'undefined') {
-    require("./common/errors");
-}

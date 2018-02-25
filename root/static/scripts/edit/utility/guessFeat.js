@@ -8,6 +8,7 @@ const _ = require('lodash');
 
 const {MIN_NAME_SIMILARITY} = require('../../common/constants');
 const {artistCreditFromArray} = require('../../common/immutable-entities');
+const MB = require('../../common/MB');
 const clean = require('../../common/utility/clean');
 const getSimilarity = require('./similarity');
 
@@ -18,8 +19,8 @@ var bracketPairs = [['(', ')'], ['[', ']']];
 function extractNonBracketedFeatCredits(str, artists, isProbablyClassical) {
     var wrapped = _(str.split(featRegex)).map(clean);
     return {
-        name: clean(wrapped.first()),
-        artistCredit: wrapped.rest().compact()
+        name: clean(wrapped.head()),
+        artistCredit: wrapped.tail().compact()
             .map(c => expandCredit(c, artists, isProbablyClassical)).flatten().value()
     };
 }
@@ -41,7 +42,7 @@ function extractBracketedFeatCredits(str, artists, isProbablyClassical) {
                     // Check if the remaining text in the brackets is also an artist name.
                     var expandedCredits = expandCredit(m.name, artists, isProbablyClassical);
 
-                    if (_.any(expandedCredits, c => c.similarity >= MIN_NAME_SIMILARITY)) {
+                    if (_.some(expandedCredits, c => c.similarity >= MIN_NAME_SIMILARITY)) {
                         credits = credits.concat(expandedCredits);
                     } else {
                         name += pair[0] + m.name + pair[1];
@@ -92,7 +93,7 @@ function bestArtistMatch(artists, name, isProbablyClassical) {
         .compact()
         .sortBy('similarity')
         .reverse()
-        .first();
+        .head();
 }
 
 function expandCredit(fullName, artists, isProbablyClassical) {
@@ -120,7 +121,7 @@ function expandCredit(fullName, artists, isProbablyClassical) {
             );
         });
 
-    if (bestFullMatch && bestFullMatch.similarity > splitMatches.sortBy('similarity').reverse().first().similarity) {
+    if (bestFullMatch && bestFullMatch.similarity > splitMatches.sortBy('similarity').reverse().head().similarity) {
         bestFullMatch.joinPhrase = fixJoinPhrase();
         return [bestFullMatch];
     }

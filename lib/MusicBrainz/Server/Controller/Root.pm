@@ -10,7 +10,6 @@ use DBDefs;
 use MusicBrainz::Server::Constants qw( $VARTIST_GID $CONTACT_URL );
 use MusicBrainz::Server::ControllerUtils::SSL qw( ensure_ssl );
 use MusicBrainz::Server::Data::Utils qw( model_to_type );
-use MusicBrainz::Server::Entity::URL::Sidebar qw( FAVICON_CLASSES );
 use MusicBrainz::Server::Log qw( log_debug );
 use MusicBrainz::Server::Replication ':replication_type';
 use aliased 'MusicBrainz::Server::Translation';
@@ -243,7 +242,12 @@ sub begin : Private
 
     # For displaying which git branch is active as well as last commit information
     # (only shown on staging servers)
-    my ($git_branch, $git_sha, $git_msg) = DBDefs->GIT_INFO;
+    my %git_info;
+    if (DBDefs->DB_STAGING_SERVER) {
+        $git_info{branch} = DBDefs->GIT_BRANCH;
+        $git_info{sha} = DBDefs->GIT_SHA;
+        $git_info{msg} = DBDefs->GIT_MSG;
+    }
 
     $c->stash(
         wiki_server => DBDefs->WIKITRANS_SERVER,
@@ -255,13 +259,8 @@ sub begin : Private
             read_only      => DBDefs->DB_READ_ONLY,
             alert => $alert,
             alert_mtime => $alert_mtime,
-            git => {
-                branch => $git_branch,
-                sha => $git_sha,
-                msg => $git_msg,
-            },
+            git => \%git_info,
         },
-        favicon_css_classes => FAVICON_CLASSES,
         new_edit_notes => $new_edit_notes,
         new_edit_notes_mtime => $new_edit_notes_mtime,
         contact_url => $CONTACT_URL,
@@ -379,9 +378,6 @@ sub end : ActionClass('RenderView')
     $c->stash->{various_artist_mbid} = $VARTIST_GID;
 
     $c->stash->{wiki_server} = DBDefs->WIKITRANS_SERVER;
-
-    $c->stash->{mapbox_map_id} = DBDefs->MAPBOX_MAP_ID;
-    $c->stash->{mapbox_access_token} = DBDefs->MAPBOX_ACCESS_TOKEN;
 }
 
 =head1 LICENSE

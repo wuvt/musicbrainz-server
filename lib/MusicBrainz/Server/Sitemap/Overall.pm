@@ -9,13 +9,13 @@ use lib "$FindBin::Bin/../lib";
 use DBDefs;
 use List::Util qw( min );
 use Moose;
+use MusicBrainz::Script::Utils qw( log );
 use MusicBrainz::Server::Constants qw( %ENTITIES entities_with );
 use MusicBrainz::Server::Data::Relationship;
 use MusicBrainz::Server::Sitemap::Constants qw(
     $MAX_SITEMAP_SIZE
     %SITEMAP_SUFFIX_INFO
 );
-use MusicBrainz::Server::Sitemap::Utils qw( log );
 use POSIX;
 use Sql;
 
@@ -248,6 +248,15 @@ sub build_one_entity {
     my @batches;
 
     # Exclude the last batch, which should always be its own sitemap.
+    #
+    # Since sitemaps do a bit of a bundling thing to reach as close to 50,000
+    # URLs as possible, it'd be possible that right after a rollover past
+    # 50,000 IDs, the new one would be folded into the otherwise-most-recent
+    # batch. Since the goal is that each URL only ever starts in its actual
+    # batch number and then moves down over time, this ensures that the last
+    # batch is always its own sitemap, even if it's few enough it could
+    # theoretically be part of the previous one.
+
     if (scalar @$raw_batches > 1) {
         my $batch = {count => 0, batches => []};
         for my $raw_batch (@{ $raw_batches }[0..scalar @$raw_batches-2]) {

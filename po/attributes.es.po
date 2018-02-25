@@ -1,9 +1,11 @@
 # 
 # Translators:
+# Abby Zla <email address hidden>, 2017
 # adeluna <email address hidden>, 2012
 # Alexander Dupuy <email address hidden>, 2012
 # Alexander Dupuy <email address hidden>, 2012
 # Alfredo Briones <email address hidden>, 2016
+# Antony Duran <email address hidden>, 2017
 #   <email address hidden>, 2012
 # Fran Martín <email address hidden>, 2016
 # gr0uch0mars <email address hidden>, 2011
@@ -14,10 +16,12 @@
 # Juan Acuña <email address hidden>, 2016
 # Kevin Doncam Demian López Brante <email address hidden>, 2016
 # Kevin López Brante <email address hidden>, 2015
+# Luis zas <email address hidden>, 2017
 # Marta PD <email address hidden>, 2014
 # Mathias Gonzalez <email address hidden>, 2015
 # Nicolás Tamargo <email address hidden>, 2011-2012
 # Nicolás Tamargo <email address hidden>, 2011-2013,2015
+# Pier Jose Gotta Perez <email address hidden>, 2017
 # Kevin Doncam Demian López Brante <email address hidden>, 2012
 #   Tobias Quathamer <email address hidden>, 2007
 #   Tobias Quathamer <email address hidden>, 2007
@@ -26,8 +30,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MusicBrainz\n"
-"PO-Revision-Date: 2016-10-26 00:30+0000\n"
-"Last-Translator: Kevin Doncam Demian López Brante <email address hidden>\n"
+"PO-Revision-Date: 2017-10-30 17:24+0000\n"
+"Last-Translator: Pier Jose Gotta Perez <email address hidden>\n"
 "Language-Team: Spanish (http://www.transifex.com/musicbrainz/musicbrainz/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -60,6 +64,11 @@ msgctxt "medium_format"
 msgid "10\" Vinyl"
 msgstr "Vinilo 10\""
 
+#: DB:medium_format/name:72
+msgctxt "medium_format"
+msgid "12\" LaserDisc"
+msgstr "12\" LaserDisc"
+
 #: DB:medium_format/name:55
 msgctxt "medium_format"
 msgid "12\" Shellac"
@@ -89,6 +98,11 @@ msgstr "Goma laca 7\""
 msgctxt "medium_format"
 msgid "7\" Vinyl"
 msgstr "Vinilo 7″"
+
+#: DB:medium_format/name:71
+msgctxt "medium_format"
+msgid "8\" LaserDisc"
+msgstr "8\" LaserDisc"
 
 #: DB:medium_format/name:34
 msgctxt "medium_format"
@@ -164,7 +178,7 @@ msgid ""
 "A mass is a choral composition that sets the invariable portions of the "
 "Christian Eucharistic liturgy (Kyrie - Gloria - Credo - Sanctus - Benedictus"
 " - Agnus Dei, with other portions sometimes added) to music."
-msgstr ""
+msgstr "Una misa es una composición coral que traslada a la música secciones fijas de la liturgia ( Kyrie - Gloria -Credo - Sanctus - Benedictus - Agnus Dei, otras secciones a veces añadidas)."
 
 #: DB:event_type/description:5
 msgctxt "event_type"
@@ -193,13 +207,18 @@ msgid ""
 "release."
 msgstr "Una fiesta, recepción u otro evento celebrado específicamente para el lanzamiento de una edición."
 
+#: DB:release_packaging/description:17
+msgctxt "release_packaging"
+msgid "A perfect bound book with a sleeve at the end to hold a CD"
+msgstr "Un libro encuadernado perfecto con una funda al final para guardar un CD"
+
 #: DB:place_type/description:5
 msgctxt "place_type"
 msgid ""
 "A place consisting of a large enclosed area with a central event space "
 "surrounded by tiered seating for spectators, which can be used for indoor "
 "sports, concerts and other entertainment events."
-msgstr ""
+msgstr "Un lugar consistente de una gran área cerrada con un espacio de eventos central rodeado por asientos escalonados para los espectadores, que puede ser usado para deportes de interior, conciertos y otros eventos de entretenimiento."
 
 #: DB:place_type/description:1
 msgctxt "place_type"
@@ -221,7 +240,7 @@ msgid ""
 "A place that has worship or religious studies as its main function. "
 "Religious buildings often host concerts and serve as recording locations, "
 "especially for classical music."
-msgstr ""
+msgstr "Un lugar que tiene el culto o los estudios religiosos como su función principal. Los edificios religiosos a menudo albergan conciertos y sirven como lugares de grabación, especialmente para la música clásica."
 
 #: DB:place_type/description:4
 msgctxt "place_type"
@@ -229,7 +248,7 @@ msgid ""
 "A place whose main purpose is to host outdoor sport events, typically "
 "consisting of a pitch surrounded by a structure for spectators with no roof,"
 " or a roof which can be retracted."
-msgstr ""
+msgstr "Un lugar cuyo principal propósito es acoger eventos deportivos al aire libre, consiste típicamente en un campo rodeado por una estructura para los espectadores sin techo, o un techo que puede ser replegado."
 
 #: DB:work_type/description:28
 msgctxt "work_type"
@@ -237,7 +256,7 @@ msgid ""
 "A play is a form of literature usually consisting of scripted dialogue "
 "between characters, and intended for theatrical performance rather than just"
 " reading."
-msgstr ""
+msgstr "Una obra de teatro es una forma de literatura que suele consistir en un diálogo guionizado entre personajes, y que está destinada a la representación teatral en vez de a la simple lectura."
 
 #: DB:work_type/description:21
 msgctxt "work_type"
@@ -303,7 +322,7 @@ msgid ""
 "A song cycle is a group of songs designed to be performed in a sequence as a"
 " single entity. In most cases, all of the songs are by the same composer, "
 "and often use words from the same poet or lyricist."
-msgstr ""
+msgstr "Un ciclo de canciones es un grupo de canciones diseñadas para ser tocadas en una secuencia y como una sola entidad. En la mayoría de los casos, todas las canciones son del mismo compositor, y a menudo usan palabras del mismo poeta o letrista."
 
 #: DB:work_type/description:17
 msgctxt "work_type"
@@ -312,7 +331,7 @@ msgid ""
 "with or without instruments, performed by singing. This is the most common "
 "form by far in folk and popular music, but also fairly common in a classical"
 " context (\"art songs\")."
-msgstr ""
+msgstr "Una canción es en su origen (y aún en la mayoría de casos) una composición para voz, con o sin instrumentos, interpretada en forma de canto. Esta es la forma más común en la música popular y tradicional, pero también bastante común en un contexto clásico (\"art songs\")."
 
 #: DB:work_type/description:22
 msgctxt "work_type"
@@ -327,7 +346,7 @@ msgid ""
 "A suite is an ordered set of instrumental or orchestral pieces normally "
 "performed in a concert setting. They may be extracts from a ballet or opera,"
 " or entirely original movements."
-msgstr ""
+msgstr "Una suite es un conjunto ordenado de piezas instrumentales u orquestales que normalmente se tocan como parte de un concierto. Pueden ser extractos de un ballet u ópera, o movimientos totalmente originales."
 
 #: DB:work_type/description:18
 msgctxt "work_type"
@@ -335,7 +354,7 @@ msgid ""
 "A symphonic poem is a piece of programmatic orchestral music, usually in a "
 "single movement, that evokes a painting, a landscape, the content of a poem,"
 " a story or novel, or other non-musical source."
-msgstr ""
+msgstr "Un poema sinfónico es una pieza de música orquestal programática, generalmente en un solo movimiento, que evoca una pintura, un paisaje, el contenido de un poema, una historia o una novela u otra fuente no musical."
 
 #: DB:work_type/description:16
 msgctxt "work_type"
@@ -347,7 +366,7 @@ msgstr "Una sinfonía es una composición extendida, casi siempre escrita para u
 #: DB:release_packaging/description:2
 msgctxt "release_packaging"
 msgid "A thinner jewel case, commonly used for CD singles."
-msgstr ""
+msgstr "Una caja de CD delgada, comúnmente utilizado para singles sencillos."
 
 #: DB:work_type/description:19
 msgctxt "work_type"
@@ -355,7 +374,7 @@ msgid ""
 "A zarzuela is a Spanish lyric-dramatic work that alternates between spoken "
 "and sung scenes, the latter incorporating operatic and popular song, as well"
 " as dance."
-msgstr ""
+msgstr "Una zarzuela es una obra lírica-dramática española que alterna escenas habladas y cantadas, esta última incorporando canciones operísticas y populares, así como danza."
 
 #: DB:work_attribute_type_allowed_value/value:26
 msgctxt "work_attribute_type_allowed_value"
@@ -375,7 +394,7 @@ msgstr "la sostenido menor"
 #: DB:work_attribute_type/name:23
 msgctxt "work_attribute_type"
 msgid "AKM ID"
-msgstr ""
+msgstr "AKM ID"
 
 #: DB:work_attribute_type/name:13
 msgctxt "work_attribute_type"
@@ -505,14 +524,14 @@ msgctxt "event_type"
 msgid ""
 "An event where a number of different acts perform across the course of the "
 "day. Larger festivals may be spread across multiple days."
-msgstr ""
+msgstr "Un evento en el que una serie de actos diferentes se realizan a lo largo del día. Festivales más grandes pueden repartirse durante varios días."
 
 #: DB:event_type/description:1
 msgctxt "event_type"
 msgid ""
 "An individual concert by a single artist or collaboration, often with "
 "supporting artists who perform before the main act."
-msgstr ""
+msgstr "Un concierto individual por un solo artista o en colaboración, frecuentemente con artistas de apoyo que se presentan antes del acto principal."
 
 #: DB:work_type/description:10
 msgctxt "work_type"
@@ -520,7 +539,7 @@ msgid ""
 "An opera is a dramatised work (text + musical score) for singers and "
 "orchestra/ensemble. In true operas all dialog is sung, through arias and "
 "recitatives, but some styles of opera include spoken dialogue."
-msgstr ""
+msgstr "Una ópera es una obra dramatizada (texto + partitura musical) para cantantes y orquesta / conjunto. En las verdaderas óperas todo el diálogo se canta, a través de arias y recitativos, aunque algunos estilos de la ópera incluyen el diálogo hablado."
 
 #: DB:work_type/description:11
 msgctxt "work_type"
@@ -529,7 +548,7 @@ msgid ""
 "orchestra, a choir, and soloists. While it has characters and a plot, it is "
 "usually not performed theatrically (it lacks costumes, props and strong "
 "character interaction)."
-msgstr ""
+msgstr "Un oratorio es una gran composición musical (generalmente sagrada) que incluye una orquesta, un coro y solistas. Si bien tiene personajes y una trama, por lo general no se realiza teatralmente (carece de trajes, accesorios y de una profunda interacción de los personajes)."
 
 #: DB:work_type/description:12
 msgctxt "work_type"
@@ -537,7 +556,7 @@ msgid ""
 "An overture is, generally, the instrumental introduction to an opera. "
 "Independent (\"concert\") overtures also exist, which are generally "
 "programmatic works shorter than a symphonic poem."
-msgstr ""
+msgstr "Una obertura es, por lo general, la introducción instrumental a una ópera. Existen también oberturas independientes (\"conciertos\"), que generalmente son obras programáticas más cortas que un poema sinfónico."
 
 #: DB:release_status/description:3
 msgctxt "release_status"
@@ -545,7 +564,7 @@ msgid ""
 "An unofficial/underground release that was not sanctioned by the artist "
 "and/or the record company. This includes unofficial live recordings and "
 "pirated releases."
-msgstr ""
+msgstr "Una edición no oficial/ oculta que no fue autorizada por el artista y/o la compañía discográfica. Esto incluye grabaciones no oficiales o ediciones piratas."
 
 #: DB:work_type/description:20
 msgctxt "work_type"
@@ -553,7 +572,7 @@ msgid ""
 "An étude is an instrumental musical composition, most commonly of "
 "considerable difficulty, usually designed to provide practice material for "
 "perfecting a particular technical skill."
-msgstr ""
+msgstr "Un \"étude\" es una composición musical instrumental, más comúnmente de considerable dificultad, diseñada generalmente para proporcionar material de práctica para perfeccionar una habilidad técnica particular."
 
 #: DB:work_attribute_type_allowed_value/value:310
 msgctxt "work_attribute_type_allowed_value"
@@ -770,7 +789,7 @@ msgstr "si dórico"
 #: DB:work_attribute_type_allowed_value/value:807
 msgctxt "work_attribute_type_allowed_value"
 msgid "B Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Si"
 
 #: DB:work_attribute_type_allowed_value/value:33
 msgctxt "work_attribute_type_allowed_value"
@@ -796,6 +815,11 @@ msgstr "si bemol menor"
 msgctxt "work_attribute_type"
 msgid "BMI ID"
 msgstr "Identificador BMI"
+
+#: DB:work_attribute_type/name:26
+msgctxt "work_attribute_type"
+msgid "BUMA/STEMRA ID"
+msgstr "ID BUMA/STEMRA"
 
 #: DB:cover_art_archive.art_type/name:2
 msgctxt "cover_art_type"
@@ -1019,6 +1043,11 @@ msgctxt "work_attribute_type_allowed_value"
 msgid "Bozlak"
 msgstr "Bozlak"
 
+#: DB:instrument_alias_type/name:3
+msgctxt "alias_type"
+msgid "Brand name"
+msgstr "Nombre de la marca"
+
 #: DB:release_group_primary_type/name:12
 msgctxt "release_group_primary_type"
 msgid "Broadcast"
@@ -1077,7 +1106,7 @@ msgstr "do dórico"
 #: DB:work_attribute_type_allowed_value/value:801
 msgctxt "work_attribute_type_allowed_value"
 msgid "C Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Do"
 
 #: DB:work_attribute_type_allowed_value/value:2
 msgctxt "work_attribute_type_allowed_value"
@@ -1112,7 +1141,7 @@ msgstr "CASH ID"
 #: DB:work_attribute_type/name:22
 msgctxt "work_attribute_type"
 msgid "CCLI ID"
-msgstr ""
+msgstr "Identificador CCLI"
 
 #: DB:medium_format/name:1
 msgctxt "medium_format"
@@ -1333,7 +1362,7 @@ msgstr "re dórico"
 #: DB:work_attribute_type_allowed_value/value:802
 msgctxt "work_attribute_type_allowed_value"
 msgid "D Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Re"
 
 #: DB:work_attribute_type_allowed_value/value:8
 msgctxt "work_attribute_type_allowed_value"
@@ -1403,17 +1432,17 @@ msgstr "DVDplus"
 #: DB:medium_format/name:70
 msgctxt "medium_format"
 msgid "DVDplus (CD side)"
-msgstr ""
+msgstr "DVDPlus (CD lateral)"
 
 #: DB:medium_format/name:68
 msgctxt "medium_format"
 msgid "DVDplus (DVD-Audio side)"
-msgstr ""
+msgstr "DVDPlus (DVD-Audio-lateral)"
 
 #: DB:medium_format/name:69
 msgctxt "medium_format"
 msgid "DVDplus (DVD-Video side)"
-msgstr ""
+msgstr "DVDplus (DVD-cara de sonido)"
 
 #: DB:work_attribute_type_allowed_value/value:343
 msgctxt "work_attribute_type_allowed_value"
@@ -1555,6 +1584,11 @@ msgctxt "work_attribute_type_allowed_value"
 msgid "Dhēnuka"
 msgstr "Dhēnuka"
 
+#: DB:release_packaging/name:17
+msgctxt "release_packaging"
+msgid "Digibook"
+msgstr "Digipak"
+
 #: DB:release_packaging/name:3
 msgctxt "release_packaging"
 msgid "Digipak"
@@ -1643,17 +1677,17 @@ msgstr "DualDisc"
 #: DB:medium_format/name:67
 msgctxt "medium_format"
 msgid "DualDisc (CD side)"
-msgstr ""
+msgstr "Disco dual (lado de CD)"
 
 #: DB:medium_format/name:65
 msgctxt "medium_format"
 msgid "DualDisc (DVD-Audio side)"
-msgstr ""
+msgstr "Disco dual (DVD-lado de sonido)"
 
 #: DB:medium_format/name:66
 msgctxt "medium_format"
 msgid "DualDisc (DVD-Video side)"
-msgstr ""
+msgstr "Disco dual (DVD-lado de video)"
 
 #: DB:work_attribute_type_allowed_value/value:612
 msgctxt "work_attribute_type_allowed_value"
@@ -1748,7 +1782,7 @@ msgstr "mi dórico"
 #: DB:work_attribute_type_allowed_value/value:803
 msgctxt "work_attribute_type_allowed_value"
 msgid "E Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Mi"
 
 #: DB:work_attribute_type_allowed_value/value:13
 msgctxt "work_attribute_type_allowed_value"
@@ -1893,7 +1927,7 @@ msgstr "fa dórico"
 #: DB:work_attribute_type_allowed_value/value:804
 msgctxt "work_attribute_type_allowed_value"
 msgid "F Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Fa"
 
 #: DB:work_attribute_type_allowed_value/value:17
 msgctxt "work_attribute_type_allowed_value"
@@ -2021,7 +2055,7 @@ msgid ""
 "Flexi-discs are phonograph records made of a thin, flexible vinyl sheet with"
 " a molded-in groove, designed to be playable on a normal phonograph "
 "turntable."
-msgstr ""
+msgstr "Los discos flexibles son registros fonográficos hechos de una lámina de vinilo delgada y flexible con una ranura moldeada, diseñada para ser reproducible en una mesa giratoria de fonógrafo normal."
 
 #: DB:work_attribute_type/name:16
 msgctxt "work_attribute_type"
@@ -2051,7 +2085,7 @@ msgstr "sol dórico"
 #: DB:work_attribute_type_allowed_value/value:805
 msgctxt "work_attribute_type_allowed_value"
 msgid "G Mixolydian"
-msgstr ""
+msgstr "Modo mixolidio en Sol"
 
 #: DB:work_attribute_type_allowed_value/value:22
 msgctxt "work_attribute_type_allowed_value"
@@ -2491,12 +2525,12 @@ msgstr "SACD híbrido"
 #: DB:medium_format/name:63
 msgctxt "medium_format"
 msgid "Hybrid SACD (CD layer)"
-msgstr ""
+msgstr "Super Audio CD Híbrido (capa CD)"
 
 #: DB:medium_format/name:64
 msgctxt "medium_format"
 msgid "Hybrid SACD (SACD layer)"
-msgstr ""
+msgstr "Super Audio CD Híbrido (capa SACD)"
 
 #: DB:work_attribute_type_allowed_value/value:418
 msgctxt "work_attribute_type_allowed_value"
@@ -2556,7 +2590,7 @@ msgstr "Identificadores"
 #: DB:label_type/name:9
 msgctxt "label_type"
 msgid "Imprint"
-msgstr ""
+msgstr "Impresion"
 
 #: DB:work_type/name:30
 msgctxt "work_type"
@@ -3823,6 +3857,11 @@ msgctxt "work_attribute_type_allowed_value"
 msgid "Nīlāṁbari"
 msgstr "Nīlāṁbari"
 
+#: DB:work_attribute_type/name:25
+msgctxt "work_attribute_type"
+msgid "OSA ID"
+msgstr "ID OSA"
+
 #: DB:cover_art_archive.art_type/name:5
 msgctxt "cover_art_type"
 msgid "Obi"
@@ -4396,12 +4435,12 @@ msgstr "SACEM ID"
 #: DB:work_attribute_type/name:24
 msgctxt "work_attribute_type"
 msgid "SADAIC ID"
-msgstr ""
+msgstr "Identificador SADAIC "
 
 #: DB:medium_format/name:62
 msgctxt "medium_format"
 msgid "SD Card"
-msgstr ""
+msgstr "Tarjeta SD"
 
 #: DB:work_attribute_type/name:8
 msgctxt "work_attribute_type"
@@ -4803,7 +4842,7 @@ msgstr "Sunādavinōdini"
 #: DB:release_packaging/name:16
 msgctxt "release_packaging"
 msgid "Super Jewel Box"
-msgstr ""
+msgstr "Caja de cd super"
 
 #: DB:work_attribute_type_allowed_value/value:252
 msgctxt "work_attribute_type_allowed_value"
@@ -4985,21 +5024,21 @@ msgctxt "medium_format"
 msgid ""
 "The CD layer of a DVDplus. The DVD layer should be added as a separate "
 "medium."
-msgstr ""
+msgstr "La capa de CD de un DVDplus. La capa de DVD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:67
 msgctxt "medium_format"
 msgid ""
 "The CD layer of a DualDisc. The DVD layer should be added as a separate "
 "medium."
-msgstr ""
+msgstr "La capa de CD de un Disco dual. La capa de DVD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:63
 msgctxt "medium_format"
 msgid ""
 "The CD layer of a hybrid SACD. The SACD layer should be added as a separate "
 "medium."
-msgstr ""
+msgstr "La capa de CD de un DVDplus. La capa de DVD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:60
 msgctxt "medium_format"
@@ -5015,28 +5054,28 @@ msgctxt "medium_format"
 msgid ""
 "The DVD (audio) layer of a DVDplus. The CD layer should be added as a "
 "separate medium."
-msgstr ""
+msgstr "La capa de DVD (sonido) de un DVDplus. La capa de CD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:65
 msgctxt "medium_format"
 msgid ""
 "The DVD (audio) layer of a DualDisc. The CD layer should be added as a "
 "separate medium."
-msgstr ""
+msgstr "La capa de DVD (sonido) de un Disco dual. La capa de CD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:66
 msgctxt "medium_format"
 msgid ""
 "The DVD (video) layer of a DualDisc. The CD layer should be added as a "
 "separate medium."
-msgstr ""
+msgstr "La capa de DVD (video) de un Disco dual. La capa de CD se debe agregar como un medio separado."
 
 #: DB:medium_format/description:64
 msgctxt "medium_format"
 msgid ""
 "The SACD layer of a hybrid SACD. The CD layer should be added as a separate "
 "medium."
-msgstr ""
+msgstr "La capa CD de un Disco dual. Para un DVD se debe agregar como un medio separado."
 
 #: DB:work_type/description:7
 msgctxt "work_type"

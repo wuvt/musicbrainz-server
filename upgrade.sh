@@ -5,11 +5,21 @@ set -o errexit
 MB_SERVER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$MB_SERVER_ROOT"
 
+source admin/config.sh
+
 DB_SCHEMA_SEQUENCE=$(perl -Ilib -e 'use DBDefs; print DBDefs->DB_SCHEMA_SEQUENCE;')
 REPLICATION_TYPE=$(perl -Ilib -e 'use DBDefs; print DBDefs->REPLICATION_TYPE;')
 
-NEW_SCHEMA_SEQUENCE=23
+NEW_SCHEMA_SEQUENCE=24
 OLD_SCHEMA_SEQUENCE=$((NEW_SCHEMA_SEQUENCE - 1))
+
+RT_MASTER=1
+RT_SLAVE=2
+RT_STANDALONE=3
+
+SQL_DIR='./admin/sql/updates/schema-change'
+EXTENSIONS_SQL="$SQL_DIR/$NEW_SCHEMA_SEQUENCE.extensions.sql"
+SLAVE_ONLY_SQL="$SQL_DIR/$NEW_SCHEMA_SEQUENCE.slave_only.sql"
 
 ################################################################################
 # Assert pre-conditions
@@ -27,11 +37,6 @@ if [ "$REPLICATION_TYPE" = "$RT_MASTER" ]
 then
     echo `date` : Export pending db changes
     ./admin/RunExport
-
-    echo `date`" : Bundling replication packets, daily"
-    ./admin/replication/BundleReplicationPackets $FTP_DATA_DIR/replication --period daily --require-previous
-    echo `date`" : + weekly"
-    ./admin/replication/BundleReplicationPackets $FTP_DATA_DIR/replication --period weekly --require-previous
 
     echo `date` : 'Drop replication triggers (musicbrainz)'
     ./admin/psql MAINTENANCE < ./admin/sql/DropReplicationTriggers.sql
@@ -54,16 +59,22 @@ fi
 # Migrations that apply for only slaves
 if [ "$REPLICATION_TYPE" = "$RT_SLAVE" ]
 then
-    echo `date` : 'Running upgrade scripts for slave nodes'
-    ./admin/psql MAINTENANCE < ./admin/sql/updates/schema-change/${NEW_SCHEMA_SEQUENCE}.slave_only.sql || exit 1
+    if [ -e "$SLAVE_ONLY_SQL" ]
+    then
+        echo `date` : 'Running upgrade scripts for slave nodes'
+        ./admin/psql MAINTENANCE < "$SLAVE_ONLY_SQL" || exit 1
+    fi
 fi
 
 ################################################################################
 # Scripts that should run on *all* nodes (master/slave/standalone)
 
 echo `date` : 'Running upgrade scripts for all nodes'
-./admin/psql --system MAINTENANCE < ./admin/sql/updates/schema-change/${NEW_SCHEMA_SEQUENCE}.extensions.sql || exit 1
-./admin/psql MAINTENANCE < ./admin/sql/updates/schema-change/${NEW_SCHEMA_SEQUENCE}.slave.sql || exit 1
+if [ -e "$EXTENSIONS_SQL" ]
+then
+    ./admin/psql --system MAINTENANCE < "$EXTENSIONS_SQL" || exit 1
+fi
+./admin/psql MAINTENANCE < $SQL_DIR/${NEW_SCHEMA_SEQUENCE}.slave.sql || exit 1
 
 ################################################################################
 # Re-enable replication
@@ -86,7 +97,7 @@ fi
 if [ "$REPLICATION_TYPE" != "$RT_SLAVE" ]
 then
     echo `date` : 'Running upgrade scripts for master/standalone nodes'
-    ./admin/psql MAINTENANCE < ./admin/sql/updates/schema-change/${NEW_SCHEMA_SEQUENCE}.standalone.sql || exit 1
+    ./admin/psql MAINTENANCE < $SQL_DIR/${NEW_SCHEMA_SEQUENCE}.standalone.sql || exit 1
 
     echo `date` : Enabling last_updated triggers
     ./admin/sql/EnableLastUpdatedTriggers.pl
@@ -100,7 +111,7 @@ echo "UPDATE replication_control SET current_schema_sequence = $NEW_SCHEMA_SEQUE
 
 # ignore superuser-only vacuum tables
 echo `date` : Vacuuming DB.
-echo "VACUUM ANALYZE;" | ./admin/psql MAINTENANCE 2>&1 | grep -v 'only superuser can vacuum it'
+echo "SET statement_timeout = 0; VACUUM ANALYZE;" | ./admin/psql MAINTENANCE 2>&1 | grep -v 'only superuser can vacuum it'
 
 ################################################################################
 # Prompt for final manual intervention

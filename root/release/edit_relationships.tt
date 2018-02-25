@@ -147,7 +147,7 @@
             </td>
           </tr>
           <tr>
-            <td class="section">[% l('Lyrics Language:') %]</td>
+            <td class="section">[% add_colon(l('Lyrics Languages')) %]</td>
             <td>
               <select data-bind="value: workLanguage, disable: loading">
                 <option selected="selected">&#xA0;</option>
@@ -189,7 +189,7 @@
                            css: { 'rel-edit': editsPending }"></span>
           <!-- ko template: {
                     name: "template.extra-attributes-and-dates",
-                    data: { source: $parents, relationship: $data }
+                    data: { source: $parents, relationship: $data, forGrouping: false }
                   }
             --><!-- /ko -->
         </div>
@@ -245,7 +245,7 @@
       </div>
     </script>
 
-    <script type="text/javascript">//<![CDATA[
+    <script type="text/javascript">
       $(function () {
         var RE = MB.relationshipEditor;
 
@@ -253,10 +253,10 @@
           [% closing_tag_escape(type_info) %],
           [% closing_tag_escape(attr_info) %]
         );
-        RE.ReleaseViewModel({ sourceData: [% closing_tag_escape(source_entity) %] });
+        new RE.ReleaseViewModel({ sourceData: [% closing_tag_escape(source_entity) %] });
 
         MB.confirmNavigationFallback();
       });
-    //]]></script>
+    </script>
 
 [%- END -%]

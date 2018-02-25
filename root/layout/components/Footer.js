@@ -5,12 +5,13 @@
 
 const React = require('react');
 
+const Frag = require('../../components/Frag');
+const DBDefs = require('../../static/scripts/common/DBDefs');
 const {l} = require('../../static/scripts/common/i18n');
 const formatUserDate = require('../../utility/formatUserDate');
 
 const Footer = (props) => {
   let stash = $c.stash;
-  let server_details = stash.server_details;
 
   return (
     <div id="footer">
@@ -27,33 +28,33 @@ const Footer = (props) => {
         {' | '}
         <a href="https://twitter.com/MusicBrainz" className="internal">{l('Twitter')}</a>
 
-        {!!server_details.beta_redirect && [
+        {!!DBDefs.BETA_REDIRECT_HOSTNAME && [
           ' | ',
           <a href="/set-beta-preference" className="internal">
-            {server_details.is_beta ? l('Stop using beta site') : l('Use beta site')}
+            {DBDefs.IS_BETA ? l('Stop using beta site') : l('Use beta site')}
           </a>
         ]}
 
-        {!!server_details.git.branch && [
+        {!!DBDefs.GIT_BRANCH && [
           <br />,
           l('Running: {git_details}',
             {__react: true,
-             git_details: <span className="tooltip" title={server_details.git.msg}>
-                            {server_details.git.branch} ({server_details.git.sha})
+             git_details: <span className="tooltip" title={DBDefs.GIT_MSG}>
+                            {DBDefs.GIT_BRANCH} ({DBDefs.GIT_SHA})
                           </span>
             })
         ]}
 
-        <If condition={stash.last_replication_date}>
-          <frag>
+        {stash.last_replication_date ? (
+          <Frag>
             <br />
             {l('Last replication packet received at {datetime}', {
                 datetime: $c.user ?
                   formatUserDate($c.user, stash.last_replication_date) :
                   stash.last_replication_date
             })}
-          </frag>
-        </If>
+          </Frag>
+        ) : null}
       </p>
 
       <p className="right">

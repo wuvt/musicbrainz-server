@@ -27,10 +27,11 @@ use warnings;
 
 package DBDefs::Default;
 
-use File::Spec::Functions qw( splitdir catdir );
+use File::Spec::Functions qw( splitdir catdir catfile tmpdir );
 use Cwd qw( abs_path );
 use JSON qw( encode_json );
 use MusicBrainz::Server::Replication ':replication_type';
+use String::ShellQuote qw( shell_quote );
 
 ################################################################################
 # Directories
@@ -101,10 +102,11 @@ sub GPG_ENCRYPT_KEY { "" }
 sub WEB_SERVER                { "localhost:5000" }
 # Relevant only if SSL redirects are enabled
 sub WEB_SERVER_SSL            { "localhost" }
-sub LUCENE_SERVER             { "search.musicbrainz.org" }
+sub SEARCH_SERVER             { "search.musicbrainz.org" }
+sub SEARCH_ENGINE             { "LUCENE" }
 # Whether to use x-accel-redirect for webservice searches,
 # using /internal/search as the internal redirect
-sub LUCENE_X_ACCEL_REDIRECT   { 0 }
+sub SEARCH_X_ACCEL_REDIRECT   { 0 }
 # Used, for example, to have emails sent from the beta server list the
 # main server
 sub WEB_SERVER_USED_IN_EMAIL  { my $self = shift; $self->WEB_SERVER }
@@ -305,16 +307,10 @@ EOF
 # Development server feature.
 # Used to display which git branch is currently running along with information
 # about the last commit
-sub GIT_INFO {
-    my $self = shift;
-
-    if ($self->DB_STAGING_SERVER) {
-        my $branch = `git rev-parse --abbrev-ref HEAD 2> /dev/null`;
-        my $sha = `git log -1 --format=format:"%h"`;
-        my $msg = `git log -1 --format=format:"Last commit by %an on %ad: %s" --date=short`;
-        return $branch, $sha, $msg;
-    }
-}
+my $git_info = shell_quote(catfile(__PACKAGE__->MB_SERVER_ROOT, 'script/git_info'));
+sub GIT_BRANCH { qx( $git_info branch ) }
+sub GIT_MSG { qx( $git_info msg ) }
+sub GIT_SHA { qx( $git_info sha ) }
 
 # How long an annotation is considered as being locked.
 sub ANNOTATION_LOCK_TIME { 60*15 }
@@ -386,8 +382,10 @@ sub MB_LANGUAGES {qw()}
 # (note: will still only use languages in MB_LANGUAGES)
 sub LANGUAGE_FALLBACK_TO_BROWSER{ 1 }
 
-# Set this to an email address and the server will email any bugs to you
-sub EMAIL_BUGS { undef }
+# Bugs can be sent to a Sentry instance (https://sentry.io) via these settings.
+# The DSNs can be found on the project configuration page.
+sub SENTRY_DSN { undef }
+sub SENTRY_DSN_PUBLIC { undef }
 
 # Configure which html validator should be used.  If you run tests
 # often, you should probably run a local copy of the validator.  See
@@ -395,15 +393,26 @@ sub EMAIL_BUGS { undef }
 sub HTML_VALIDATOR { 'http://validator.w3.org/nu/?out=json' }
 # sub HTML_VALIDATOR { 'http://localhost:8888?out=json' }
 
-# We use a small HTTP server (root/server.js) to render React.js templates.
-# These configure the host/port it listens on. If RENDERER_HOST is '', then
-# musicbrainz-server will fork & exec root/server.js for us (convenient on
-# development servers). Otherwise, it'll assume the service is running
-# separately.
-sub RENDERER_HOST { '' }
-sub RENDERER_PORT { 9009 }
-# Whether to use X-Accel-Redirect for the requests mentioned above.
-sub RENDERER_X_ACCEL_REDIRECT { 0 }
+# We use a small Node.js server (root/server.js) to render React.js
+# templates. RENDERER_SOCKET configures the local (UNIX) socket path it
+# listens on.
+sub RENDERER_SOCKET {
+    catfile(tmpdir, 'musicbrainz-template-renderer.socket')
+}
+# If FORK_RENDERER is set to a true value, MusicBrainz Server will fork and
+# exec root/server.js automatically. TERM signals received by plackup will
+# also be passed along to the renderer. Otherwise, it is assumed that the
+# renderer was run manually and is already listening on RENDERER_SOCKET.
+#
+# This option is convenient for development servers.
+#
+# Note: FORK_RENDERER works fine when using plackup by itself, but does not
+# play nicely with superdaemons such as Starman or Server::Starter that
+# prefork worker processes. Signals are not passed through properly when
+# using those, leaving duplicate, orphan renderer processes. Set
+# FORK_RENDERER to '0' and start the renderer manually
+# (./script/start_renderer.pl) when using a superdaemon.
+sub FORK_RENDERER { 1 }
 
 # Base URL of external Discourse instance.
 sub DISCOURSE_SERVER { '' }

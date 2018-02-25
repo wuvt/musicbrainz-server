@@ -6,6 +6,8 @@ use MooseX::Types::URI qw( Uri );
 extends 'MusicBrainz::Server::Entity::CoreEntity';
 with 'MusicBrainz::Server::Entity::Role::Linkable';
 
+sub entity_type { 'url' }
+
 has 'url' => (
     is => 'ro',
     isa => Uri,
@@ -119,8 +121,13 @@ around TO_JSON => sub {
 
     return {
         %{ $self->$orig },
-        href => $self->href_url,
+        $self->can('show_in_external_links') ?
+            (show_in_external_links => $self->show_in_external_links) : (),
+        $self->can('sidebar_name') ?
+            (sidebar_name => $self->sidebar_name) : (),
+        href_url => $self->href_url,
         pretty_name => $self->pretty_name,
+        decoded => $self->decoded,
     };
 };
 

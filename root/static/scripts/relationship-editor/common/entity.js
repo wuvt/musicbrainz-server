@@ -3,8 +3,15 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
+const ko = require('knockout');
+const _ = require('lodash');
+
+require('knockout-arraytransforms');
+
 const deferFocus = require('../../edit/utility/deferFocus');
 const mergeDates = require('./mergeDates');
+
+require('../../common/entity');
 
 function getDirection(relationship, source) {
   let entities = relationship.entities();
@@ -20,12 +27,16 @@ function getDirection(relationship, source) {
 
 (function (RE) {
 
-    MB.entity.CoreEntity.extend({
+    const coreEntityPrototype = MB.entity.CoreEntity.prototype;
 
-        after$init: function () {
+    coreEntityPrototype._afterCoreEntityCtor = function () {
+        if (this.uniqueID == null) {
             this.uniqueID = _.uniqueId("entity-");
-            this.relationshipElements = {};
-        },
+        }
+        this.relationshipElements = {};
+    };
+
+    _.assign(coreEntityPrototype, {
 
         parseRelationships: function (relationships) {
             var self = this;
@@ -66,14 +77,14 @@ function getDirection(relationship, source) {
             var self = this;
 
             function linkPhrase(relationship) {
-                return relationship.linkPhrase(self);
+                return relationship.groupingLinkPhrase(self);
             }
 
             function openAddDialog(source, event) {
                 var relationships = this.values(),
                     firstRelationship = relationships[0];
 
-                var dialog = RE.UI.AddDialog({
+                var dialog = new RE.UI.AddDialog({
                     source: self,
                     target: MB.entity({}, firstRelationship.target(self).entityType),
                     direction: getDirection(firstRelationship, self),
@@ -83,7 +94,7 @@ function getDirection(relationship, source) {
                 var relationship = dialog.relationship();
                 relationship.linkTypeID(firstRelationship.linkTypeID());
 
-                var attributeLists = _.invoke(relationships, "attributes");
+                var attributeLists = _.invokeMap(relationships, "attributes");
 
                 var commonAttributes = _.map(
                     _.reject(_.intersection.apply(_, attributeLists), isFreeText),
@@ -145,8 +156,8 @@ function getDirection(relationship, source) {
                 if (rel !== other && rel.isDuplicate(other)) {
                     var obj = _.omit(rel.editData(), "id");
 
-                    obj.beginDate = mergeDates(rel.period.beginDate, other.period.beginDate);
-                    obj.endDate = mergeDates(rel.period.endDate, other.period.endDate);
+                    obj.begin_date = mergeDates(rel.begin_date, other.begin_date);
+                    obj.end_date = mergeDates(rel.end_date, other.end_date);
 
                     other.fromJS(obj);
                     rel.remove();
@@ -173,14 +184,11 @@ function getDirection(relationship, source) {
         }
     });
 
+    const recordingPrototype = MB.entity.Recording.prototype;
 
-    MB.entity.Recording.extend({
-
-        after$init: function () {
-            this.performances = this.relationships.filter(isPerformance);
-        }
-    });
-
+    recordingPrototype._afterRecordingCtor = function () {
+        this.performances = this.relationships.filter(isPerformance);
+    };
 
     function isPerformance(relationship) {
         return relationship.entityTypes === "recording-work";

@@ -2,12 +2,12 @@
 # Translators:
 # Ian McEwen <email address hidden>, 2012
 # Maurits Meulenbelt <email address hidden>, 2012
-# Maurits Meulenbelt <email address hidden>, 2013-2016
+# Maurits Meulenbelt <email address hidden>, 2013-2017
 # Nikolai Prokoschenko <email address hidden>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: MusicBrainz\n"
-"PO-Revision-Date: 2016-08-07 10:23+0000\n"
+"PO-Revision-Date: 2017-09-19 12:54+0000\n"
 "Last-Translator: Maurits Meulenbelt <email address hidden>\n"
 "Language-Team: Dutch (http://www.transifex.com/musicbrainz/musicbrainz/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -102,7 +102,7 @@ msgstr "Abonnementen op artiesten"
 msgid ""
 "Artist subscriptions made public and various smaller user centric "
 "improvements are released."
-msgstr "Abonnementen op artiesten openbaar gemaakt en verschillende kleiner verbeteringen voor gebruikers zijn uitgebracht."
+msgstr "Abonnementen op artiesten openbaar gemaakt en verschillende kleinere verbeteringen voor gebruikers zijn uitgebracht."
 
 #: DB:statistics.statistic_event/description:2003-06-22
 msgid "Artist subscriptions."
@@ -180,7 +180,7 @@ msgstr "Toegewijde databaseserver"
 msgid ""
 "Edit display improvements, turned off RDF dumps, new install scripts "
 "released."
-msgstr "Verbeteringen in het weergeven van bewerkingen, RDF dumps uitgeschakeld en nieuwe installatiescripts uitgebracht."
+msgstr "Verbeteringen in het weergeven van bewerkingen, RDF-dumps uitgeschakeld en nieuwe installatiescripts uitgebracht."
 
 #: DB:statistics.statistic_event/title:2015-12-28
 msgid "Edit note notifications"
@@ -194,7 +194,7 @@ msgstr "Zoeken naar bewerkingen"
 msgid ""
 "Editor ojnkpjg runs a script setting track times from DiscID values, "
 "creating a huge spike in edits."
-msgstr "Redacteur ojnkpjg voert een script uit dat de duur van nummers instelt aan de hand van disc-id’s, wat tot een enorme piek aan bewerkingen leidt."
+msgstr "Redacteur ojnkpjg voert een script uit dat de duur van nummers instelt aan de hand van disc-ID’s, wat tot een enorme piek aan bewerkingen leidt."
 
 #: DB:statistics.statistic_event/description:2015-11-30
 msgid ""
@@ -224,7 +224,7 @@ msgstr "FreeDB uit / Autoredacteurs"
 
 #: DB:statistics.statistic_event/title:2006-08-15
 msgid "Great Dispute"
-msgstr "Grote Schisma"
+msgstr "Het Grote Schisma"
 
 #: DB:statistics.statistic_event/title:2009-06-17
 msgid "Imported CD Baby catalog as CD Stubs"
@@ -266,7 +266,7 @@ msgstr "In aanloop naar NGS worden redacteurs aangespoord om bewerkingen te verm
 
 #: DB:statistics.statistic_event/title:2006-03-05
 msgid "Indexed search/XML WS"
-msgstr "Geïndexeerd zoeken / XML WD"
+msgstr "Geïndexeerd zoeken / XML-webdienst"
 
 #: DB:statistics.statistic_event/description:2006-03-05
 msgid "Indexes search and a new XML based Web Service are released."
@@ -389,7 +389,7 @@ msgstr "MusicBrainz begint een partnerschap met MusicIP en begint de PUID akoest
 
 #: DB:statistics.statistic_event/title:2006-03-12
 msgid "MusicIP PUID"
-msgstr "MusicIP PUID"
+msgstr "MusicIP-PUID"
 
 #: DB:statistics.statistic_event/title:2011-05-12
 msgid "NGS No-Editing Phase"
@@ -459,7 +459,7 @@ msgstr "Roman Tsukanov wordt lid van het MetaBrainz-team"
 
 #: DB:statistics.statistic_event/title:2006-01-08
 msgid "SG5 Fixes"
-msgstr "SG5 verbeteringen"
+msgstr "SG5-verbeteringen"
 
 #: DB:statistics.statistic_event/title:2006-12-17
 msgid "Search improvements"
@@ -542,7 +542,7 @@ msgid ""
 "The new MetaBrainz website, featuring an all-new design and online sign-up "
 "for commercial users, is launched, replacing the one designed in the year "
 "2000!"
-msgstr ""
+msgstr "MetaBrainz krijgt een nieuwe website, met een compleet nieuw ontwerp en een mogelijkheid voor commerciële gebruikers om zich online aan te melden. De oude website kwam uit het jaar 2000!"
 
 #: DB:statistics.statistic_event/description:2012-10-15
 msgid ""
@@ -562,7 +562,7 @@ msgstr "Verbeterde menunavigatie, dubbele artiesten, bewerkingen voor hele uitga
 
 #: DB:statistics.statistic_event/title:2007-12-07
 msgid "Track times set from DiscIDs"
-msgstr "Nummerlengtes die met disc-id’s zijn ingesteld"
+msgstr "Nummerlengtes die met disc-ID’s zijn ingesteld"
 
 #: DB:statistics.statistic_event/title:2005-02-13
 msgid "User improvements"
@@ -596,10 +596,10 @@ msgstr "/dag"
 msgid "100%"
 msgstr "100%"
 
-#: ../root/statistics/index.tt:924
+#: ../root/statistics/index.tt:952
 msgctxt "vote"
 msgid "Abstain"
-msgstr "Onthouding"
+msgstr "onthouding"
 
 #: ../root/statistics/view_js.tt:81
 msgid "Abstentions"
@@ -617,7 +617,7 @@ msgstr "Actieve gebruikers"
 msgid "Active Voters"
 msgstr "Actieve stemmers"
 
-#: ../root/statistics/timeline.tt:20
+#: ../root/statistics/timeline.tt:18
 msgid "Add/remove lines:"
 msgstr "Lijnen toevoegen of verwijderen:"
 
@@ -641,7 +641,7 @@ msgstr "Alle bewerkingen die niet door de controle van voorwaardes kwamen."
 msgid "All edits that have hit an error"
 msgstr "Alle bewerkingen waarbij een fout is opgetreden"
 
-#: ../root/statistics/languages_scripts.tt:24
+#: ../root/statistics/languages_scripts.tt:23
 msgid "All other available languages and scripts have 0 releases and works."
 msgstr "Alle andere beschikbare talen en schriften hebben nul uitgaves en composities."
 
@@ -653,24 +653,24 @@ msgstr "Amazon:"
 msgid "Applied edits"
 msgstr "Toegepaste bewerkingen"
 
-#: ../root/statistics/index.tt:842
+#: ../root/statistics/index.tt:870
 msgid "Applied:"
 msgstr "doorgevoerd:"
 
-#: ../root/statistics/index.tt:906
+#: ../root/statistics/index.tt:934
 msgctxt "vote"
 msgid "Approve"
-msgstr "Goedgekeurd"
+msgstr "goedgekeurd"
 
 #: ../root/statistics/view_js.tt:186
 msgid "Area Tags (raw)"
 msgstr "Etiketten van gebieden (totaal)"
 
-#: ../root/statistics/index.tt:577 ../root/statistics/view_js.tt:55
+#: ../root/statistics/index.tt:605 ../root/statistics/view_js.tt:55
 msgid "Areas"
 msgstr "Gebieden"
 
-#: ../root/statistics/index.tt:52 ../root/statistics/index.tt:584
+#: ../root/statistics/index.tt:52 ../root/statistics/index.tt:612
 msgid "Areas:"
 msgstr "Gebieden:"
 
@@ -706,7 +706,7 @@ msgstr "Etiketten van artiesten (totaal)"
 msgid "Artist Types and Genders"
 msgstr "Types artiesten en geslachten"
 
-#: ../root/statistics/countries.tt:27 ../root/statistics/index.tt:142
+#: ../root/statistics/countries.tt:26 ../root/statistics/index.tt:142
 #: ../root/statistics/index.tt:146 ../root/statistics/view_js.tt:48
 msgid "Artists"
 msgstr "Artiesten"
@@ -779,7 +779,7 @@ msgstr "Artiesten waarvan het type niet is ingesteld"
 msgid "Artists:"
 msgstr "Artiesten:"
 
-#: ../root/statistics/index.tt:553
+#: ../root/statistics/index.tt:581
 msgid "Attributes"
 msgstr "Eigenschappen"
 
@@ -839,7 +839,7 @@ msgstr "Cd-beginsels (ingevoerd)"
 msgid "Cancelled edits"
 msgstr "Geannuleerde bewerkingen"
 
-#: ../root/statistics/index.tt:872
+#: ../root/statistics/index.tt:900
 msgid "Cancelled:"
 msgstr "geannuleerd:"
 
@@ -847,7 +847,7 @@ msgstr "geannuleerd:"
 msgid "Characters"
 msgstr "Karakters"
 
-#: ../root/statistics/timeline.tt:20
+#: ../root/statistics/timeline.tt:18
 msgid "Check boxes above"
 msgstr "Bovenstaande selectievakjes"
 
@@ -855,11 +855,11 @@ msgstr "Bovenstaande selectievakjes"
 msgid "Choirs"
 msgstr "Koren"
 
-#: ../root/statistics/timeline.tt:19
+#: ../root/statistics/timeline.tt:17
 msgid "Click to deselect"
 msgstr "Klik ergens in de grafiek"
 
-#: ../root/statistics/timeline.tt:16
+#: ../root/statistics/timeline.tt:14
 msgid "Controls"
 msgstr "Bediening"
 
@@ -917,7 +917,7 @@ msgstr "Totaal aantal ooit ingediende cd-beginsels"
 
 #: ../root/statistics/view_js.tt:139
 msgid "Count of all Disc IDs"
-msgstr "Totaal aantal disc-id’s"
+msgstr "Totaal aantal disc-ID’s"
 
 #: ../root/statistics/view_js.tt:142
 msgid "Count of all IPIs"
@@ -969,11 +969,11 @@ msgstr "Aantal etiketten van platenmaatschappijen (totaal)"
 
 #: ../root/statistics/view_js.tt:154
 msgid "Count of all Mediums with Disc IDs"
-msgstr "Totaal aantal media met disc-id’s"
+msgstr "Totaal aantal media met disc-ID’s"
 
 #: ../root/statistics/view_js.tt:159
 msgid "Count of all Mediums with {n} Disc IDs"
-msgstr "Totaal aantal media met {n} disc-id’s"
+msgstr "Totaal aantal media met {n} disc-ID’s"
 
 #: ../root/statistics/view_js.tt:80
 msgid "Count of all No votes"
@@ -1061,11 +1061,11 @@ msgstr "Totaal aantal uitgaves van een enkele artiest"
 
 #: ../root/statistics/view_js.tt:153
 msgid "Count of all Releases with Disc IDs"
-msgstr "Totaal aantal uitgaves met disc-id’s"
+msgstr "Totaal aantal uitgaves met disc-ID’s"
 
 #: ../root/statistics/view_js.tt:158
 msgid "Count of all Releases with {n} Disc IDs"
-msgstr "Totaal aantal uitgaves met {n} disc-id’s"
+msgstr "Totaal aantal uitgaves met {n} disc-ID’s"
 
 #: ../root/statistics/view_js.tt:193
 msgid "Count of all Series Tags (raw)"
@@ -1195,15 +1195,15 @@ msgstr "Aantal stemmen per dag"
 msgid "Count of votes per week"
 msgstr "Aantal stemmen per week"
 
-#: ../root/statistics/countries.tt:18 ../root/statistics/layout.tt:5
+#: ../root/statistics/countries.tt:16 ../root/statistics/layout.tt:4
 msgid "Countries"
 msgstr "Landen"
 
-#: ../root/statistics/countries.tt:26
+#: ../root/statistics/countries.tt:25
 msgid "Country"
 msgstr "Land"
 
-#: ../root/statistics/coverart.tt:6 ../root/statistics/layout.tt:5
+#: ../root/statistics/coverart.tt:5 ../root/statistics/layout.tt:4
 #: ../root/statistics/view_js.tt:38
 msgid "Cover Art"
 msgstr "Afbeelding(en)"
@@ -1216,13 +1216,13 @@ msgstr "Bronnen voor afbeeldingen"
 msgid "Data Quality"
 msgstr "Gegevenskwaliteit"
 
-#: ../root/statistics/layout.tt:24 ../root/statistics/layout.tt:35
+#: ../root/statistics/layout.tt:23 ../root/statistics/layout.tt:34
 msgid "Database Statistics"
 msgstr "Statistieken over MusicBrainz"
 
-#: ../root/statistics/layout.tt:16
+#: ../root/statistics/layout.tt:15
 msgid "Database Statistics - {title}"
-msgstr "Statistieken over MusicBrainz - {title}"
+msgstr "Statistieken over MusicBrainz – {title}"
 
 #: ../root/statistics/view_js.tt:165
 msgid "Default Data Quality"
@@ -1234,13 +1234,13 @@ msgstr "standaard gegevenskwaliteit:"
 
 #: ../root/statistics/index.tt:389 ../root/statistics/view_js.tt:139
 msgid "Disc IDs"
-msgstr "Disc-id’s"
+msgstr "Disc-ID’s"
 
 #: ../root/statistics/index.tt:124 ../root/statistics/index.tt:392
 msgid "Disc IDs:"
-msgstr "Disc-id’s:"
+msgstr "Disc-ID’s:"
 
-#: ../root/statistics/timeline.tt:18
+#: ../root/statistics/timeline.tt:16
 msgid "Draw a rectangle on either graph"
 msgstr "Trek een rechthoek op een grafiek"
 
@@ -1248,12 +1248,12 @@ msgstr "Trek een rechthoek op een grafiek"
 msgid "Edit Information"
 msgstr "Informatie over bewerkingen"
 
-#: ../root/statistics/editors.tt:36 ../root/statistics/editors.tt:37
+#: ../root/statistics/editors.tt:37 ../root/statistics/editors.tt:38
 msgid "Editor"
 msgstr "Redacteur"
 
-#: ../root/statistics/editors.tt:2 ../root/statistics/editors.tt:35
-#: ../root/statistics/index.tt:715 ../root/statistics/layout.tt:5
+#: ../root/statistics/editors.tt:1 ../root/statistics/editors.tt:36
+#: ../root/statistics/index.tt:743 ../root/statistics/layout.tt:4
 msgid "Editors"
 msgstr "Redacteurs"
 
@@ -1265,7 +1265,7 @@ msgstr "Redacteurs (totaal)"
 msgid "Editors (deleted)"
 msgstr "Redacteurs (verwijderd)"
 
-#: ../root/statistics/index.tt:820
+#: ../root/statistics/index.tt:848
 msgid "Editors (deleted):"
 msgstr "Redacteurs (verwijderd):"
 
@@ -1281,16 +1281,16 @@ msgstr "Redacteurs (geldig / verwijderd):"
 msgid "Editors (valid)"
 msgstr "Redacteurs (geldig)"
 
-#: ../root/statistics/index.tt:718
+#: ../root/statistics/index.tt:746
 msgid "Editors (valid):"
 msgstr "Redacteurs (geldig):"
 
-#: ../root/statistics/index.tt:711
+#: ../root/statistics/index.tt:739
 msgid "Editors, Edits, and Votes"
 msgstr "Redacteurs, bewerkingen en stemmen"
 
-#: ../root/statistics/edits.tt:2 ../root/statistics/edits.tt:9
-#: ../root/statistics/index.tt:827 ../root/statistics/layout.tt:5
+#: ../root/statistics/edits.tt:1 ../root/statistics/edits.tt:9
+#: ../root/statistics/index.tt:855 ../root/statistics/layout.tt:4
 #: ../root/statistics/view_js.tt:61
 msgid "Edits"
 msgstr "Bewerkingen"
@@ -1307,8 +1307,8 @@ msgstr "Bewerkingen per dag"
 msgid "Edits per week"
 msgstr "Bewerkingen per week"
 
-#: ../root/statistics/edits.tt:18 ../root/statistics/index.tt:830
-#: ../root/statistics/index.tt:877
+#: ../root/statistics/edits.tt:18 ../root/statistics/index.tt:858
+#: ../root/statistics/index.tt:905
 msgid "Edits:"
 msgstr "Bewerkingen:"
 
@@ -1324,11 +1324,11 @@ msgstr "Evalnochange Edits"
 msgid "Evalnochange edits"
 msgstr "Evalnochange edits"
 
-#: ../root/statistics/index.tt:683 ../root/statistics/view_js.tt:59
+#: ../root/statistics/index.tt:711 ../root/statistics/view_js.tt:59
 msgid "Events"
 msgstr "Evenementen"
 
-#: ../root/statistics/index.tt:68 ../root/statistics/index.tt:690
+#: ../root/statistics/index.tt:68 ../root/statistics/index.tt:718
 msgid "Events:"
 msgstr "Evenementen:"
 
@@ -1336,19 +1336,19 @@ msgstr "Evenementen:"
 msgid "Exact Values (items vs. day)"
 msgstr "Exacte waardes (objecten uitgezet tegen de datum)"
 
-#: ../root/statistics/relationships.tt:31
+#: ../root/statistics/relationships.tt:30
 msgid "Exclusive"
 msgstr "Exclusief"
 
-#: ../root/statistics/index.tt:854
+#: ../root/statistics/index.tt:882
 msgid "Failed (dependency):"
 msgstr "mislukt (afhankelijkheid):"
 
-#: ../root/statistics/index.tt:866
+#: ../root/statistics/index.tt:894
 msgid "Failed (internal error):"
 msgstr "mislukt (interne fout):"
 
-#: ../root/statistics/index.tt:860
+#: ../root/statistics/index.tt:888
 msgid "Failed (prerequisite):"
 msgstr "mislukt (voorwaarde):"
 
@@ -1372,7 +1372,7 @@ msgstr "Vrouwelijke artiesten"
 msgid "Female:"
 msgstr "vrouw:"
 
-#: ../root/statistics/editors.tt:31
+#: ../root/statistics/editors.tt:32
 msgid ""
 "For the vote statistics, only yes or no votes are counted, abstain votes are"
 " not counted."
@@ -1382,7 +1382,7 @@ msgstr "Voor de stemstatistieken worden alleen voor- en tegenstemmen geteld, gee
 msgid "Format"
 msgstr "Mediumtype"
 
-#: ../root/statistics/layout.tt:5 ../root/statistics/view_js.tt:37
+#: ../root/statistics/layout.tt:4 ../root/statistics/view_js.tt:37
 msgid "Formats"
 msgstr "Mediumtypes"
 
@@ -1398,7 +1398,7 @@ msgstr "hoge gegevenskwaliteit"
 msgid "High Data Quality:"
 msgstr "hoge gegevenskwaliteit:"
 
-#: ../root/statistics/timeline.tt:21
+#: ../root/statistics/timeline.tt:19
 msgid "Hover and click on vertical lines"
 msgstr "Beweeg over de verticale lijnen en klik er op"
 
@@ -1446,7 +1446,7 @@ msgstr "ISWC’s (totaal)"
 msgid "Identifiers"
 msgstr "Identificatoren"
 
-#: ../root/statistics/relationships.tt:31
+#: ../root/statistics/relationships.tt:30
 msgid "Inclusive"
 msgstr "Inclusief"
 
@@ -1454,11 +1454,11 @@ msgstr "Inclusief"
 msgid "Instrument Tags (raw)"
 msgstr "Etiketten van instrumenten (totaal)"
 
-#: ../root/statistics/index.tt:655 ../root/statistics/view_js.tt:58
+#: ../root/statistics/index.tt:683 ../root/statistics/view_js.tt:58
 msgid "Instruments"
 msgstr "Instrumenten"
 
-#: ../root/statistics/index.tt:64 ../root/statistics/index.tt:662
+#: ../root/statistics/index.tt:64 ../root/statistics/index.tt:690
 msgid "Instruments:"
 msgstr "Instrumenten:"
 
@@ -1486,7 +1486,8 @@ msgstr "Waarderingen van platenmaatschappijen (totaal)"
 msgid "Label Tags (raw)"
 msgstr "Etiketten van platenmaatschappijen (totaal)"
 
-#: ../root/statistics/countries.tt:29 ../root/statistics/view_js.tt:54
+#: ../root/statistics/countries.tt:28 ../root/statistics/index.tt:522
+#: ../root/statistics/index.tt:529 ../root/statistics/view_js.tt:54
 msgid "Labels"
 msgstr "Platenmaatschappijen"
 
@@ -1498,35 +1499,35 @@ msgstr "Platenmaatschappijen zonder land"
 msgid "Labels:"
 msgstr "Platenmaatschappijen:"
 
-#: ../root/statistics/languages_scripts.tt:32
+#: ../root/statistics/languages_scripts.tt:31
 msgid "Language"
 msgstr "Taal"
 
-#: ../root/statistics/languages_scripts.tt:27
+#: ../root/statistics/languages_scripts.tt:26
 msgid "Languages"
 msgstr "Talen"
 
-#: ../root/statistics/languages_scripts.tt:21
+#: ../root/statistics/languages_scripts.tt:19
 msgid "Languages and Scripts"
 msgstr "Talen en schriften"
 
-#: ../root/statistics/layout.tt:5
+#: ../root/statistics/layout.tt:4
 msgid "Languages/Scripts"
 msgstr "Talen/Schriften"
 
-#: ../root/statistics/index.tt:883 ../root/statistics/index.tt:935
+#: ../root/statistics/index.tt:911 ../root/statistics/index.tt:963
 msgid "Last 7 days:"
-msgstr "Laatste 7 dagen:"
+msgstr "afgelopen 7 dagen:"
 
-#: ../root/statistics/countries.tt:20 ../root/statistics/coverart.tt:11
-#: ../root/statistics/editors.tt:29 ../root/statistics/edits.tt:7
+#: ../root/statistics/countries.tt:19 ../root/statistics/coverart.tt:11
+#: ../root/statistics/editors.tt:30 ../root/statistics/edits.tt:7
 #: ../root/statistics/formats.tt:18 ../root/statistics/index.tt:7
-#: ../root/statistics/languages_scripts.tt:23
-#: ../root/statistics/relationships.tt:20
+#: ../root/statistics/languages_scripts.tt:22
+#: ../root/statistics/relationships.tt:19
 msgid "Last updated: {date}"
 msgstr "Het laatst bijgewerkt op {date}"
 
-#: ../root/statistics/timeline.tt:4
+#: ../root/statistics/timeline.tt:2
 msgid "Legend"
 msgstr "Legenda"
 
@@ -1558,19 +1559,19 @@ msgstr "Media"
 msgid "Mediums with 1 Disc ID"
 msgid_plural "Mediums with {n} Disc IDs"
 msgstr[0] "Media met 1 disc-id"
-msgstr[1] "Media met {n} disc-id’s"
+msgstr[1] "Media met {n} disc-ID’s"
 
 #: ../root/statistics/view_js.tt:154
 msgid "Mediums with Disc IDs"
-msgstr "Media met disc-id’s"
+msgstr "Media met disc-ID’s"
 
 #: ../root/statistics/index.tt:442
 msgid "Mediums with at least one disc ID:"
-msgstr "Media met ten minste één disc-id:"
+msgstr "Media met ten minste één disc-ID:"
 
 #: ../root/statistics/index.tt:436
 msgid "Mediums with no disc IDs:"
-msgstr "Media zonder disc-id’s:"
+msgstr "Media zonder disc-ID’s:"
 
 #: ../root/statistics/view_js.tt:111
 msgid "Mediums with no format set"
@@ -1580,26 +1581,26 @@ msgstr "Media waarvan het type niet is ingesteld"
 msgid "Mediums:"
 msgstr "Media:"
 
-#: ../root/statistics/editors.tt:36
+#: ../root/statistics/editors.tt:37
 msgid "Most active editors in the past week"
 msgstr "Meest actieve redacteurs in de afgelopen week (bewerken)"
 
-#: ../root/statistics/editors.tt:42
+#: ../root/statistics/editors.tt:43
 msgid "Most active voters in the past week"
 msgstr "Meest actieve redacteurs in de afgelopen week (stemmen)"
 
-#: ../root/statistics/timeline.tt:8
+#: ../root/statistics/timeline.tt:6
 msgid "MusicBrainz Events"
 msgstr "Gebeurtenissen op MusicBrainz"
 
-#: ../root/statistics/timeline.tt:21
+#: ../root/statistics/timeline.tt:19
 msgid "MusicBrainz Events:"
 msgstr "Gebeurtenissen op MusicBrainz:"
 
-#: ../root/statistics/index.tt:918
+#: ../root/statistics/index.tt:946
 msgctxt "vote"
 msgid "No"
-msgstr "Tegen"
+msgstr "tegen"
 
 #: ../root/statistics/no_statistics.tt:2
 msgid "No Statistics"
@@ -1630,7 +1631,7 @@ msgstr "Geen afbeelding van de voorkant:"
 msgid "No packaging set"
 msgstr "Geen verpakking ingesteld"
 
-#: ../root/statistics/relationships.tt:25
+#: ../root/statistics/relationships.tt:24
 msgid "No relationship statistics available."
 msgstr "Geen statistieken over relaties beschikbaar."
 
@@ -1650,9 +1651,10 @@ msgstr "Geen type"
 msgid "Non-group artists:"
 msgstr "Artiesten die geen groep zijn:"
 
-#: ../root/statistics/index.tt:543 ../root/statistics/index.tt:570
+#: ../root/statistics/index.tt:543 ../root/statistics/index.tt:571
 #: ../root/statistics/index.tt:598 ../root/statistics/index.tt:626
-#: ../root/statistics/index.tt:676 ../root/statistics/index.tt:704
+#: ../root/statistics/index.tt:654 ../root/statistics/index.tt:704
+#: ../root/statistics/index.tt:732
 msgid "None"
 msgstr "Geen"
 
@@ -1668,11 +1670,11 @@ msgstr "normale gegevenskwaliteit:"
 msgid "Open Edits"
 msgstr "Open bewerkingen"
 
-#: ../root/statistics/editors.tt:36
+#: ../root/statistics/editors.tt:37
 msgid "Open and applied edits in past week"
 msgstr "Open en doorgevoerde bewerkingen in de afgelopen week"
 
-#: ../root/statistics/index.tt:836
+#: ../root/statistics/index.tt:864
 msgid "Open:"
 msgstr "open:"
 
@@ -1700,7 +1702,7 @@ msgstr "Artiest met overig geslacht"
 msgid "Other-type Artists"
 msgstr "Artiest met overig type"
 
-#: ../root/statistics/index.tt:2 ../root/statistics/layout.tt:5
+#: ../root/statistics/index.tt:1 ../root/statistics/layout.tt:4
 msgid "Overview"
 msgstr "Overzicht"
 
@@ -1724,11 +1726,11 @@ msgstr "Aantal afbeeldingen"
 msgid "Pieces of cover art:"
 msgstr "Aantal afbeeldingen:"
 
-#: ../root/statistics/index.tt:605 ../root/statistics/view_js.tt:56
+#: ../root/statistics/index.tt:633 ../root/statistics/view_js.tt:56
 msgid "Places"
 msgstr "Plaatsen"
 
-#: ../root/statistics/index.tt:56 ../root/statistics/index.tt:612
+#: ../root/statistics/index.tt:56 ../root/statistics/index.tt:640
 msgid "Places:"
 msgstr "Plaatsen:"
 
@@ -1736,9 +1738,9 @@ msgstr "Plaatsen:"
 msgid "Primary Types"
 msgstr "Primaire types"
 
-#: ../root/statistics/countries.tt:25 ../root/statistics/editors.tt:8
-#: ../root/statistics/formats.tt:24 ../root/statistics/languages_scripts.tt:31
-#: ../root/statistics/languages_scripts.tt:52
+#: ../root/statistics/countries.tt:24 ../root/statistics/editors.tt:9
+#: ../root/statistics/formats.tt:24 ../root/statistics/languages_scripts.tt:30
+#: ../root/statistics/languages_scripts.tt:51
 msgid "Rank"
 msgstr "Rang"
 
@@ -1746,7 +1748,7 @@ msgstr "Rang"
 msgid "Rate of Change (average items/day vs. day)"
 msgstr "Veranderingssnelheid (gemiddeld aantal objecten per dag uitgezet tegen de datum)"
 
-#: ../root/statistics/timeline.tt:12
+#: ../root/statistics/timeline.tt:10
 msgid "Rate of Change Graph"
 msgstr "Veranderingssnelheidsgrafiek"
 
@@ -1797,13 +1799,13 @@ msgstr "Opnames met ISRC’s"
 msgid "Recordings:"
 msgstr "Opnames:"
 
-#: ../root/statistics/layout.tt:5 ../root/statistics/relationships.tt:15
-#: ../root/statistics/relationships.tt:22 ../root/statistics/view_js.tt:34
+#: ../root/statistics/layout.tt:4 ../root/statistics/relationships.tt:13
+#: ../root/statistics/relationships.tt:21 ../root/statistics/view_js.tt:34
 #: ../root/statistics/view_js.tt:196
 msgid "Relationships"
 msgstr "Relaties"
 
-#: ../root/statistics/index.tt:83 ../root/statistics/relationships.tt:34
+#: ../root/statistics/index.tt:83 ../root/statistics/relationships.tt:33
 msgid "Relationships:"
 msgstr "Relaties:"
 
@@ -1870,14 +1872,14 @@ msgstr "Uitgavegroepen"
 msgid "Release groups with cover art:"
 msgstr "Uitgavegroepen met afbeeldingen:"
 
-#: ../root/statistics/formats.tt:16 ../root/statistics/formats.tt:20
+#: ../root/statistics/formats.tt:15 ../root/statistics/formats.tt:20
 msgid "Release/Medium Formats"
 msgstr "Type uitgave/medium"
 
-#: ../root/statistics/countries.tt:28 ../root/statistics/coverart.tt:35
+#: ../root/statistics/countries.tt:27 ../root/statistics/coverart.tt:35
 #: ../root/statistics/formats.tt:26 ../root/statistics/index.tt:243
-#: ../root/statistics/languages_scripts.tt:33
-#: ../root/statistics/languages_scripts.tt:54 ../root/statistics/view_js.tt:52
+#: ../root/statistics/languages_scripts.tt:32
+#: ../root/statistics/languages_scripts.tt:53 ../root/statistics/view_js.tt:52
 msgid "Releases"
 msgstr "Uitgaves"
 
@@ -1893,7 +1895,7 @@ msgstr "Uitgaves van één artiest"
 msgid "Releases with 1 Disc ID"
 msgid_plural "Releases with {n} Disc IDs"
 msgstr[0] "Uitgaves met één disc-id"
-msgstr[1] "Uitgaves met {n} disc-id’s"
+msgstr[1] "Uitgaves met {n} disc-ID’s"
 
 #: ../root/statistics/view_js.tt:206 ../root/statistics/view_js.tt:208
 msgid "Releases with Amazon Cover Art"
@@ -1913,7 +1915,7 @@ msgstr "Uitgaves met afbeeldingen van relaties."
 
 #: ../root/statistics/view_js.tt:153
 msgid "Releases with Disc IDs"
-msgstr "Uitgaves met disc-id’s"
+msgstr "Uitgaves met disc-ID’s"
 
 #: ../root/statistics/view_js.tt:209
 msgid "Releases with No Cover Art"
@@ -1925,7 +1927,7 @@ msgstr "Uitgaves met een medium zonder ingesteld type"
 
 #: ../root/statistics/index.tt:409
 msgid "Releases with at least one disc ID:"
-msgstr "Uitgaves met ten minste één disc-id:"
+msgstr "Uitgaves met ten minste één disc-ID:"
 
 #: ../root/statistics/coverart.tt:22 ../root/statistics/coverart.tt:49
 #: ../root/statistics/coverart.tt:65 ../root/statistics/coverart.tt:81
@@ -1939,7 +1941,7 @@ msgstr "Uitgaves waarvan het land niet is ingesteld"
 
 #: ../root/statistics/index.tt:403
 msgid "Releases with no disc IDs:"
-msgstr "Uitgaves zonder disc-id’s:"
+msgstr "Uitgaves zonder disc-ID’s:"
 
 #: ../root/statistics/view_js.tt:105
 msgid "Releases with no language set"
@@ -1951,7 +1953,7 @@ msgstr "Uitgaves waarbij het schrift niet is ingesteld"
 
 #: ../root/statistics/index.tt:239
 msgid "Releases, Data Quality, and Disc IDs"
-msgstr "Uitgaves, gegevenskwaliteit en disc-id’s"
+msgstr "Uitgaves, gegevenskwaliteit en disc-ID’s"
 
 #: ../root/statistics/index.tt:24 ../root/statistics/index.tt:246
 #: ../root/statistics/index.tt:268 ../root/statistics/index.tt:292
@@ -1960,15 +1962,15 @@ msgstr "Uitgaves, gegevenskwaliteit en disc-id’s"
 msgid "Releases:"
 msgstr "Uitgaves:"
 
-#: ../root/statistics/timeline.tt:19
+#: ../root/statistics/timeline.tt:17
 msgid "Reset:"
 msgstr "Originele grootte:"
 
-#: ../root/statistics/languages_scripts.tt:53
+#: ../root/statistics/languages_scripts.tt:52
 msgid "Script"
 msgstr "Schrift"
 
-#: ../root/statistics/languages_scripts.tt:48
+#: ../root/statistics/languages_scripts.tt:47
 msgid "Scripts"
 msgstr "Schriften"
 
@@ -1976,7 +1978,7 @@ msgstr "Schriften"
 msgid "Secondary Types"
 msgstr "Secundaire types"
 
-#: ../root/statistics/index.tt:633 ../root/statistics/view_js.tt:57
+#: ../root/statistics/index.tt:661 ../root/statistics/view_js.tt:57
 msgctxt "plural"
 msgid "Series"
 msgstr "Series"
@@ -1985,7 +1987,7 @@ msgstr "Series"
 msgid "Series Tags (raw)"
 msgstr "Etiketten van series (totaal)"
 
-#: ../root/statistics/index.tt:60 ../root/statistics/index.tt:640
+#: ../root/statistics/index.tt:60 ../root/statistics/index.tt:668
 msgctxt "plural"
 msgid "Series:"
 msgstr "Series:"
@@ -2006,15 +2008,15 @@ msgstr "Etiketten (totaal / verzameld):"
 msgid "Tags (raw)"
 msgstr "Etiketten (totaal)"
 
-#: ../root/statistics/editors.tt:16
+#: ../root/statistics/editors.tt:17
 msgid "There is no data to display here."
 msgstr "Er zijn geen gegevens om hier te tonen."
 
-#: ../root/statistics/layout.tt:5
+#: ../root/statistics/layout.tt:4
 msgid "Timeline"
 msgstr "Tijdslijn"
 
-#: ../root/statistics/timeline.tt:27
+#: ../root/statistics/timeline.tt:25
 msgid "Timeline Graph"
 msgstr "Tijdslijn"
 
@@ -2022,24 +2024,24 @@ msgstr "Tijdslijn"
 msgid "To-be-cancelled edits"
 msgstr "Bewerkingen die geannuleerd gaan worden"
 
-#: ../root/statistics/editors.tt:37
+#: ../root/statistics/editors.tt:38
 msgid "Top editors overall"
 msgstr "Topredacteurs (altijd)"
 
-#: ../root/statistics/editors.tt:43
+#: ../root/statistics/editors.tt:44
 msgid "Top voters overall"
 msgstr "Topstemmers (altijd)"
 
-#: ../root/statistics/countries.tt:30 ../root/statistics/formats.tt:35
-#: ../root/statistics/languages_scripts.tt:35
+#: ../root/statistics/countries.tt:29 ../root/statistics/formats.tt:35
+#: ../root/statistics/languages_scripts.tt:34
 msgid "Total"
 msgstr "Totaal"
 
-#: ../root/statistics/editors.tt:37
+#: ../root/statistics/editors.tt:38
 msgid "Total applied edits"
 msgstr "Totaal aantal doorgevoerde bewerkingen"
 
-#: ../root/statistics/editors.tt:43
+#: ../root/statistics/editors.tt:44
 msgid "Total votes"
 msgstr "Totaal aantal stemmen"
 
@@ -2051,9 +2053,10 @@ msgstr "Nummers"
 msgid "Tracks:"
 msgstr "Nummers:"
 
-#: ../root/statistics/index.tt:526 ../root/statistics/index.tt:581
+#: ../root/statistics/index.tt:526 ../root/statistics/index.tt:554
 #: ../root/statistics/index.tt:609 ../root/statistics/index.tt:637
-#: ../root/statistics/index.tt:659 ../root/statistics/index.tt:687
+#: ../root/statistics/index.tt:665 ../root/statistics/index.tt:687
+#: ../root/statistics/index.tt:715
 msgid "Types"
 msgstr "Types"
 
@@ -2065,7 +2068,7 @@ msgstr "URL-relaties:"
 msgid "URLs:"
 msgstr "URL’s:"
 
-#: ../root/statistics/countries.tt:9 ../root/statistics/view_js.tt:91
+#: ../root/statistics/countries.tt:7 ../root/statistics/view_js.tt:91
 #: ../root/statistics/view_js.tt:92 ../root/statistics/view_js.tt:93
 msgid "Unknown Country"
 msgstr "Onbekend land"
@@ -2078,7 +2081,7 @@ msgstr "Kwaliteit van de gegevens onbekend"
 msgid "Unknown Data Quality:"
 msgstr "onbekende gegevenskwaliteit:"
 
-#: ../root/statistics/formats.tt:5
+#: ../root/statistics/formats.tt:4
 msgid "Unknown Format"
 msgstr "Onbekend mediumtype"
 
@@ -2098,11 +2101,11 @@ msgstr "Onbekende taal"
 msgid "Unknown Script"
 msgstr "Onbekend schrift"
 
-#: ../root/statistics/languages_scripts.tt:7
+#: ../root/statistics/languages_scripts.tt:5
 msgid "Unknown language"
 msgstr "Onbekende taal"
 
-#: ../root/statistics/languages_scripts.tt:14
+#: ../root/statistics/languages_scripts.tt:12
 msgid "Unknown script"
 msgstr "Onbekend schrift"
 
@@ -2118,23 +2121,23 @@ msgstr "Artiesten van een onbekend type"
 msgid "Videos:"
 msgstr "Video’s:"
 
-#: ../root/statistics/index.tt:848
+#: ../root/statistics/index.tt:876
 msgid "Voted down:"
 msgstr "weggestemd:"
 
-#: ../root/statistics/editors.tt:42 ../root/statistics/editors.tt:43
+#: ../root/statistics/editors.tt:43 ../root/statistics/editors.tt:44
 msgid "Voter"
 msgstr "Stemmer"
 
-#: ../root/statistics/editors.tt:41
+#: ../root/statistics/editors.tt:42
 msgid "Voters"
 msgstr "Stemmers"
 
-#: ../root/statistics/index.tt:897 ../root/statistics/view_js.tt:75
+#: ../root/statistics/index.tt:925 ../root/statistics/view_js.tt:75
 msgid "Votes"
 msgstr "Stemmen"
 
-#: ../root/statistics/editors.tt:42
+#: ../root/statistics/editors.tt:43
 msgid "Votes in past week"
 msgstr "Stemmen in de afgelopen week"
 
@@ -2146,7 +2149,7 @@ msgstr "Stemmen per dag"
 msgid "Votes per week"
 msgstr "Stemmen per week"
 
-#: ../root/statistics/index.tt:900 ../root/statistics/index.tt:929
+#: ../root/statistics/index.tt:928 ../root/statistics/index.tt:957
 msgid "Votes:"
 msgstr "Stemmen:"
 
@@ -2162,34 +2165,34 @@ msgstr "Waarderingen van composities (totaal)"
 msgid "Work Tags (raw)"
 msgstr "Etiketten van composities (totaal)"
 
-#: ../root/statistics/index.tt:522 ../root/statistics/languages_scripts.tt:34
+#: ../root/statistics/index.tt:550 ../root/statistics/languages_scripts.tt:33
 #: ../root/statistics/view_js.tt:50
 msgid "Works"
 msgstr "Composities"
 
-#: ../root/statistics/index.tt:44 ../root/statistics/index.tt:529
-#: ../root/statistics/index.tt:556
+#: ../root/statistics/index.tt:44 ../root/statistics/index.tt:557
+#: ../root/statistics/index.tt:584
 msgid "Works:"
 msgstr "Composities:"
 
-#: ../root/statistics/index.tt:912
+#: ../root/statistics/index.tt:940
 msgctxt "vote"
 msgid "Yes"
-msgstr "Voor"
+msgstr "voor"
 
 #: ../root/statistics/view_js.tt:79
 msgid "Yes Votes"
 msgstr "Voorstemmen"
 
-#: ../root/statistics/index.tt:890 ../root/statistics/index.tt:942
+#: ../root/statistics/index.tt:918 ../root/statistics/index.tt:970
 msgid "Yesterday:"
 msgstr "gisteren:"
 
-#: ../root/statistics/timeline.tt:18
+#: ../root/statistics/timeline.tt:16
 msgid "Zoom:"
 msgstr "Vergroten:"
 
-#: ../root/statistics/index.tt:724
+#: ../root/statistics/index.tt:752
 msgid "active ever:"
 msgstr "ooit actief:"
 
@@ -2205,7 +2208,7 @@ msgstr "van één artiest:"
 msgid "by various artists:"
 msgstr "van diverse artiesten:"
 
-#: ../root/statistics/index.tt:815
+#: ../root/statistics/index.tt:843
 msgid "inactive:"
 msgstr "inactief:"
 
@@ -2241,57 +2244,57 @@ msgstr "overig:"
 msgid "of type Person:"
 msgstr "personen:"
 
-#: ../root/statistics/index.tt:809
+#: ../root/statistics/index.tt:837
 msgid "validated email only:"
 msgstr "alleen bevestigde e-mails:"
 
-#: ../root/statistics/index.tt:754
+#: ../root/statistics/index.tt:782
 msgid "who edit:"
 msgstr "die bewerken:"
 
-#: ../root/statistics/index.tt:731
+#: ../root/statistics/index.tt:759
 msgid "who edited and/or voted in the last 7 days:"
 msgstr "die de afgelopen 7 dagen bewerkt of gestemd hebben:"
 
-#: ../root/statistics/index.tt:739
+#: ../root/statistics/index.tt:767
 msgid "who edited in the last 7 days:"
 msgstr "die de afgelopen 7 dagen bewerkt hebben:"
 
-#: ../root/statistics/index.tt:803
+#: ../root/statistics/index.tt:831
 msgid "who have registered applications:"
 msgstr "die applicaties hebben geregistreerd:"
 
-#: ../root/statistics/index.tt:768
+#: ../root/statistics/index.tt:796
 msgid "who leave edit notes:"
 msgstr "die notities achterlaten:"
 
-#: ../root/statistics/index.tt:796
+#: ../root/statistics/index.tt:824
 msgid "who use collections:"
 msgstr "die collecties gebruiken:"
 
-#: ../root/statistics/index.tt:782
+#: ../root/statistics/index.tt:810
 msgid "who use ratings:"
 msgstr "die waarderingen gebruiken:"
 
-#: ../root/statistics/index.tt:789
+#: ../root/statistics/index.tt:817
 msgid "who use subscriptions:"
 msgstr "die abbonnementen gebruiken:"
 
-#: ../root/statistics/index.tt:775
+#: ../root/statistics/index.tt:803
 msgid "who use tags:"
 msgstr "die etiketten gebruiken:"
 
-#: ../root/statistics/index.tt:761
+#: ../root/statistics/index.tt:789
 msgid "who vote:"
 msgstr "die stemmen:"
 
-#: ../root/statistics/index.tt:747
+#: ../root/statistics/index.tt:775
 msgid "who voted in the last 7 days:"
 msgstr "die de afgelopen 7 dagen gestemd hebben:"
 
 #: ../root/statistics/index.tt:425 ../root/statistics/index.tt:458
 msgid "with 10 or more disc IDs:"
-msgstr "met tien of meer disc-id’s:"
+msgstr "met tien of meer disc-ID’s:"
 
 #: ../root/statistics/coverart.tt:162
 msgid "with 30 or more pieces of cover art:"
@@ -2316,8 +2319,8 @@ msgstr "onbekend type:"
 #: ../root/statistics/index.tt:417 ../root/statistics/index.tt:450
 msgid "with {num} disc ID:"
 msgid_plural "with {num} disc IDs:"
-msgstr[0] "met {num} disc-id:"
-msgstr[1] "met {num} disc-id’s:"
+msgstr[0] "met {num} disc-ID:"
+msgstr[1] "met {num} disc-ID’s:"
 
 #: ../root/statistics/coverart.tt:155
 msgid "with {num} piece of cover art:"
@@ -2354,7 +2357,7 @@ msgstr "uitgaves met de naam {name}"
 #: ../root/statistics/coverart.tt:109 ../root/statistics/coverart.tt:115
 #: ../root/statistics/coverart.tt:141 ../root/statistics/coverart.tt:157
 #: ../root/statistics/coverart.tt:164 ../root/statistics/edits.tt:29
-#: ../root/statistics/formats.tt:7 ../root/statistics/formats.tt:9
+#: ../root/statistics/formats.tt:6 ../root/statistics/formats.tt:8
 #: ../root/statistics/index.tt:157 ../root/statistics/index.tt:163
 #: ../root/statistics/index.tt:169 ../root/statistics/index.tt:175
 #: ../root/statistics/index.tt:181 ../root/statistics/index.tt:187
@@ -2375,28 +2378,29 @@ msgstr "uitgaves met de naam {name}"
 #: ../root/statistics/index.tt:452 ../root/statistics/index.tt:460
 #: ../root/statistics/index.tt:481 ../root/statistics/index.tt:497
 #: ../root/statistics/index.tt:517 ../root/statistics/index.tt:538
-#: ../root/statistics/index.tt:545 ../root/statistics/index.tt:565
-#: ../root/statistics/index.tt:572 ../root/statistics/index.tt:593
+#: ../root/statistics/index.tt:545 ../root/statistics/index.tt:566
+#: ../root/statistics/index.tt:573 ../root/statistics/index.tt:593
 #: ../root/statistics/index.tt:600 ../root/statistics/index.tt:621
 #: ../root/statistics/index.tt:628 ../root/statistics/index.tt:649
-#: ../root/statistics/index.tt:671 ../root/statistics/index.tt:678
+#: ../root/statistics/index.tt:656 ../root/statistics/index.tt:677
 #: ../root/statistics/index.tt:699 ../root/statistics/index.tt:706
-#: ../root/statistics/index.tt:726 ../root/statistics/index.tt:733
-#: ../root/statistics/index.tt:741 ../root/statistics/index.tt:749
-#: ../root/statistics/index.tt:756 ../root/statistics/index.tt:763
-#: ../root/statistics/index.tt:770 ../root/statistics/index.tt:777
+#: ../root/statistics/index.tt:727 ../root/statistics/index.tt:734
+#: ../root/statistics/index.tt:754 ../root/statistics/index.tt:761
+#: ../root/statistics/index.tt:769 ../root/statistics/index.tt:777
 #: ../root/statistics/index.tt:784 ../root/statistics/index.tt:791
 #: ../root/statistics/index.tt:798 ../root/statistics/index.tt:805
-#: ../root/statistics/index.tt:811 ../root/statistics/index.tt:817
-#: ../root/statistics/index.tt:838 ../root/statistics/index.tt:844
-#: ../root/statistics/index.tt:850 ../root/statistics/index.tt:856
-#: ../root/statistics/index.tt:862 ../root/statistics/index.tt:868
-#: ../root/statistics/index.tt:874 ../root/statistics/index.tt:885
-#: ../root/statistics/index.tt:892 ../root/statistics/index.tt:908
-#: ../root/statistics/index.tt:914 ../root/statistics/index.tt:920
-#: ../root/statistics/index.tt:926 ../root/statistics/index.tt:937
-#: ../root/statistics/index.tt:944 ../root/statistics/relationships.tt:8
-#: ../root/statistics/relationships.tt:50
+#: ../root/statistics/index.tt:812 ../root/statistics/index.tt:819
+#: ../root/statistics/index.tt:826 ../root/statistics/index.tt:833
+#: ../root/statistics/index.tt:839 ../root/statistics/index.tt:845
+#: ../root/statistics/index.tt:866 ../root/statistics/index.tt:872
+#: ../root/statistics/index.tt:878 ../root/statistics/index.tt:884
+#: ../root/statistics/index.tt:890 ../root/statistics/index.tt:896
+#: ../root/statistics/index.tt:902 ../root/statistics/index.tt:913
+#: ../root/statistics/index.tt:920 ../root/statistics/index.tt:936
+#: ../root/statistics/index.tt:942 ../root/statistics/index.tt:948
+#: ../root/statistics/index.tt:954 ../root/statistics/index.tt:965
+#: ../root/statistics/index.tt:972 ../root/statistics/relationships.tt:6
+#: ../root/statistics/relationships.tt:49
 msgid "{n}%"
 msgstr "{n}%"
 
@@ -2404,10 +2408,10 @@ msgstr "{n}%"
 msgid "{script} releases"
 msgstr "uitgaves met het {script} schrift"
 
-#: ../root/statistics/relationships.tt:45
+#: ../root/statistics/relationships.tt:44
 msgid "{type0}-{type1}"
 msgstr "{type0}-{type1}"
 
-#: ../root/statistics/relationships.tt:48
+#: ../root/statistics/relationships.tt:47
 msgid "{type0}-{type1} relationships:"
 msgstr "{type0}-{type1}-relaties:"

@@ -3,9 +3,12 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
+const ko = require('knockout');
 const _ = require('lodash');
 
+const {hex_sha1} = require('../../../lib/sha1/sha1');
 const {VIDEO_ATTRIBUTE_GID} = require('../../common/constants');
+const MB = require('../../common/MB');
 const clean = require('../../common/utility/clean');
 const nonEmpty = require('../../common/utility/nonEmpty');
 const request = require('../../common/utility/request');
@@ -80,7 +83,7 @@ const request = require('../../common/utility/request');
 
                 // Trim trailing whitespace for the final join phrase only.
                 if (index === names.length - 1) {
-                    name.join_phrase = _.trimRight(name.join_phrase);
+                    name.join_phrase = _.trimEnd(name.join_phrase);
                 }
 
                 name.join_phrase = name.join_phrase || null;
@@ -143,8 +146,6 @@ const request = require('../../common/utility/request');
         },
 
         relationship: function (relationship) {
-            var period = relationship.period || {};
-
             var data = {
                 id:             number(relationship.id),
                 linkTypeID:     number(relationship.linkTypeID),
@@ -154,7 +155,7 @@ const request = require('../../common/utility/request');
             };
 
             data.attributes = _(ko.unwrap(relationship.attributes))
-                .invoke('toJS')
+                .invokeMap('toJS')
                 .sortBy(function (a) { return a.type.id })
                 .value();
 
@@ -165,13 +166,13 @@ const request = require('../../common/utility/request');
             }
 
             if (relationship.hasDates()) {
-                data.beginDate = fields.partialDate(period.beginDate);
-                data.endDate = fields.partialDate(period.endDate);
+                data.begin_date = fields.partialDate(relationship.begin_date);
+                data.end_date = fields.partialDate(relationship.end_date);
 
-                if (data.endDate && _(data.endDate).values().any(nonEmpty)) {
+                if (data.end_date && _(data.end_date).values().some(nonEmpty)) {
                     data.ended = true;
                 } else {
-                    data.ended = Boolean(value(period.ended));
+                    data.ended = Boolean(value(relationship.ended));
                 }
             }
 
@@ -196,16 +197,16 @@ const request = require('../../common/utility/request');
         release: function (release) {
             var releaseGroupID = (release.releaseGroup() || {}).id;
 
-            var events = $.map(value(release.events), function (data) {
+            var events = _(value(release.events)).map(function (data) {
                 var event = {
                     date:       fields.partialDate(data.date),
                     country_id: number(data.countryID)
                 };
 
-                if (_(event.date).values().any(nonEmpty) || event.country_id !== null) {
+                if (_(event.date).values().some(nonEmpty) || event.country_id !== null) {
                     return event;
                 }
-            });
+            }).compact().value();
 
             return {
                 name:               string(release.name),
@@ -262,7 +263,7 @@ const request = require('../../common/utility/request');
                 name:           string(work.name),
                 comment:        string(work.comment),
                 type_id:        number(work.typeID),
-                language_id:    number(work.languageID)
+                languages:      array(work.languages, number),
             };
         }
     };
@@ -289,8 +290,7 @@ const request = require('../../common/utility/request');
                 if (_.isEqual(newData[key], oldData[key])) {
                     delete newData[key];
                 }
-            })
-            .value();
+            });
     }
 
 
@@ -312,7 +312,7 @@ const request = require('../../common/utility/request');
         function (args) {
             delete args.gid;
 
-            if (!_.any(args.secondary_type_ids)) {
+            if (!_.some(args.secondary_type_ids)) {
                 delete args.secondary_type_ids;
             }
         }
@@ -460,3 +460,5 @@ const request = require('../../common/utility/request');
     edit.create = editEndpoint("/ws/js/edit/create");
 
 }(MB.edit = {}));
+
+module.exports = MB.edit;

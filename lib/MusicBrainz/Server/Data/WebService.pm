@@ -6,14 +6,17 @@ use DBDefs;
 use Encode qw( decode );
 use HTTP::Status ':constants';
 use MusicBrainz::Server::Release;
-use MusicBrainz::Server::Validation qw( is_positive_integer );
+use MusicBrainz::Server::Validation qw(
+    is_non_negative_integer
+    is_positive_integer
+);
 use URI::Escape qw( uri_escape_utf8 );
 
 with 'MusicBrainz::Server::Data::Role::Context';
 
 # Escape special characters in a Lucene search query
 sub escape_query {
-    shift =~ s/([+\-&|!(){}\[\]\^"~*?:\\])/\\$1/gr
+    (shift // '') =~ s/([+\-&|!(){}\[\]\^"~*?:\\])/\\$1/gr
 }
 
 # construct a lucene search query based on the args given and then pass it to a search server.
@@ -25,13 +28,17 @@ sub xml_search
     my $query = "";
     my $dur = 0;
     my $offset = 0;
-    my $limit = $args->{limit} || 0;
-    my $dismax = 'false'; # MBS-8994
+    my $limit = 0;
+    my $dismax = 'false';
 
-    if (defined $args->{offset} && is_positive_integer($args->{offset}))
-    {
+    if (is_positive_integer($args->{offset})) {
         $offset = $args->{offset}
     }
+
+    if (is_positive_integer($args->{limit})) {
+        $limit = $args->{limit}
+    }
+
     $limit = 25 if ($limit < 1 || $limit > 100);
 
     if (defined $args->{query} && $args->{query} ne "")
@@ -45,6 +52,7 @@ sub xml_search
 
         $query = $args->{query};
 
+        # MBS-8994
         if (defined $args->{dismax} && $args->{dismax} eq 'true') {
             $dismax = 'true';
         }
@@ -97,11 +105,11 @@ sub xml_search
         {
             $query .= " AND status:" . ($args->{releasestatus} - MusicBrainz::Server::Release::RELEASE_ATTR_SECTION_STATUS_START + 1) . "^0.0001";
         }
-        if ($args->{count} > 0)
+        if (is_positive_integer($args->{count}))
         {
             $query .= " AND tracks:" . $args->{count};
         }
-        if ($args->{discids} > 0)
+        if (is_positive_integer($args->{discids}))
         {
             $query .= " AND discids:" . $args->{discids};
         }
@@ -162,7 +170,7 @@ sub xml_search
             my $qdur = int($args->{duration} / 2000);
             $query .= " AND (qdur:$qdur OR qdur:" . ($qdur - 1) . " OR qdur:" . ($qdur + 1) . ")" if ($qdur);
         }
-        if ($args->{tracknumber} >= 0)
+        if (is_non_negative_integer($args->{tracknumber}))
         {
             $query .= " AND tnum:" . $args->{tracknumber};
         }
@@ -170,7 +178,7 @@ sub xml_search
         {
             $query .= " AND type:" . $args->{releasetype};
         }
-        if ($args->{count} > 0)
+        if (is_positive_integer($args->{count}))
         {
             $query .= " AND tracks:" . $args->{count};
         }
@@ -202,16 +210,24 @@ sub xml_search
         };
     }
 
-    my $format = ($args->{fmt} // "") eq "json" ? "jsonnew" : "xml";
-
-    my $url_ext = "/ws/2/$resource/?" .
-        "max=$limit&type=$resource&fmt=$format&offset=$offset" .
-        "&query=" . uri_escape_utf8($query) . "&dismax=$dismax";
-
-    if (DBDefs->LUCENE_X_ACCEL_REDIRECT) {
-        return { redirect_url => '/internal/search/' . DBDefs->LUCENE_SERVER . $url_ext }
+    my $url_ext;
+    if (DBDefs->SEARCH_ENGINE eq 'LUCENE') {
+        my $format = ($args->{fmt} // "") eq "json" ? "jsonnew" : "xml";
+        $url_ext = "/ws/2/$resource/?" .
+           "max=$limit&type=$resource&fmt=$format&offset=$offset" .
+           "&query=" . uri_escape_utf8($query) . "&dismax=$dismax";
     } else {
-        my $url = 'http://' . DBDefs->LUCENE_SERVER . $url_ext;
+        my $format = ($args->{fmt} // "") eq "json" ? "mbjson" : "mbxml";
+        my $def_type = $dismax eq 'true' ? 'dismax' : 'lucene';
+        $url_ext = "/$resource/select?" .
+            "rows=$limit&wt=$format&start=$offset" .
+            "&q=" . uri_escape_utf8($query) . "&defType=$def_type";
+    }
+
+    if (DBDefs->SEARCH_X_ACCEL_REDIRECT) {
+        return { redirect_url => '/internal/search/' . DBDefs->SEARCH_SERVER . $url_ext }
+    } else {
+        my $url = 'http://' . DBDefs->SEARCH_SERVER . $url_ext;
         my $response = $self->c->lwp->get($url);
         if ( $response->is_success )
         {

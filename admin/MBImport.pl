@@ -44,11 +44,13 @@ my $fFixUTF8 = 0;
 my $skip_ensure_editor = 0;
 my $update_replication_control = 1;
 my $delete_first = 0;
+my $database = 'MAINTENANCE';
 
 GetOptions(
     "help|h"                    => \$fHelp,
     "ignore-errors|i!"  => \$fIgnoreErrors,
     "tmp-dir|t=s"               => \$tmpdir,
+    "database=s" => \$database,
     "fix-broken-utf8"   => \$fFixUTF8,
     "skip-editor!" => \$skip_ensure_editor,
     "update-replication-control!" => \$update_replication_control,
@@ -65,6 +67,7 @@ Usage: MBImport.pl [options] FILE ...
                           special U+FFFD codepoint (UTF-8: 0xEF 0xBF 0xBD)
     -i, --ignore-errors   if a table fails to import, continue anyway
     -t, --tmp-dir DIR     use DIR for temporary storage (default: /tmp)
+        --database        database to import into (default: MAINTENANCE)
         --skip-editor     do not guarantee editor rows are present (useful when
                           importing single tables).
         --update-replication-control whether or not this import should
@@ -107,7 +110,7 @@ EOF
 $fHelp and usage();
 @ARGV or usage();
 
-my $mb = Databases->get_connection('MAINTENANCE');
+my $mb = Databases->get_connection($database);
 my $sql = Sql->new($mb->conn);
 
 
@@ -119,11 +122,12 @@ for my $arg (@ARGV)
     next if -d _;
     -f _ or die "'$arg' is neither a regular file nor a directory";
 
-    next unless $arg =~ /\.tar(?:\.(gz|bz2))?$/;
+    next unless $arg =~ /\.tar(?:\.(gz|bz2|xz))?$/;
 
     my $decompress = "";
     $decompress = "--gzip" if $1 and $1 eq "gz";
     $decompress = "--bzip2" if $1 and $1 eq "bz2";
+    $decompress = "--xz" if $1 and $1 eq "xz";
 
     use File::Temp qw( tempdir );
     my $dir = tempdir("MBImport-XXXXXXXX", DIR => $tmpdir, CLEANUP => 1)
@@ -285,6 +289,8 @@ sub ImportTable
                         # replaces any invalid UTF-8 character with special 0xFFFD codepoint
                         # and warn on any such occurence
                         $t = Encode::decode("UTF-8", $t, Encode::FB_DEFAULT | Encode::WARN_ON_ERR);
+                } else {
+                        $t = Encode::decode("UTF-8", $t, Encode::FB_CROAK);
                 }
                 if (!$dbh->pg_putcopydata($t))
                 {
@@ -439,6 +445,7 @@ sub validate_tar
         not($decompress) ? "cat"
         : $decompress eq "--gzip" ? "gunzip"
         : $decompress eq "--bzip2" ? "bunzip2"
+        : $decompress eq "--xz" ? "xz -d"
         : die
     );
 

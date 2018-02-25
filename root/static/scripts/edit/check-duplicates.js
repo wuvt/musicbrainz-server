@@ -110,7 +110,7 @@ function isPlaceCommentRequired(duplicates) {
     return true;
   }
 
-  return _.any(duplicates, function (place) {
+  return _.some(duplicates, function (place) {
     return !place.area || place.area.gid === selectedArea.gid;
   });
 }
@@ -121,7 +121,7 @@ function isCommentRequired(type, name, duplicates) {
   }
 
   return duplicates.some(function (duplicate) {
-    return name.toUpperCase() === duplicate.unaccentedName.toUpperCase();
+    return name.toUpperCase() === duplicate.unaccented_name.toUpperCase();
   });
 }
 

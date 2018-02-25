@@ -14,13 +14,13 @@
     <tr>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: hasTrackNumbers" />
+          <input type="checkbox" name="lines-have-numbers" data-bind="checked: hasTrackNumbers" />
           [%= l('Lines start with a track number') %]
         </label>
       </td>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: useTrackNumbers, enable: hasTrackNumbers" />
+          <input type="checkbox" name="use-numbers" data-bind="checked: useTrackNumbers, enable: hasTrackNumbers" />
           [%= l('Use track numbers') %]
         </label>
       </td>
@@ -28,7 +28,7 @@
     <tr>
       <td style="padding-left: 2em">
         <label>
-          <input type="checkbox" data-bind="checked: hasVinylNumbers, enable: hasTrackNumbers" />
+          <input type="checkbox" name="enable-vinyl-numbers" data-bind="checked: hasVinylNumbers, enable: hasTrackNumbers" />
           [%= l('Enable vinyl track numbers') %]
         </label>
       </td>
@@ -37,13 +37,13 @@
     <tr>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: hasTrackArtists" />
+          <input type="checkbox" name="lines-have-artists" data-bind="checked: hasTrackArtists" />
           [%= l('Lines contain track artists') %]
         </label>
       </td>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: useTrackArtists, enable: hasTrackArtists" />
+          <input type="checkbox" name="use-artists" data-bind="checked: useTrackArtists, enable: hasTrackArtists" />
           [%= l('Use track artists') %]
         </label>
       </td>
@@ -52,7 +52,7 @@
       <td></td>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: useTrackNames" />
+          <input type="checkbox" name="use-titles" data-bind="checked: useTrackNames" />
           [%= l('Use track titles') %]
         </label>
       </td>
@@ -61,7 +61,7 @@
       <td></td>
       <td>
         <label>
-          <input type="checkbox" data-bind="checked: useTrackLengths" />
+          <input type="checkbox" name="use-lengths" data-bind="checked: useTrackLengths" />
           [%= l('Use track lengths') %]
         </label>
       </td>
@@ -210,8 +210,8 @@
   <!-- ko template: "template.track-parser" --><!-- /ko -->
 
   <div class="buttons">
-    <button type="button" class="negative" data-bind="click: close">[% l('Close') %]</button>
-    <button type="button" style="float: right" data-bind="click: parse">[% l('Parse Tracks') %]</button>
+    <button type="button" class="negative" id="close-track-parser" data-bind="click: close">[% l('Close') %]</button>
+    <button type="button" id="parse-tracks" style="float: right" data-bind="click: parse">[% l('Parse Tracks') %]</button>
   </div>
 </div>
 
@@ -239,7 +239,7 @@
   </div>
 
   <div class="buttons">
-    <button type="button" class="negative" data-click="close">[% l('Close') %]</button>
+    <button type="button" class="negative" id="close-add-medium" data-click="close">[% l('Close') %]</button>
     <button type="button" style="float: right" class="positive" data-click="addDisc" data-bind="enable: currentTab().result()">[% l('Add Medium') %]</button>
   </div>
 </div>
@@ -259,7 +259,7 @@
   <!-- /ko -->
 
   <!-- ko if: !needsMediums() && mediums().length === loadedMediums().length &&
-              _(mediums()).invoke("toc").filter().size() < _($data.seededTocs).values().size() -->
+              _(mediums()).invokeMap("toc").filter().size() < _($data.seededTocs).values().size() -->
     <div class="warning">
       <p>
         [%~ l('You’ve seeded some Disc IDs that aren’t matched to any medium. If this is wrong, use the “Attach Disc ID” options below.') ~%]
@@ -280,17 +280,24 @@
         <td class="format">
           <label data-bind="attr: { for: 'disc-format-' + uniqueID }">[% l('Format:') %]</label>
           <select data-bind="value: formatID, attr: { id: 'disc-format-' + uniqueID }">
-            <option value="" selected="selected">&#160;</option>
+            <option value="" selected="selected">—</option>
             [%- FOR format=formats %]
             <option value="[% format.value %]">[% format.label %]</option>
             [%- END %]
           </select>
+          <label>
+            <input type="checkbox" data-bind="checked: formatUnknownToUser, enable: formatID() == ''" />
+            [% l('I don’t know') %]
+          </label>
           (<a href="[% c.uri_for('/doc/Release/Format') %]" target="_blank">[% l('help') %]</a>)
           <!-- ko if: release.mediums().length > 1 || name() -->
             <label data-bind="attr: { for: 'disc-title-' + uniqueID }">[% l('Disc title:') %]</label>
             <input type="text" data-bind="value: name, attr: { id: 'disc-title-' + uniqueID }" />
             <button type="button" class="icon guesscase-title" title="[% l('Guess case disc title') %]" data-click="guessCaseMediumName"></button>
           <!-- /ko -->
+          <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: needsFormat">
+            [%~ l('A format is required. If you don’t know it, tick the “I don’t know” checkbox next to the format dropdown.') %]
+          </p>
         </td>
 
         <td class="icon" style="text-align: right">
@@ -395,7 +402,7 @@
         <!-- /ko -->
 
         <div class="buttons">
-          <button type="button" data-click="openTrackParser">[% l('Track Parser') %]</button>
+          <button type="button" id="open-track-parser" data-click="openTrackParser">[% l('Track Parser') %]</button>
           <button type="button" data-click="resetTrackNumbers">[%- l('Reset track numbers') -%]</button>
           <button type="button" data-click="swapTitlesWithArtists">[%- l('Swap track titles with artist credits') -%]</button>
           <button type="button" data-click="guessMediumFeatArtists">[%- l('Guess feat. artists from track titles') -%]</button>

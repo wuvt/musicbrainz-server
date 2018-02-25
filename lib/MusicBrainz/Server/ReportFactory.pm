@@ -47,9 +47,11 @@ use MusicBrainz::Server::PagedReport;
     FeaturingRecordings
     FeaturingReleaseGroups
     FeaturingReleases
+    InstrumentsWithoutAnImage
     ISRCsWithManyRecordings
     ISWCsWithManyWorks
     LabelsDisambiguationSameName
+    LimitedEditors
     MediumsWithSequenceIssues
     MultipleASINs
     MultipleDiscogsLinks
@@ -61,6 +63,7 @@ use MusicBrainz::Server::PagedReport;
     RecordingsWithoutVALink
     RecordingsWithEarliestReleaseRelationships
     RecordingsWithVaryingTrackLengths
+    RecordingsSameNameDifferentArtistsSameName
     ReleasedTooEarly
     ReleaseGroupsWithoutVACredit
     ReleaseGroupsWithoutVALink
@@ -71,6 +74,7 @@ use MusicBrainz::Server::PagedReport;
     ReleasesWithoutVACredit
     ReleasesWithoutVALink
     ReleasesWithUnlikelyLanguageScript
+    ReleasesMissingDiscIDs
     SeparateDiscs
     SetInDifferentRG
     SingleMediumReleasesWithMediumTitles
@@ -118,9 +122,11 @@ use MusicBrainz::Server::Report::DuplicateReleaseGroups;
 use MusicBrainz::Server::Report::FeaturingRecordings;
 use MusicBrainz::Server::Report::FeaturingReleaseGroups;
 use MusicBrainz::Server::Report::FeaturingReleases;
+use MusicBrainz::Server::Report::InstrumentsWithoutAnImage;
 use MusicBrainz::Server::Report::ISRCsWithManyRecordings;
 use MusicBrainz::Server::Report::ISWCsWithManyWorks;
 use MusicBrainz::Server::Report::LabelsDisambiguationSameName;
+use MusicBrainz::Server::Report::LimitedEditors;
 use MusicBrainz::Server::Report::MediumsWithSequenceIssues;
 use MusicBrainz::Server::Report::MultipleASINs;
 use MusicBrainz::Server::Report::MultipleDiscogsLinks;
@@ -132,6 +138,7 @@ use MusicBrainz::Server::Report::RecordingsWithoutVACredit;
 use MusicBrainz::Server::Report::RecordingsWithoutVALink;
 use MusicBrainz::Server::Report::RecordingsWithEarliestReleaseRelationships;
 use MusicBrainz::Server::Report::RecordingsWithVaryingTrackLengths;
+use MusicBrainz::Server::Report::RecordingsSameNameDifferentArtistsSameName;
 use MusicBrainz::Server::Report::ReleasedTooEarly;
 use MusicBrainz::Server::Report::ReleaseGroupsWithoutVACredit;
 use MusicBrainz::Server::Report::ReleaseGroupsWithoutVALink;
@@ -142,6 +149,7 @@ use MusicBrainz::Server::Report::ReleasesWithNoMediums;
 use MusicBrainz::Server::Report::ReleasesWithoutVACredit;
 use MusicBrainz::Server::Report::ReleasesWithoutVALink;
 use MusicBrainz::Server::Report::ReleasesWithUnlikelyLanguageScript;
+use MusicBrainz::Server::Report::ReleasesMissingDiscIDs;
 use MusicBrainz::Server::Report::SeparateDiscs;
 use MusicBrainz::Server::Report::SetInDifferentRG;
 use MusicBrainz::Server::Report::SingleMediumReleasesWithMediumTitles;
@@ -175,6 +183,7 @@ sub create_report
 =head1 COPYRIGHT
 
 Copyright (C) 2009 Lukas Lalinsky
+Copyright (C) 2017 MetaBrainz Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -187,7 +196,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut

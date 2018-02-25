@@ -63,7 +63,7 @@ msgstr ""
 msgid "Akan"
 msgstr ""
 
-#. frequency:0 iso_code_3:akk 
+#. frequency:1 iso_code_3:akk 
 #: DB:language/name:11
 msgid "Akkadian"
 msgstr ""
@@ -613,7 +613,7 @@ msgstr ""
 msgid "Efik"
 msgstr ""
 
-#. frequency:0 iso_code_3:egy 
+#. frequency:1 iso_code_3:egy 
 #: DB:language/name:117
 msgid "Egyptian (Ancient)"
 msgstr ""
@@ -861,6 +861,11 @@ msgstr ""
 #. frequency:1 iso_code_3:kal 
 #: DB:language/name:204
 msgid "Greenlandic"
+msgstr ""
+
+#. frequency:1 iso_code_3:gos 
+#: DB:language/name:2534
+msgid "Gronings"
 msgstr ""
 
 #. frequency:1 iso_code_3:grn 
@@ -2521,6 +2526,11 @@ msgstr ""
 #. frequency:1 iso_code_3:wol 
 #: DB:language/name:458
 msgid "Wolof"
+msgstr ""
+
+#. frequency:1 iso_code_3:wya 
+#: DB:language/name:7181
+msgid "Wyandot"
 msgstr ""
 
 #. frequency:1 iso_code_3:xho 

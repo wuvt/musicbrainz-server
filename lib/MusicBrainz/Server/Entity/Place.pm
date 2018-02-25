@@ -15,6 +15,8 @@ with 'MusicBrainz::Server::Entity::Role::Comment';
 with 'MusicBrainz::Server::Entity::Role::Area';
 with 'MusicBrainz::Server::Entity::Role::Type' => { model => 'PlaceType' };
 
+sub entity_type { 'place' }
+
 has 'address' => (
     is => 'rw',
     isa => 'Str'
@@ -33,6 +35,7 @@ around TO_JSON => sub {
     return {
         %{ $self->$orig },
         area => $self->area ? $self->area->TO_JSON : undef,
+        coordinates => $self->coordinates ? $self->coordinates->TO_JSON : undef,
     };
 };
 

@@ -8,6 +8,8 @@ use DBDefs;
 use Encode;
 use JSON;
 use Moose::Util qw( does_role );
+use MusicBrainz::Sentry qw( sentry_enabled );
+use MusicBrainz::Server::Data::Utils qw( boolean_to_json );
 use MusicBrainz::Server::Log qw( logger );
 use POSIX qw(SIGALRM);
 use Sys::Hostname;
@@ -21,8 +23,6 @@ use aliased 'MusicBrainz::Server::Translation';
 #   ConfigLoader: will load the configuration from a YAML file in the
 #                 application's home directory
 my @args = qw/
-StackTrace
-
 Session
 Session::State::Cookie
 
@@ -89,21 +89,8 @@ if ($ENV{'MUSICBRAINZ_USE_PROXY'})
     __PACKAGE__->config( using_frontend_proxy => 1 );
 }
 
-if (DBDefs->EMAIL_BUGS) {
-    __PACKAGE__->config->{'Plugin::ErrorCatcher'} = {
-        enable => 1,
-        emit_module => 'MusicBrainz::ErrorCatcherEmailWrapper',
-        user_identified_by => 'identity_string'
-    };
-
-    __PACKAGE__->config->{'Plugin::ErrorCatcher::Email'} = {
-        to => DBDefs->EMAIL_BUGS(),
-        from => 'bug-reporter@' . DBDefs->WEB_SERVER(),
-        use_tags => 1,
-        subject => '%h: Unhandled error in %f (line %l)'
-    };
-
-    push @args, "ErrorCatcher";
+if (sentry_enabled) {
+    push @args, 'Sentry';
 }
 
 __PACKAGE__->config->{'Plugin::Cache'}{backend} = DBDefs->PLUGIN_CACHE_OPTIONS;
@@ -379,7 +366,10 @@ around dispatch => sub {
             if (my $sth = $context->sql->sth) {
                 $sth->cancel;
             }
-            MusicBrainz::Server::Exceptions::GenericTimeout->throw("Request took more than $max_request_time seconds");
+            MusicBrainz::Server::Exceptions::GenericTimeout->throw(
+                $c->req->method . ' ' . $c->req->uri .
+                " took more than $max_request_time seconds"
+            );
         });
         $action->safe(1);
         POSIX::sigaction(SIGALRM, $action);
@@ -403,8 +393,8 @@ around 'finalize_error' => sub {
             if scalar @$errors == 1 && blessed $errors->[0]
                 && does_role($errors->[0], 'MusicBrainz::Server::Exceptions::Role::Timeout');
 
-        # don't send mail about timeouts (ErrorCatcher will log instead)
-        local $MusicBrainz::ErrorCatcherEmailWrapper::suppress = 1
+        # don't send timeouts to Sentry (log instead)
+        local $Catalyst::Plugin::Sentry::suppress = 1
             if $timed_out;
 
         $c->$orig(@args);
@@ -413,7 +403,6 @@ around 'finalize_error' => sub {
             $c->stash->{errors} = $errors;
             $c->stash->{template} = $timed_out ?
                 'main/timeout.tt' : 'main/500.tt';
-            $c->stash->{stack_trace} = $c->_stacktrace;
             try { $c->stash->{hostname} = hostname; } catch {};
             $c->clear_errors;
             if ($c->stash->{error_body_in_stash}) {
@@ -441,6 +430,90 @@ has json => (
         return JSON->new->allow_blessed->convert_blessed;
     }
 );
+
+sub TO_JSON {
+    my $self = shift;
+
+    # Whitelist of keys that we use in the templates.
+    my @stash_keys = qw(
+        current_language
+        current_language_html
+        entity
+        hide_merge_helper
+        instrument_types
+        instruments_by_type
+        isrcs
+        jsonld_data
+        last_replication_date
+        linked_entities
+        makes_no_changes
+        merge_link
+        new_edit_notes
+        recordings
+        server_details
+        server_languages
+        tag
+        to_merge
+    );
+
+    my %stash;
+    for (@stash_keys) {
+        $stash{$_} = $self->stash->{$_};
+    }
+
+    if (my $entity = delete $stash{entity}) {
+        if (ref($entity) =~ /^MusicBrainz::Server::Entity::/) {
+            $entity->serialize_with_linked_entities(\%stash);
+        }
+    }
+
+    # convert DateTime objects to iso8601-formatted strings
+    if (my $date = $stash{last_replication_date}) {
+        $date = $date->clone;
+        $date->set_time_zone('UTC');
+        $stash{last_replication_date} = $date->iso8601 . 'Z';
+    }
+
+    # Limit server_languages data to what's needed, since the complete output
+    # is very large.
+    if (my $server_languages = $stash{server_languages}) {
+        my @langs;
+        for my $lang (@{$server_languages}) {
+            push @langs,
+                [ $lang->[0],
+                  { map { $_ => $lang->[1]->{$_} }
+                    qw( id native_language native_territory ) } ];
+        }
+        $stash{server_languages} = \@langs;
+    }
+
+    if (my $server_details = delete $stash{server_details}) {
+        $stash{alert} = $server_details->{alert};
+        $stash{alert_mtime} = $server_details->{alert_mtime};
+    }
+
+    my $req = $self->req;
+    my %headers;
+    for my $name ($req->headers->header_field_names) {
+        $headers{$name} = $req->headers->header($name);
+    }
+
+    return {
+        user => ($self->user_exists ? $self->user : undef),
+        user_exists => boolean_to_json($self->user_exists),
+        debug => boolean_to_json($self->debug),
+        relative_uri => $self->relative_uri,
+        req => {
+            headers => \%headers,
+            query_params => $req->query_params,
+            uri => $req->uri,
+        },
+        stash => \%stash,
+        sessionid => scalar($self->sessionid),
+        session => $self->session,
+        flash => $self->flash,
+    };
+}
 
 =head1 NAME
 

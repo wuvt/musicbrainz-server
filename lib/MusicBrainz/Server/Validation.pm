@@ -31,6 +31,7 @@ require Exporter;
     our @EXPORT_OK = qw(
         unaccent_utf16
         is_integer
+        is_non_negative_integer
         is_positive_integer
         is_database_row_id
         is_database_bigint_id
@@ -87,6 +88,11 @@ sub is_integer
     defined($t) and not ref($t) and $t =~ /\A(-?[0-9]{1,20})\z/;
 }
 
+sub is_non_negative_integer {
+    my $t = shift;
+    is_integer($t) and $t >= 0;
+}
+
 sub is_positive_integer
 {
     my $t = shift;
@@ -109,7 +115,7 @@ sub is_guid
 {
     my $t = $_[0];
     defined($t) and not ref($t) or return undef;
-    length($t) eq 36 or return undef;
+    length($t) == 36 or return undef;
 
     $t =~ /[^0-]/ or return undef;
 
@@ -352,8 +358,13 @@ sub normalise_strings
         $t =~ tr/"\x{0060}\x{00B4}\x{00AB}\x{00BB}\x{02BB}\x{05F3}\x{05F4}\x{2018}-\x{201F}\x{2032}\x{2033}\x{2039}\x{203A}/'/;
 
         # Dashes
-        # 05BE Hebrew maqaf, 2010 hyphen, 2012 figure dash, 2013 en-dash, 2212 minus
-        $t =~ tr/\x{05BE}\x{2010}\x{2012}\x{2013}\x{2212}/-/;
+        # 05BE Hebrew maqaf, 2010 hyphen, 2012 figure dash, 2013 en-dash, 2014 em-dash, 2015 horizontal bar, 2212 minus
+        $t =~ tr/\x{05BE}\x{2010}\x{2012}\x{2013}\x{2014}\x{2015}\x{2212}/-/;
+
+        # Horizontal three-dots ellipses
+        # 2026 horizontal ellipsis,
+        # 22EF midline horizontal ellipsis
+        $t =~ s/[\x{2026}\x{22EF}]/.../g;
 
         # Unaccent what's left
         decode("utf-16", unaccent_utf16(encode("utf-16", $t)));

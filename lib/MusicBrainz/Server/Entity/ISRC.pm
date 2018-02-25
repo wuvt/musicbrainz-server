@@ -7,6 +7,8 @@ use MusicBrainz::Server::Entity::Types;
 extends 'MusicBrainz::Server::Entity';
 with 'MusicBrainz::Server::Entity::Role::Editable';
 
+sub entity_type { 'isrc' }
+
 has 'isrc' => (
     is => 'rw',
     isa => 'Str'
@@ -41,6 +43,15 @@ sub source
 }
 
 sub name { shift->isrc }
+
+around TO_JSON => sub {
+    my ($orig, $self) = @_;
+
+    my $json = $self->$orig;
+    $json->{isrc} = $self->isrc;
+    $json->{recording_id} = $self->recording_id;
+    return $json;
+};
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

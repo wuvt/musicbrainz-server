@@ -3,11 +3,17 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
+require('../typeInfo');
+
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('lodash');
 const test = require('tape');
-const ReactTestUtils = require('react-addons-test-utils');
+const ReactTestUtils = require('react-dom/test-utils');
 const ReactDOM = require('react-dom');
 
 const validation = require('../../edit/validation');
+const fields = require('../../release-editor/fields');
 const {triggerChange, triggerClick, addURL} = require('../external-links-editor/utils');
 const common = require('./common');
 
@@ -135,13 +141,13 @@ addReleaseTest("recordingEdit edits are generated for new mediums (MBS-7271)", f
     };
 
     release.mediums.push(
-        releaseEditor.fields.Medium({ tracks: [ trackData ] })
+        new fields.Medium({ tracks: [ trackData ] })
     );
 
     var track = release.mediums()[1].tracks()[0];
     var recordingData = _.extend({ gid: "80f797aa-2077-435d-85e2-c22e31a654f4" }, trackData);
 
-    track.recording(MB.entity.Recording(recordingData));
+    track.recording(new MB.entity.Recording(recordingData));
     track.name("foobar");
 
     var edits = _.filter(releaseEditor.edits.medium(release),
@@ -166,7 +172,7 @@ addReleaseTest("mediumCreate edits are generated for new release", function (t, 
     t.plan(1);
 
     release.mediums.push(
-      releaseEditor.fields.Medium(_.omit(common.testMedium, "id"))
+      new fields.Medium(_.omit(common.testMedium, "id"))
     );
 
     t.deepEqual(releaseEditor.edits.medium(release), [
@@ -285,7 +291,7 @@ addReleaseTest("mediumAddDiscID edits are generated for new release", function (
 test("releaseReorderMediums edits are not generated for new releases", function (t) {
     t.plan(1);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         mediums: [
             { position: 1, tracks: [ { name: "foo" } ] },
             { position: 2, tracks: [ { name: "bar" } ] },
@@ -302,7 +308,7 @@ test("releaseReorderMediums edits are not generated for new releases", function 
 test("MBS-7453: release group edits strip whitespace from name", function (t) {
     t.plan(1);
 
-    var release = releaseEditor.fields.Release({ name: "  Foo  oo " });
+    var release = new fields.Release({ name: "  Foo  oo " });
 
     t.equal(releaseEditor.edits.releaseGroup(release)[0].name, "Foo oo");
 });
@@ -310,7 +316,7 @@ test("MBS-7453: release group edits strip whitespace from name", function (t) {
 test("releaseGroupCreate edits", function (t) {
     t.plan(1);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         name: "Chocolate Synthesizer",
         artistCredit: common.testArtistCredit,
         releaseGroup: { typeID: 1 }
@@ -407,7 +413,7 @@ editReleaseTest("releaseDeleteReleaseLabel edit is generated when label/catalog 
     t.plan(1);
 
     var releaseLabel = release.labels()[0];
-    releaseLabel.label(MB.entity.Label({}));
+    releaseLabel.label(new MB.entity.Label({}));
     releaseLabel.catalogNumber("");
 
     t.deepEqual(releaseEditor.edits.releaseLabel(release), [
@@ -475,185 +481,6 @@ editReleaseTest("mediumDelete edit is generated for existing release", function 
     ]);
 });
 
-var testURLRelationship = {
-    target: {
-        entityType: "url",
-        name: "https://www.discogs.com/release/1369894"
-    },
-    linkTypeID: 76,
-    id: 123
-};
-
-editReleaseTest("relationshipCreate edit for external link is generated for existing release", function (t, release) {
-    t.plan(1);
-
-    var component = releaseEditor.createExternalLinksEditor(
-        common.testRelease,
-        document.createElement('div')
-    );
-
-    addURL(component, 'https://www.discogs.com/release/1369894');
-
-    t.deepEqual(releaseEditor.edits.externalLinks(release), [
-      {
-        "attributes": [],
-        "edit_type": 90,
-        "entities": [
-          {
-            "entityType": "release",
-            "gid": "868cc741-e3bc-31bc-9dac-756e35c8f152",
-            "name": "Vision Creation Newsun"
-          },
-          {
-            "entityType": "url",
-            "name": "https://www.discogs.com/release/1369894"
-          }
-        ],
-        "hash": "4436c776fd02c161b235368c5da2ae0c8d52c450",
-        "linkTypeID": 76
-      }
-    ]);
-});
-
-editReleaseTest("relationshipEdit edit for external link is generated for existing release", function (t, release) {
-    t.plan(1);
-
-    MB.faviconClasses = {};
-
-    var component = releaseEditor.createExternalLinksEditor(
-        _.assign({}, common.testRelease, { relationships: [testURLRelationship] }),
-        document.createElement('div')
-    );
-
-    triggerChange(
-        ReactTestUtils.scryRenderedDOMComponentsWithTag(component, 'input')[0],
-        'http://www.amazon.co.jp/gp/product/B00003IQQD'
-    );
-
-    triggerChange(ReactTestUtils.scryRenderedDOMComponentsWithTag(component, 'select')[0], 77);
-
-    t.deepEqual(releaseEditor.edits.externalLinks(release), [
-      {
-        "edit_type": 91,
-        "entities": [
-          {
-            "entityType": "release",
-            "gid": "868cc741-e3bc-31bc-9dac-756e35c8f152",
-            "name": "Vision Creation Newsun"
-          },
-          {
-            "entityType": "url",
-            "name": "https://www.amazon.co.jp/gp/product/B00003IQQD"
-          }
-        ],
-        "hash": "08cbacb3fae1ad89f2ae1b886493a3a55d24e3ec",
-        "id": 123,
-        "linkTypeID": 77
-      }
-    ]);
-});
-
-editReleaseTest("relationshipDelete edit for external link is generated for existing release", function (t, release) {
-    t.plan(1);
-
-    var component = releaseEditor.createExternalLinksEditor(
-        _.assign({}, common.testRelease, { relationships: [testURLRelationship] }),
-        document.createElement('div')
-    );
-
-    // Click remove button
-    triggerClick($(ReactDOM.findDOMNode(component)).find('button')[0]);
-
-    t.deepEqual(releaseEditor.edits.externalLinks(release), [
-      {
-        "attributes": [],
-        "edit_type": 92,
-        "entities": [
-          {
-            "entityType": "release",
-            "gid": "868cc741-e3bc-31bc-9dac-756e35c8f152",
-            "name": "Vision Creation Newsun"
-          },
-          {
-            "entityType": "url",
-            "name": "https://www.discogs.com/release/1369894"
-          }
-        ],
-        "hash": "54bd2a4f4c79e7d4a4bb1d93a368dc7cd56cd822",
-        "id": 123,
-        "linkTypeID": 76
-      }
-    ]);
-});
-
-editReleaseTest("edits are not generated for external links that duplicate existing removed ones", function (t, release) {
-    t.plan(6);
-
-    var newURL = { name: "https://www.discogs.com/release/13698944", entityType: "url" };
-
-    var component = releaseEditor.createExternalLinksEditor(
-        _.assign(
-            {},
-            common.testRelease,
-            {
-                relationships: [
-                    testURLRelationship,
-                    _.assign(_.clone(testURLRelationship), { id: 456, target: newURL })
-                ]
-            }
-        ),
-        document.createElement('div')
-    );
-
-    var $mountPoint = $(ReactDOM.findDOMNode(component));
-
-    // Remove first URL
-    triggerClick($mountPoint.find('button:eq(0)')[0]);
-
-    // Add a duplicate of the first URL
-    addURL(component, 'https://www.discogs.com/release/1369894');
-
-    // No edits are generated, because there are errors.
-    t.equal(releaseEditor.edits.externalLinks(release).length, 0);
-    t.equal(validation.errorsExist(), true);
-
-    // Remove duplicate
-    triggerClick($mountPoint.find('button:eq(1)')[0]);
-
-    // There's one edit to remove the first URL.
-    t.deepEqual(releaseEditor.edits.externalLinks(release), [
-      {
-        "attributes": [],
-        "edit_type": 92,
-        "entities": [
-          {
-            "entityType": "release",
-            "gid": "868cc741-e3bc-31bc-9dac-756e35c8f152",
-            "name": "Vision Creation Newsun"
-          },
-          {
-            "entityType": "url",
-            "name": "https://www.discogs.com/release/1369894"
-          }
-        ],
-        "hash": "54bd2a4f4c79e7d4a4bb1d93a368dc7cd56cd822",
-        "id": 123,
-        "linkTypeID": 76
-      }
-    ]);
-
-    t.equal(validation.errorsExist(), false);
-
-    // Duplicate the first URL again by editing the other existing URL
-    triggerChange(
-        $mountPoint.find('input:eq(0)')[0],
-        'https://www.discogs.com/release/1369894'
-    );
-
-    t.equal(releaseEditor.edits.externalLinks(release).length, 0);
-    t.equal(validation.errorsExist(), true);
-});
-
 editReleaseTest("releaseGroupEdit edits should not include unchanged fields (MBS-8212)", function (t, release) {
     t.plan(1);
 
@@ -673,7 +500,7 @@ editReleaseTest("releaseGroupEdit edits should not include unchanged fields (MBS
 test("mediumEdit and releaseReorderMediums edits are generated for non-loaded mediums", function (t) {
     t.plan(6);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         gid: "f4c552ab-515e-42df-a9ee-a370867d29d1",
         mediums: [
             { id: 123, name: "foo", position: 1 },
@@ -741,7 +568,7 @@ test("mediumEdit and releaseReorderMediums edits are generated for non-loaded me
 test("mediumCreate edits are not given conflicting positions", function (t) {
     t.plan(2);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         gid: "f4c552ab-515e-42df-a9ee-a370867d29d1",
         mediums: [
             { id: 123, position: 1 },
@@ -757,19 +584,19 @@ test("mediumCreate edits are not given conflicting positions", function (t) {
 
     medium1.position(4);
 
-    var newMedium1 = releaseEditor.fields.Medium({
+    var newMedium1 = new fields.Medium({
         name: "foo",
         position: 1
     });
 
-    newMedium1.tracks.push(releaseEditor.fields.Track({}, newMedium1));
+    newMedium1.tracks.push(new fields.Track({}, newMedium1));
 
-    var newMedium2 = releaseEditor.fields.Medium({
+    var newMedium2 = new fields.Medium({
         name: "bar",
         position: 2
     });
 
-    newMedium2.tracks.push(releaseEditor.fields.Track({}, newMedium2));
+    newMedium2.tracks.push(new fields.Track({}, newMedium2));
     mediums.push(newMedium1, newMedium2);
 
     var mediumCreateEdits = _.map(
@@ -823,7 +650,7 @@ test("mediumCreate edits are not given conflicting positions", function (t) {
 test("mediumCreate positions don't conflict with removed mediums (MBS-7952)", function (t) {
     t.plan(1);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         gid: "f4c552ab-515e-42df-a9ee-a370867d29d1",
         mediums: [{ id: 123, position: 1 }]
     });
@@ -831,9 +658,9 @@ test("mediumCreate positions don't conflict with removed mediums (MBS-7952)", fu
     releaseEditor.rootField.release(release);
 
     var mediums = release.mediums;
-    var newMedium = releaseEditor.fields.Medium({ position: 2 });
+    var newMedium = new fields.Medium({ position: 2 });
 
-    newMedium.tracks.push(releaseEditor.fields.Track({}, newMedium));
+    newMedium.tracks.push(new fields.Track({}, newMedium));
     mediums.push(newMedium);
     releaseEditor.removeMedium(mediums()[0]);
     common.createMediums(release);
@@ -862,7 +689,7 @@ test("mediumCreate positions don't conflict with removed mediums (MBS-7952)", fu
 test("releaseDeleteReleaseLabel edits are not generated for non-existent release labels (MBS-7455)", function (t) {
     t.plan(1);
 
-    var release = releaseEditor.fields.Release({
+    var release = new fields.Release({
         gid: "f4c552ab-515e-42df-a9ee-a370867d29d1",
         labels: [
             { id: 123, label: null, catalogNumber: "foo123" },

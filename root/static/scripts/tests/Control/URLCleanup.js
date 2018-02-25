@@ -9,8 +9,106 @@ const _ = require('lodash');
 
 const {LINK_TYPES, cleanURL, guessType, validationRules} = require('../../edit/URLCleanup');
 
-test('URL cleanup component: auto-select, clean-up, and validation', {}, function (t) {
     const test_data = [
+        // 45cat
+        {
+                             input_url: 'https://www.45cat.com/artist/edwin-starr',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45cat.com/artist/edwin-starr',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'www.45cat.com/label/eastwest/all',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45cat.com/label/eastwest',
+               only_valid_entity_types: ['label']
+        },
+        {
+                             input_url: 'http://45cat.com/record/vs1370&rc=365077#365077',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45cat.com/record/vs1370',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://www.45cat.com/45_composer.php?tc=Floyd+Hunt',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        // 45worlds
+        {
+                             input_url: 'http://www.45worlds.com/78rpm/artist/yehudi-menuhin',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/78rpm/artist/yehudi-menuhin',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://45worlds.com/classical/artist/yehudi-menuhin',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/classical/artist/yehudi-menuhin',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'www.45worlds.com/classical/soloist/yehudi-menuhin',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/classical/soloist/yehudi-menuhin',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/live/listing/rumer-fawcetts-field-2012&rc=186697#186697',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/live/listing/rumer-fawcetts-field-2012',
+               only_valid_entity_types: ['event']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/tape/label/parlophone/all',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/tape/label/parlophone',
+               only_valid_entity_types: ['label']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/live/venue/stadium-high-school-stadium',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/live/venue/stadium-high-school-stadium',
+               only_valid_entity_types: ['place']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/vinyl/album/mfsl1100',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/vinyl/album/mfsl1100',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/12single/record/fu2t',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/12single/record/fu2t',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/cdsingle/cd/pwcd227',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/cdsingle/cd/pwcd227',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://www.45worlds.com/classical/music/asd264',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.45worlds.com/classical/music/asd264',
+               only_valid_entity_types: ['release']
+        },
         // 7digital (zdigital)
         {
                              input_url: 'http://es.7digital.com/artist/the-impatient-sisters',
@@ -168,6 +266,28 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'otherdatabases',
                     expected_clean_url: 'http://www.animenewsnetwork.com/encyclopedia/company.php?id=10510',
         },
+        // Anison Generation
+        {
+                             input_url: 'http://anison.info/data/person/1878.html',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://anison.info/data/person/1878.html',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://anison.info/data/source/15524.html?test',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://anison.info/data/source/15524.html',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://anison.info/data/song/5227.html#test',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://anison.info/data/song/5227.html',
+               only_valid_entity_types: ['recording']
+        },
         // (Internet) Archive
         {
                              input_url: 'http://web.archive.org/web/20100904165354/i265.photobucket.com/albums/ii229/drsaunde/487015.jpg',
@@ -198,6 +318,35 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'http://avexnet.jp/id/supeg/discography/product/CTCR-11051.html',
                      input_entity_type: 'release',
             expected_relationship_type: 'discographyentry',
+        },
+        // Baidu Baike
+        {
+                             input_url: 'baike.baidu.com/view/6458423.htm#1',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://baike.baidu.com/view/6458423.htm',
+               only_valid_entity_types: ['artist', 'release_group', 'work']
+        },
+        {
+                             input_url: 'http://baike.baidu.com/subview/738269/15973629.htm',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://baike.baidu.com/subview/738269/15973629.htm',
+               only_valid_entity_types: ['artist', 'release_group', 'work']
+        },
+        {
+                             input_url: 'http://baike.baidu.com/item/Summer%20Romance%2787/16598351?fromtitle=Summer+Romance&fromid=8735297&type=syn#2',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://baike.baidu.com/item/Summer%20Romance%2787/16598351',
+               only_valid_entity_types: ['artist', 'release_group', 'work']
+        },
+        {
+                             input_url: 'http://baike.baidu.com/item/王婷萱#1',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://baike.baidu.com/item/王婷萱',
+               only_valid_entity_types: ['artist', 'release_group', 'work']
         },
         // Bandcamp
         {
@@ -230,6 +379,42 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                input_relationship_type: 'downloadpurchase',
                only_valid_entity_types: ['recording', 'release']
         },
+        // Bandsintown
+        {
+                             input_url: "https://m.bandsintown.com/MattDobberteen's50thBirthday?came_from=178",
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'bandsintown',
+                    expected_clean_url: "https://www.bandsintown.com/mattdobberteen's50thbirthday",
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.bandsintown.com/1%252F2Orchestra/past_events',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'bandsintown',
+                    expected_clean_url: 'https://www.bandsintown.com/1%252f2orchestra',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://bandsintown.com/a/159526#',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'bandsintown',
+                    expected_clean_url: 'https://www.bandsintown.com/a/159526',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://bandsintown.com/event/13245613-the-accidentals-santa-barbara-soho-restaurant-and-music-club-2017?artist=The+Accidentals&came_from=174',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'bandsintown',
+                    expected_clean_url: 'https://www.bandsintown.com/e/13245613',
+               only_valid_entity_types: ['event']
+        },
+        {
+                             input_url: 'bandsintown.com/venue/846942-soho-restaurant-and-music-club-santa-barbara-ca-tickets-and-schedule',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'bandsintown',
+                    expected_clean_url: 'https://www.bandsintown.com/v/846942',
+               only_valid_entity_types: ['place']
+        },
         // BBC Music
         {
                              input_url: 'http://www.bbc.co.uk/music/artists/b52dd210-909c-461a-a75d-19e85a522042#tracks',
@@ -249,6 +434,35 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'artist',
             expected_relationship_type: 'otherdatabases',
         },
+        // Big Cartel
+        {
+                             input_url: 'www.musicofjunior.bigcartel.com/test',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'mailorder',
+                    expected_clean_url: 'http://www.musicofjunior.bigcartel.com',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.musicofjunior.bigcartel.com?test',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'mailorder',
+                    expected_clean_url: 'http://www.musicofjunior.bigcartel.com',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://www.musicofjunior.bigcartel.com/product/juniorland-ep#test',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'mailorder',
+                    expected_clean_url: 'http://www.musicofjunior.bigcartel.com/product/juniorland-ep',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://images.bigcartel.com/product_images/186926366/juniorland_bigcartel.jpg?auto=format&fit=max&w=300',
+                     input_entity_type: 'release',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'mailorder',
+               only_valid_entity_types: []
+        },
         // BIS Records
         {
                              input_url: 'http://bis.se/index.php?op=album&aID=BIS-1961',
@@ -267,6 +481,103 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'artist',
             expected_relationship_type: undefined,
                     expected_clean_url: 'afroliciousoriginal.blogspot.com/',
+        },
+        // BnF (Bibliothèque nationale de France) Catalogue
+        {
+                             input_url: 'http://ark.bnf.fr/ark:/12148/cb11923342r',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11923342r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'catalogue.bnf.fr/ark:/12148/cb11923342r',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11923342r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'http://data.bnf.fr/ark:/12148/cb11923342r',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11923342r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'https://data.bnf.fr/11923342/antoine_de_saint-exupery/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11923342r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'http://data.bnf.fr/linked-authors/11923342/r/220',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11923342r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'catalogue.bnf.fr/ark:/12148/cb394875737.unimarc',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb394875737',
+               only_valid_entity_types: ['event', 'release', 'series']
+        },
+        {
+                             input_url: 'http://data.bnf.fr/43854245/concerto_en_re_spectacle_2014/',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb43854245s',
+               only_valid_entity_types: ['event', 'release', 'series']
+        },
+        {
+                             input_url: 'http://catalogue.bnf.fr/ark:/12148/cb13875048m/PUBLIC',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb13875048m',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'http://catalogue.bnf.fr/ark:/12148/cb16215568r#noticeNum',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb16215568r',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
+        },
+        {
+                             input_url: 'http://catalogue.bnf.fr/ark:/12148/cb37879365r',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+        },
+        {
+                             input_url: 'http://gallica.bnf.fr/ark:/12148/bpt6k8815248w',
+                     input_entity_type: 'release',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'http://ark.bnf.fr/ark:/12148/bpt6k8815248w',
+                     input_entity_type: 'release',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'http://catalogue.bnf.fr/ark:/12148/cb442156144',
+                     input_entity_type: 'series',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb442156144',
+               only_valid_entity_types: ['event', 'release', 'series']
+        },
+        {
+                             input_url: 'http://catalogue.bnf.fr/ark:/12148/cb11962706k',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://catalogue.bnf.fr/ark:/12148/cb11962706k',
+               only_valid_entity_types: ['artist', 'label', 'place', 'series', 'work']
         },
         // BookBrainz
         {
@@ -305,11 +616,75 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'bookbrainz',
                     expected_clean_url: 'https://bookbrainz.org/work/65e71f2e-7245-42df-b93e-89463a28f75c',
         },
+        // Brahms Ircam
+        {
+                             input_url: 'http://brahms.ircam.fr/gilbert-amy#parcours',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://brahms.ircam.fr/gilbert-amy',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://brahms.ircam.fr/works/work/6385/',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://brahms.ircam.fr/works/work/6385',
+               only_valid_entity_types: ['work']
+        },
+        {
+                             input_url: 'http://brahms.ircam.fr/works/genre/328/?test/',
+                     input_entity_type: 'work',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        // Cancioneros Musicales Españoles (CME)
+        {
+                             input_url: 'cancioneros.si/mediawiki/index.php?title=Cancionero_Musical_de_Palacio#RELACI.C3.93N_DE_OBRAS',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.cancioneros.si/mediawiki/index.php?title=Cancionero_Musical_de_Palacio',
+               only_valid_entity_types: ['artist', 'series', 'work']
+        },
+        {
+                             input_url: 'http://www.cancioneros.si/index.php/actividades/pr%C3%B3ximas/conciertos/1553-mhm-2016-11-26-m%C3%BAsica-de-c%C3%A1mara-del-siglo-xix-al-xx.html',
+                     input_entity_type: 'event',
+            expected_relationship_type: undefined
+        },
         // CastAlbums.org
         {
                              input_url: 'http://castalbums.org/recordings/The-Scottsboro-Boys-2014-Original-London-Cast/28967',
                      input_entity_type: 'release_group',
             expected_relationship_type: 'otherdatabases',
+        },
+        // CD Baby
+        {
+                             input_url: 'www.cdbaby.name/artist/JohnDoe1#',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'cdbaby',
+                    expected_clean_url: 'https://store.cdbaby.com/Artist/JohnDoe1',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://cdbaby.com/cd/John003',
+                     input_entity_type: 'release',
+            expected_relationship_type: undefined,
+                    expected_clean_url: 'https://store.cdbaby.com/cd/john003',
+        },
+        // CB (Cape Breton) Fiddle Recordings
+        {
+                             input_url: 'http://cbfiddle.com/rx/rec/r55.html',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.cbfiddle.com/rx/rec/r55.html',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'www.cbfiddle.com/rx/tune/t4003.html',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.cbfiddle.com/rx/tune/t4003.html',
+               only_valid_entity_types: ['work']
         },
         // CDJapan
         {
@@ -339,10 +714,22 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
         },
         // Classical Archives
         {
+                             input_url: 'http://www.classicalarchives.com/artist/27956.html',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.classicalarchives.com/artist/27956.html',
+        },
+        {
                              input_url: 'www.classicalarchives.com/composer/2806.html#tvf=tracks&tv=albums',
                      input_entity_type: 'artist',
             expected_relationship_type: 'otherdatabases',
                     expected_clean_url: 'http://www.classicalarchives.com/composer/2806.html',
+        },
+        {
+                             input_url: 'http://www.classicalarchives.com/ensemble/10.html',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.classicalarchives.com/ensemble/10.html',
         },
         {
                              input_url: 'http://classicalarchives.com/album/menlo-201409.html?test',
@@ -417,6 +804,25 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'license',
                     expected_clean_url: 'http://creativecommons.org/publicdomain/zero/1.0/',
         },
+        // Dailymotion
+        {
+                             input_url: 'https://dailymotion.com/who-knows#uploads',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'videochannel',
+                    expected_clean_url: 'http://www.dailymotion.com/who-knows',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
+        },
+        {
+                             input_url: 'http://www.dailymotion.com/video/xyztuvw_useless-slug?start=42',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'http://www.dailymotion.com/video/xyztuvw',
+               only_valid_entity_types: ['recording', 'release']
+        },
+        {
+                             input_url: 'http://www.dailymotion.com/playlist/xwvuts_who-knows_top/1#video=xyztuvw',
+                    expected_clean_url: 'http://www.dailymotion.com/video/xyztuvw',
+        },
         // Decoda
         {
                              input_url: 'http://decoda.com/robi-on-ne-meurt-plus-damour-lyrics',
@@ -428,28 +834,41 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'http://www.deezer.com/artist/243332',
                      input_entity_type: 'artist',
             expected_relationship_type: 'streamingmusic',
+               only_valid_entity_types: ['artist']
         },
         {
                              input_url: 'http://www.deezer.com/artist/6509511?test',
                      input_entity_type: 'artist',
             expected_relationship_type: 'streamingmusic',
                     expected_clean_url: 'https://www.deezer.com/artist/6509511',
+               only_valid_entity_types: ['artist']
         },
         {
                              input_url: 'https://deezer.com/album/8935347',
                      input_entity_type: 'release',
             expected_relationship_type: 'streamingmusic',
                     expected_clean_url: 'https://www.deezer.com/album/8935347',
+               only_valid_entity_types: ['release']
         },
         {
                              input_url: 'http://www.deezer.com/track/3437226',
                      input_entity_type: 'recording',
             expected_relationship_type: 'streamingmusic',
+               only_valid_entity_types: ['recording']
         },
         {
-                             input_url: 'http://www.deezer.com/album/497382',
+                             input_url: 'http://www.deezer.com/en/album/497382',
                      input_entity_type: 'release',
             expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://www.deezer.com/album/497382',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'https://www.deezer.com/profile/18671676',
+                     input_entity_type: 'artist',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'streamingmusic',
+               only_valid_entity_types: []
         },
         // DHHU
         {
@@ -560,6 +979,26 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'discogs',
                     expected_clean_url: 'https://www.discogs.com/release/5578',
         },
+        // Drip
+        {
+                             input_url: 'https://d.rip/ehaidle/posts/RHJvcFBvc3QtMzQ4',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'patronage',
+                    expected_clean_url: 'https://d.rip/ehaidle',
+        },
+        {
+                             input_url: 'https://d.rip/ehaidle/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'patronage',
+                    expected_clean_url: 'https://d.rip/ehaidle',
+        },
+        // Drip (old)
+        {
+                             input_url: 'https://drip.kickstarter.com/willits',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'patronage',
+                    expected_clean_url: 'https://d.rip/willits',
+        },
         // e-onkyo music
         {
                              input_url: 'http://www.e-onkyo.com/music/album/vpcd81809/',
@@ -583,30 +1022,52 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'https://www.facebook.com/pages/De_Tot_Cor/133207893384897',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
         },
         {
                              input_url: 'http://www.facebook.com/sininemusic',
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'https://www.facebook.com/sininemusic',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
         },
         {
                              input_url: 'https://www.facebook.com/RomanzMusic?fref=ts',
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'https://www.facebook.com/RomanzMusic',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
         },
         {
                              input_url: 'https://www.facebook.com/event.php?eid=129606980393356',
                      input_entity_type: 'event',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'https://www.facebook.com/events/129606980393356',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
         },
         {
                              input_url: 'https://www.facebook.com/events/779218695457920/?ref=2&ref_dashboard_filter=past&sid_reminder=1385056373762424832',
                      input_entity_type: 'event',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'https://www.facebook.com/events/779218695457920',
+        },
+        {
+                             input_url: 'https://www.facebook.com/muse/photos_stream',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.facebook.com/muse',
+        },
+        {
+                             input_url: 'https://www.facebook.com/events/314549615570029/?acontext=%7B%22action_history%22%3A%22[%7B%5C%22surface%5C%22%3A%5C%22page%5C%22%2C%5C%22mechanism%5C%22%3A%5C%22main_list%5C%22%2C%5C%22extra_data%5C%22%3A%5C%22%7B%7D%5C%22%7D]%22%7D',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.facebook.com/events/314549615570029',
+        },
+        {
+                             input_url: 'http://www.fb.com/bradpot187',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.facebook.com/bradpot187',
         },
         // Finna.fi
         {
@@ -721,6 +1182,50 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'downloadpurchase',
                     expected_clean_url: 'https://play.google.com/store/music/album?id=Bxpxunylzxqoqiiostyvocjtuu4',
         },
+        // HMiku (Miku Hatsune) Wiki
+        {
+                             input_url: 'atwiki.jp/hmiku/pages/178.html#id_077d534d',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'https://www5.atwiki.jp/hmiku/pages/178.html',
+               only_valid_entity_types: ['artist', 'release_group', 'work']
+        },
+        {
+                             input_url: 'https://www5.atwiki.jp/hmiku/tag/96crow',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        // Hoick Music Search
+        {
+                             input_url: 'http://hoick.jp/mdb/author/%E4%BD%90%E7%80%AC%E5%AF%BF%E4%B8%80',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://hoick.jp/mdb/author/%E4%BD%90%E7%80%AC%E5%AF%BF%E4%B8%80',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'hoick.jp/mdb/detail/3467/%E3%81%8A%E3%82%88%E3%81%92!%E3%81%9F%E3%81%84%E3%82%84%E3%81%8D%E3%81%8F%E3%82%93#rev_conte',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://hoick.jp/mdb/detail/3467/%E3%81%8A%E3%82%88%E3%81%92!%E3%81%9F%E3%81%84%E3%82%84%E3%81%8D%E3%81%8F%E3%82%93',
+               only_valid_entity_types: ['work']
+        },
+        // Hoick Online Shop
+        {
+                             input_url: 'http://hoick.jp/products/detail/18578/%E3%81%9F%E3%81%A3%E3%81%B7%E3%82%8A!%E3%81%95%E3%81%84%E3%81%97%E3%82%93%E3%82%AD%E3%83%83%E3%82%BA%E3%82%BD%E3%83%B3%E3%82%B0%20%E3%82%B6%E3%83%BB%E3%83%99%E3%82%B9%E3%83%8851#review_contents',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'mailorder',
+                    expected_clean_url: 'https://hoick.jp/products/detail/18578/%E3%81%9F%E3%81%A3%E3%81%B7%E3%82%8A!%E3%81%95%E3%81%84%E3%81%97%E3%82%93%E3%82%AD%E3%83%83%E3%82%BA%E3%82%BD%E3%83%B3%E3%82%B0%20%E3%82%B6%E3%83%BB%E3%83%99%E3%82%B9%E3%83%8851',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'https://hoick.jp/products/detail/18578/%E3%81%9F%E3%81%A3%E3%81%B7%E3%82%8A!%E3%81%95%E3%81%84%E3%81%97%E3%82%93%E3%82%AD%E3%83%83%E3%82%BA%E3%82%BD%E3%83%B3%E3%82%B0%20%E3%82%B6%E3%83%BB%E3%83%99%E3%82%B9%E3%83%8851',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'lyrics',
+               only_valid_entity_types: []
+        },
         // (VICTOR STUDIO) HD-Music.
         {
                              input_url: 'http://hd-music.info/album.cgi/913',
@@ -783,6 +1288,42 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'http://instagram.com/deadmau5',
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.instagram.com/deadmau5/',
+        },
+        {
+                             input_url: 'https://i.instagram.com/yorickvannorden/?ref=badge',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.instagram.com/yorickvannorden/',
+        },
+        // Irish Traditional Music Tune Index (Alan Ng's Tunography)
+        {
+                             input_url: 'https://www.irishtune.info/album/MCnnly/#',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'https://www.irishtune.info/album/MCnnly/',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'http://irishtune.info/album/SRyan+C/',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'https://www.irishtune.info/album/SRyan+C/',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'www.irishtune.info/album/KClns+1/',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'https://www.irishtune.info/album/KClns+1/',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'https://www.irishtune.info/tune/1499',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'https://www.irishtune.info/tune/1499/',
+               only_valid_entity_types: ['work']
         },
         // (Apple) iTunes
         {
@@ -858,6 +1399,13 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                     expected_clean_url: 'https://itunes.apple.com/ir/podcast/id469326376',
                only_valid_entity_types: ['release']
         },
+        {
+                             input_url: 'https://itunes.apple.com/jp/album/uchiagehanabi-single/1263790414',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'downloadpurchase',
+                    expected_clean_url: 'https://itunes.apple.com/jp/album/id1263790414',
+               only_valid_entity_types: ['release']
+        },
         // Jamendo Music
         {
                              input_url: 'http://www.jamendo.com/en/track/725574/giraffe',
@@ -876,6 +1424,21 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'release',
             expected_relationship_type: 'downloadfree',
                     expected_clean_url: 'http://www.jamendo.com/album/56372',
+        },
+        // JOYSOUND
+        {
+                             input_url: 'https://www.joysound.com/web/search/artist/5169?startIndex=20#songlist',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://www.joysound.com/web/search/artist/5169',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://www.joysound.com/web/search/song/155526#lyrics',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://www.joysound.com/web/search/song/155526',
+               only_valid_entity_types: ['work']
         },
         // JUGEM
         {
@@ -960,6 +1523,10 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'http://www.lastfm.com/music/Carving+Colours',
                     expected_clean_url: 'http://www.last.fm/music/Carving+Colours',
         },
+        {
+                             input_url: 'https://www.last.fm/it/label/Shyrec#shoutbox',
+                    expected_clean_url: 'http://www.last.fm/label/Shyrec',
+        },
         // LiederNet Archive
         {
                              input_url: 'http://www.lieder.net/lieder/get_text.html?TextId=6448',
@@ -988,6 +1555,42 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'http://blog.livedoor.jp/mintmania/',
                      input_entity_type: 'label',
             expected_relationship_type: 'blog',
+        },
+        // LiveFans
+        {
+                             input_url: 'http://www.livefans.jp/artists/4486/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.livefans.jp/artists/4486',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://livefans.jp/events/760678?ref=headline',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.livefans.jp/events/760678',
+               only_valid_entity_types: ['event']
+        },
+        {
+                             input_url: 'https://www.livefans.jp/groups/102241#reviewPost',
+                     input_entity_type: 'series',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.livefans.jp/groups/102241',
+               only_valid_entity_types: ['series']
+        },
+        {
+                             input_url: 'www.livefans.jp/venues/past/4853',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.livefans.jp/venues/4853',
+               only_valid_entity_types: ['place']
+        },
+        {
+                             input_url: 'http://www.livefans.jp/venues/facility?latitude=35.670302&longitude=139.718274&target=1&v_id=4853',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.livefans.jp/venues/4853',
+               only_valid_entity_types: ['place']
         },
         // Loudr
         {
@@ -1053,6 +1656,35 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'mora.jp/package/43000002/ANTCD-3106/',
                     expected_clean_url: 'http://mora.jp/package/43000002/ANTCD-3106/',
         },
+        // MusicaPopular.cl
+        {
+                             input_url: 'musicapopular.cl/artista/sensorama-19-81/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.musicapopular.cl/artista/sensorama-19-81/',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'www.musicapopular.cl/grupo/super_collider/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.musicapopular.cl/grupo/super_collider/',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.musicapopular.cl/artista/sensorama-19-81/?p=1668',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.musicapopular.cl/artista/sensorama-19-81/?p=1668',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'http://www.musicapopular.cl/disco/raw-digits',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://www.musicapopular.cl/disco/raw-digits/',
+               only_valid_entity_types: ['release_group']
+        },
         // MusicMoz
         {
                              input_url: 'http://musicmoz.org/Bands_and_Artists/S/Soundgarden/',
@@ -1104,6 +1736,28 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'otherdatabases',
                     expected_clean_url: 'https://www.musik-sammler.de/media/594158/',
         },
+        // Musixmatch
+        {
+                             input_url: 'https://www.musixmatch.com/artist/Bruno-Mars/community/2',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://www.musixmatch.com/artist/Bruno-Mars',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'https://www.musixmatch.com/album/Bruno-Mars/This-Is-My-Love-Remixes-3',
+                     input_entity_type: 'album',
+            expected_relationship_type: undefined,
+               input_relationship_type: 'lyrics',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'https://www.musixmatch.com/lyrics/Mark-Ronson-feat-Bruno-Mars/Uptown-Funk/translation/spanish',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://www.musixmatch.com/lyrics/Mark-Ronson-feat-Bruno-Mars/Uptown-Funk',
+               only_valid_entity_types: ['work']
+        },
         // mvdbase.com (The Music Video DataBase)
         {
                              input_url: 'http://www.mvdbase.com/video.php?id=4',
@@ -1140,7 +1794,7 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'release',
             expected_relationship_type: 'discographyentry',
         },
-        // Ney Nota Arşivi 
+        // Ney Nota Arşivi
         {
                              input_url: 'http://www.neyzen.com/nota_arsivi/02_klasik_eserler/054_mahur_buselik/mahur_buselik_ss_aydin_oran.pdf',
                      input_entity_type: 'work',
@@ -1188,6 +1842,20 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'work',
             expected_relationship_type: 'otherdatabases',
         },
+        // Operabase
+        {
+                             input_url: 'www.operabase.com/a/Risto_Joost/21715/future',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://operabase.com/a/Risto_Joost/21715',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://operabase.com/listart.cgi?name=Risto+Joost&acts=+Schedule+',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
         // OPERADIS Operatic Discography
         {
                              input_url: 'http://www.operadis-opera-discography.org.uk/CLBABLUE.HTM',
@@ -1207,6 +1875,12 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'patronage',
                     expected_clean_url: 'https://www.patreon.com/example',
         },
+        {
+                             input_url: 'https://www.patreon.com/user/posts?u=4212671&month=2017-4',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'patronage',
+                    expected_clean_url: 'https://www.patreon.com/user?u=4212671',
+        },
         // PayPal.Me
         {
                              input_url: 'https://paypal.me/example',
@@ -1216,6 +1890,39 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
         {
                              input_url: 'https://www.paypal.me/example?q=test',
                     expected_clean_url: 'https://www.paypal.me/example',
+        },
+        // Petit Lyrics
+        {
+                             input_url: 'https://petitlyrics.com/lyrics/artist/24786/2-1.html',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://petitlyrics.com/lyrics/artist/24786',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'petitlyrics.com/lyrics/1039367',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://petitlyrics.com/lyrics/1039367',
+               only_valid_entity_types: ['work']
+        },
+        {
+                             input_url: 'https://petitlyrics.com/lyrics/album/4e484be3818ae3818be38182e38195e38293e381a8e38184e381a3e38197e3828720e69c80e696b0e38399e382b9e38388e3808ce381bfe38293e381aae381aee383aae382bae383a0e3808d?artist=%E6%A8%AA%E5%B1%B1%E3%81%A0%E3%81%84%E3%81%99%E3%81%91%2C%E4%B8%89%E8%B0%B7%E3%81%9F%E3%81%8F%E3%81%BF',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://petitlyrics.com/lyrics/album/4e484be3818ae3818be38182e38195e38293e381a8e38184e381a3e38197e3828720e69c80e696b0e38399e382b9e38388e3808ce381bfe38293e381aae381aee383aae382bae383a0e3808d',
+               only_valid_entity_types: ['release_group']
+        },
+        // Pinterest
+        {
+                             input_url: 'uk.pinterest.com/tucenter/pins/#',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://www.pinterest.com/tucenter/',
+        },
+        {
+                             input_url: 'http://pinterest.com/tucenter/',
+                    expected_clean_url: 'https://www.pinterest.com/tucenter/',
         },
         // PureVolume
         {
@@ -1230,6 +1937,12 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'otherdatabases',
         },
         // RecoChoku
+        {
+                             input_url: 'http://recochoku.jp/artist/2000166063/?affiliate=4350010210',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'downloadpurchase',
+                    expected_clean_url: 'http://recochoku.jp/artist/2000166063/',
+        },
         {
                              input_url: 'recochoku.jp/song/S21893898/',
                      input_entity_type: 'recording',
@@ -1294,6 +2007,102 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'place',
             expected_relationship_type: 'socialnetwork',
                     expected_clean_url: 'http://www.reverbnation.com/venue/602562',
+        },
+        {
+                             input_url: 'http://www.reverbnation.com/sidneybowen?profile_view_source=profile_box',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'http://www.reverbnation.com/sidneybowen',
+        },
+        {
+                             input_url: 'http://www.reverbnation.com/sidneybowen?profile_tour=true&profile_view_source=profile_box&kick=179811',
+                     input_entity_type: 'place',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'http://www.reverbnation.com/sidneybowen',
+        },
+        {
+                             input_url: 'https://www.reverbnation.com/tomorrowsyesterdayband?fb_og_action=reverbnation_fb:unknown&fb_og_object=reverbnation_fb:artist&player_client_id=j29dsi7kl&utm_campaign=a_profile_page&utm_content=reverbnation_fb:artist&utm_medium=facebook_og&utm_source=reverbnation_fb:unknown',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'http://www.reverbnation.com/tomorrowsyesterdayband',
+        },
+        // Rock.com.ar
+        {
+                             input_url: 'http://rock.com.ar/artistas/200',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/200',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://rock.com.ar/artistas/168/biografia',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/168',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://rock.com.ar/artistas/239/fotos/13',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/239',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'rock.com.ar/artistas/11752/discos/10703',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/11752/discos/10703',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'rock.com.ar/artistas/11752/discos',
+                     input_entity_type: 'release_group',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/11752',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'www.rock.com.ar/artistas/11752/letras/19898',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/11752/letras/19898',
+               only_valid_entity_types: ['work']
+        },
+        // Rock.com.ar (from before its 2017 relaunch)
+        {
+                             input_url: 'http://www.rock.com.ar/artistas/soda-stereo#contenedor',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/artistas/soda-stereo',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.rock.com.ar/bios/0/168.shtml',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/bios/0/168.shtml',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://www.rock.com.ar/fotos/0/12.shtml',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'www.rock.com.ar/discos/10/10703.shtml',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/discos/10/10703.shtml',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'rock.com.ar/letras/19/19898.shtml',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://rock.com.ar/letras/19/19898.shtml',
+               only_valid_entity_types: ['work']
         },
         // Rockens Danmarkskort
         {
@@ -1472,7 +2281,68 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                              input_url: 'https://embed.spotify.com/?uri=spotify:track:7gwRSZ0EmGWa697ZrE58GA',
                      input_entity_type: 'recording',
             expected_relationship_type: 'streamingmusic',
-                    expected_clean_url: 'http://open.spotify.com/track/7gwRSZ0EmGWa697ZrE58GA',
+                    expected_clean_url: 'https://open.spotify.com/track/7gwRSZ0EmGWa697ZrE58GA',
+               only_valid_entity_types: ['recording']
+        },
+        {
+                             input_url: 'http://open.spotify.com/track/1SI5O5cu8AM19cninxf9RZ',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://open.spotify.com/track/1SI5O5cu8AM19cninxf9RZ',
+               only_valid_entity_types: ['recording']
+        },
+        {
+                             input_url: 'http://play.spotify.com/album/3rFPzWNUrtoqMd9yNGaFMr?play=true&utm_source=open.spotify.com&utm_medium=open',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://open.spotify.com/album/3rFPzWNUrtoqMd9yNGaFMr',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'https://play.spotify.com/artist/5zS2OG2kKeGYFqX6lcuVOt?play=true&utm_source=google&utm_medium=growth_paid&utm_campaign=pla_US&gclid=CN-m_fOj3cMCFUJk7AodTBsA8g',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://open.spotify.com/artist/5zS2OG2kKeGYFqX6lcuVOt',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'open.spotify.com/album/0tabKG66W34Ms0SsovkP6Q/6yVKnHVFGkg4OQ8IrgQVpZ',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://open.spotify.com/album/0tabKG66W34Ms0SsovkP6Q',
+               only_valid_entity_types: ['release']
+        },
+        {
+                             input_url: 'http://open.spotify.com/local/Electrolyze/Single/Belief/265',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'streamingmusic',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'https://play.spotify.com/search/The%20Most%20Essential%20Bossa%20Nova',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'streamingmusic',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'http://play.spotify.com/user/scotchbonnetrecords',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://open.spotify.com/user/scotchbonnetrecords',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
+        },
+        {
+                             input_url: 'https://play.spotify.com/user/1254688529/playlist/0MRy5cv9ZktSjysDEIP72H',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'socialnetwork',
+               only_valid_entity_types: []
+        },
+        {
+                             input_url: 'play.spotify.com/user/1254688529/',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'socialnetwork',
+                    expected_clean_url: 'https://open.spotify.com/user/1254688529',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
         },
         // Ted Crane
         {
@@ -1553,6 +2423,21 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'work',
             expected_relationship_type: 'otherdatabases',
         },
+        // Twitch
+        {
+                             input_url: 'http://twitch.tv/who_knows/videos/all',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'videochannel',
+                    expected_clean_url: 'https://www.twitch.tv/who_knows',
+               only_valid_entity_types: ['artist', 'event', 'label', 'place', 'series']
+        },
+        {
+                             input_url: 'https://www.twitch.tv/videos/1234567890?collection=Key_w',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://www.twitch.tv/videos/1234567890',
+               only_valid_entity_types: ['recording', 'release']
+        },
         // Twitter
         {
                              input_url: 'http://twitter.com/miguelgrimaldo',
@@ -1602,39 +2487,112 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'release',
             expected_relationship_type: 'discographyentry',
         },
+        // UtaiteDB/VocaDB
+        {
+                             input_url: 'http://utaitedb.net/Ar/1#',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://utaitedb.net/Ar/1',
+               only_valid_entity_types: ['artist', 'label']
+        },
+        {
+                             input_url: 'https://vocadb.net/Ar/26957#picturesTab',
+                     input_entity_type: 'label',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://vocadb.net/Ar/26957',
+               only_valid_entity_types: ['artist', 'label']
+        },
+        {
+                             input_url: 'utaitedb.net/Al/4644',
+                     input_entity_type: 'release',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://utaitedb.net/Al/4644',
+               only_valid_entity_types: ['release_group']
+        },
+        {
+                             input_url: 'http://vocadb.net/E/10/comiket-80',
+                     input_entity_type: 'event',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://vocadb.net/E/10',
+               only_valid_entity_types: ['event']
+        },
+        {
+                             input_url: 'http://utaitedb.net/Event/SeriesDetails/30',
+                     input_entity_type: 'series',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://utaitedb.net/Event/SeriesDetails/30',
+               only_valid_entity_types: ['series']
+        },
+        {
+                             input_url: 'http://vocadb.net/Song/Details/141014',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://vocadb.net/S/141014',
+               only_valid_entity_types: ['recording', 'work']
+        },
+        {
+                             input_url: 'http://vocadb.net/S/143473?albumId=21156',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'otherdatabases',
+                    expected_clean_url: 'http://vocadb.net/S/143473',
+               only_valid_entity_types: ['recording', 'work']
+        },
         // Utamap
         {
                              input_url: 'http://www.utamap.com/showkasi.php?surl=34985',
                      input_entity_type: 'work',
             expected_relationship_type: 'lyrics',
         },
+        // Utaten
+        {
+                             input_url: 'utaten.com/artist/fripSide?sort=popular_sort_asc',
+                     input_entity_type: 'artist',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://utaten.com/artist/fripSide',
+               only_valid_entity_types: ['artist']
+        },
+        {
+                             input_url: 'http://utaten.com/lyric/fripSide/prominence#sort=popular_sort_asc',
+                     input_entity_type: 'work',
+            expected_relationship_type: 'lyrics',
+                    expected_clean_url: 'https://utaten.com/lyric/fripSide/prominence',
+               only_valid_entity_types: ['work']
+        },
+        {
+                             input_url: 'https://utaten.com/news/index/14365',
+                     input_entity_type: 'artist',
+            expected_relationship_type: undefined,
+                    expected_clean_url: 'https://utaten.com/news/index/14365',
+               input_relationship_type: 'lyrics',
+               only_valid_entity_types: []
+        },
         // VGMdb (Video Game Music and Anime Soundtrack Database)
         {
                              input_url: 'https://vgmdb.net/artist/431',
                      input_entity_type: 'artist',
             expected_relationship_type: 'vgmdb',
-                    expected_clean_url: 'http://vgmdb.net/artist/431',
+                    expected_clean_url: 'https://vgmdb.net/artist/431',
                only_valid_entity_types: ['artist']
         },
         {
                              input_url: 'http://vgmdb.com/event/197',
                      input_entity_type: 'event',
             expected_relationship_type: 'vgmdb',
-                    expected_clean_url: 'http://vgmdb.net/event/197',
+                    expected_clean_url: 'https://vgmdb.net/event/197',
                only_valid_entity_types: ['event']
         },
         {
                              input_url: 'https://vgmdb.com/org/284',
                      input_entity_type: 'label',
             expected_relationship_type: 'vgmdb',
-                    expected_clean_url: 'http://vgmdb.net/org/284',
+                    expected_clean_url: 'https://vgmdb.net/org/284',
                only_valid_entity_types: ['artist', 'label']
         },
         {
                              input_url: 'vgmdb.net/album/29727',
                      input_entity_type: 'release',
             expected_relationship_type: 'vgmdb',
-                    expected_clean_url: 'http://vgmdb.net/album/29727',
+                    expected_clean_url: 'https://vgmdb.net/album/29727',
                only_valid_entity_types: ['release']
         },
         // VIAF (Virtual International Authority File)
@@ -1704,13 +2662,13 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
         },
-        // VKontakte 
+        // VKontakte
         {
                              input_url: 'http://vk.com/tin_sontsya',
                      input_entity_type: 'artist',
             expected_relationship_type: 'socialnetwork',
         },
-        // Weibo 
+        // Weibo
         {
                              input_url: 'www.weibo.com/mchotdog2010#test',
                      input_entity_type: 'artist',
@@ -1760,6 +2718,12 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
         {
                              input_url: 'http://www.wikidata.org/wiki/Q14005#sitelinks-wikipedia',
                     expected_clean_url: 'https://www.wikidata.org/wiki/Q14005',
+        },
+        {
+                             input_url: 'https://www.wikidata.org/wiki/Special:EntityPage/Q339359',
+                     input_entity_type: 'instrument',
+                    expected_clean_url: 'https://www.wikidata.org/wiki/Q339359',
+            expected_relationship_type: 'wikidata',
         },
         {
                              input_url: 'http://www.wikidata.org/entity/Q4655955',
@@ -1940,6 +2904,12 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             expected_relationship_type: 'streamingmusic',
                     expected_clean_url: 'https://www.youtube.com/watch?v=UmHdefsaL6I',
         },
+        {
+                             input_url: 'https://www.youtube.com/watch?v=4eUqsUZBluA&list=PLkHWBeudCLJCjB41Yt1iiain82Lp1zQOB',
+                     input_entity_type: 'recording',
+            expected_relationship_type: 'streamingmusic',
+                    expected_clean_url: 'https://www.youtube.com/watch?v=4eUqsUZBluA',
+        },
     ];
 
     const relationship_types_by_uuid = _.reduce(LINK_TYPES, function(results, rel_uuid_by_entity_type, relationship_type) {
@@ -1959,7 +2929,7 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
     }
 
     _.each(test_data, function (subtest, i) {
-        t.test('input URL [' + i + '] = ' + subtest.input_url, {}, function(st) {
+        test('input URL [' + i + '] = ' + subtest.input_url, {}, function(st) {
             var tested = false;
             if (!subtest.input_url) {
                 st.fail('Test is invalid: "input_url" is missing: ' + JSON.stringify(subtest));
@@ -2028,6 +2998,3 @@ test('URL cleanup component: auto-select, clean-up, and validation', {}, functio
             st.end();
         });
     });
-
-    t.end();
-});

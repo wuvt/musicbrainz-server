@@ -18,6 +18,8 @@ with 'MusicBrainz::Server::Entity::Role::Comment';
 with 'MusicBrainz::Server::Entity::Role::Area';
 with 'MusicBrainz::Server::Entity::Role::Type' => { model => 'ArtistType' };
 
+sub entity_type { 'artist' }
+
 has 'sort_name' => (
     is => 'rw',
     isa => 'Str'
@@ -77,7 +79,16 @@ sub _appearances_table_types { ("release", "release_group", "work", "recording")
 around TO_JSON => sub {
     my ($orig, $self) = @_;
 
-    return {%{ $self->$orig }, sortName => $self->sort_name};
+    return {
+        %{$self->$orig},
+        $self->begin_area ? (begin_area => $self->begin_area->TO_JSON) : (),
+        $self->end_area ? (end_area => $self->end_area->TO_JSON) : (),
+        $self->gender ? (gender => $self->gender->TO_JSON) : (),
+        begin_area_id => $self->begin_area_id,
+        end_area_id => $self->end_area_id,
+        gender_id => $self->gender_id,
+        sort_name => $self->sort_name,
+    };
 };
 
 __PACKAGE__->meta->make_immutable;

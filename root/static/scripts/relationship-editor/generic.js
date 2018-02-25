@@ -3,19 +3,26 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('lodash');
+
 const {SERIES_ORDERING_TYPE_AUTOMATIC} = require('../common/constants');
+const MB = require('../common/MB');
 const clean = require('../common/utility/clean');
+const formatDate = require('../common/utility/formatDate');
 const validation = require('../edit/validation');
+const {ViewModel} = require('./common/viewModel');
 
 (function (RE) {
 
     var UI = RE.UI = RE.UI || {};
 
+    class GenericEntityViewModel extends ViewModel {
 
-    RE.GenericEntityViewModel = aclass(RE.ViewModel, {
-        fieldName: "rel",
+        constructor(options) {
+            super(options);
 
-        after$init: function () {
             MB.sourceRelationshipEditor = this;
 
             var source = this.source;
@@ -25,30 +32,30 @@ const validation = require('../edit/validation');
                     return !r.linkTypeID() || !r.target(source).gid;
                 })
             );
-        },
+        }
 
-        openAddDialog: function (source, event) {
+        openAddDialog(source, event) {
             var targetType = _.without(MB.allowedRelations[source.entityType], 'url')[0];
 
-            UI.AddDialog({
+            new UI.AddDialog({
                 source: source,
                 target: MB.entity({}, targetType),
                 viewModel: this
             }).open(event.target);
-        },
+        }
 
-        openEditDialog: function (relationship, event) {
+        openEditDialog(relationship, event) {
             if (!relationship.removed()) {
-                UI.EditDialog({
+                new UI.EditDialog({
                     relationship: relationship,
                     source: ko.contextFor(event.target).$parents[1],
                     viewModel: this
                 }).open(event.target);
             }
-        },
+        }
 
-        around$_sortedRelationships: function (supr, relationships, source) {
-            var result = supr(relationships, source);
+        _sortedRelationships(relationships, source) {
+            var result = super._sortedRelationships(relationships, source);
 
             if (source.entityType === "series") {
                 var sorted = ko.observableArray(result());
@@ -57,7 +64,7 @@ const validation = require('../edit/validation');
                     var seriesType = source.type();
 
                     if (seriesType) {
-                        sorted((seriesOrdering[seriesType.series_entity_type] || _.identity)(result(), source));
+                        sorted((seriesOrdering[seriesType.item_entity_type] || _.identity)(result(), source));
                     } else {
                         sorted(result());
                     }
@@ -73,11 +80,15 @@ const validation = require('../edit/validation');
 
             return result;
         }
-    });
+    }
+
+    GenericEntityViewModel.prototype.fieldName = 'rel';
+
+    exports.GenericEntityViewModel = GenericEntityViewModel;
 
     var seriesOrdering = {
         event: function (relationships, series) {
-            return _.sortByAll(
+            return _.sortBy(
                 relationships,
                 function (r) { return r.target(series).begin_date || '' },
                 function (r) { return r.target(series).end_date || '' },
@@ -85,10 +96,10 @@ const validation = require('../edit/validation');
             );
         },
         release: function (relationships, series) {
-            return _.sortByAll(
+            return _.sortBy(
                 relationships,
-                function (r) { return _(r.target(series).events).map(getDate).sort().first() },
-                function (r) { return _(r.target(series).labels).map(getCatalogNumber).sort().first() }
+                function (r) { return _(r.target(series).events).map(getDate).sort().head() },
+                function (r) { return _(r.target(series).labels).map(getCatalogNumber).sort().head() }
             );
         },
         release_group: function (relationships, series) {
@@ -97,7 +108,7 @@ const validation = require('../edit/validation');
     };
 
     function getDate(x) {
-        return x.date || '';
+        return formatDate(x.date);
     }
 
     function getCatalogNumber(x) {
@@ -167,8 +178,8 @@ const validation = require('../edit/validation');
                 }
             });
 
-            var beginDate = changeData.beginDate;
-            var endDate = changeData.endDate;
+            var beginDate = changeData.begin_date;
+            var endDate = changeData.end_date;
 
             if (beginDate) {
                 pushInput(prefix, "period.begin_date.year", beginDate.year);
@@ -202,7 +213,7 @@ const validation = require('../edit/validation');
         }
     }
 
-    RE.prepareSubmission = function (formName) {
+    function prepareSubmission(formName) {
         var submitted = [];
         var submittedLinks;
         var vm;
@@ -247,16 +258,19 @@ const validation = require('../edit/validation');
         if (vm = MB.sourceExternalLinksEditor) {
             vm.getFormData(formName + '.url', fieldCount, pushInput);
 
-            if (MB.hasSessionStorage && vm.state.links.size) {
-                window.sessionStorage.setItem('submittedLinks', JSON.stringify(vm.state.links.toJS()));
+            if (MB.hasSessionStorage && vm.state.links.length) {
+                window.sessionStorage.setItem('submittedLinks', JSON.stringify(vm.state.links));
             }
         }
 
         $("#relationship-editor").append(hiddenInputs);
-    };
+    }
 
     $(document).on("submit", "#page form:not(#relationship-editor-form)", _.once(function () {
-        RE.prepareSubmission($('#relationship-editor').data('form-name'));
+        prepareSubmission($('#relationship-editor').data('form-name'));
     }));
+
+    RE.prepareSubmission = prepareSubmission;
+    exports.prepareSubmission = prepareSubmission;
 
 }(MB.relationshipEditor = MB.relationshipEditor || {}));

@@ -19,6 +19,8 @@ with 'MusicBrainz::Server::Entity::Role::ArtistCredit';
 
 use aliased 'MusicBrainz::Server::Entity::Work';
 
+sub entity_type { 'release' }
+
 around BUILDARGS => sub {
     my $orig = shift;
     my $self = shift;
@@ -279,6 +281,11 @@ around TO_JSON => sub {
     if ($self->all_mediums) {
         $data->{mediums} = [map { $_->TO_JSON } $self->all_mediums];
         $data->{formats} = $self->combined_format_name;
+    }
+
+    my $length = $self->length;
+    if (defined $length) {
+        $data->{length} = $length;
     }
 
     return $data;

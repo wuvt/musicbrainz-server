@@ -11,6 +11,8 @@ with 'MusicBrainz::Server::Entity::Role::OptionsTree' => {
     sort_criterion => 'name',
 };
 
+sub entity_type { 'link_type' }
+
 has 'entity0_type' => (
     is => 'rw',
     isa => 'Str',
@@ -116,6 +118,15 @@ has 'orderable_direction' => (
     is => 'rw',
     isa => 'Int',
 );
+
+around TO_JSON => sub {
+    my ($orig, $self) = @_;
+
+    my $json = $self->$orig;
+    $json->{link_phrase} = $self->link_phrase;
+
+    return $json;
+};
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

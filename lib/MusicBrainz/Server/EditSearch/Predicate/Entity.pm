@@ -1,14 +1,22 @@
-use MusicBrainz::Server::Constants qw( %ENTITIES entities_with );
+use MusicBrainz::Server::Constants qw( %ENTITIES @RELATABLE_ENTITIES );
 
-for my $type (entities_with(['mbid', 'relatable'])) {
+for my $type (@RELATABLE_ENTITIES) {
     my $model = $ENTITIES{$type}{model};
     my $has_subs = $ENTITIES{$type}{subscriptions};
     my $subs_section = '';
 
     if ($has_subs) {
         $subs_section = <<EOF;
-use MusicBrainz::Server::EditSearch::Predicate::SubscribedEntity;
-with 'MusicBrainz::Server::EditSearch::Predicate::SubscribedEntity' => { type => '$type' };
+use MusicBrainz::Server::EditSearch::Predicate::Role::Subscribed;
+with 'MusicBrainz::Server::EditSearch::Predicate::Role::Subscribed' => {
+    type => '$type',
+    template_clause => 'EXISTS (
+        SELECT TRUE FROM edit_$type
+         WHERE ROLE_CLAUSE(edit_$type.$type)
+           AND edit_$type.edit = edit.id
+    )',
+    subscribed_column => '$type'
+};
 EOF
     }
 
@@ -19,8 +27,8 @@ EOF
     eval <<EOF;
 package MusicBrainz::Server::EditSearch::Predicate::$model;
 use Moose;
-use MusicBrainz::Server::EditSearch::Predicate::LinkedEntity;
-with 'MusicBrainz::Server::EditSearch::Predicate::LinkedEntity' => { type => '$type' };
+use MusicBrainz::Server::EditSearch::Predicate::Role::LinkedEntity;
+with 'MusicBrainz::Server::EditSearch::Predicate::Role::LinkedEntity' => { type => '$type' };
 $subs_section
 with 'MusicBrainz::Server::EditSearch::Predicate';
 EOF

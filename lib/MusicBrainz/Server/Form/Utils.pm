@@ -22,6 +22,7 @@ use Sub::Exporter -setup => {
                       build_attr_info
                       build_options_tree
                       indentation
+                      validate_username
               )]
 };
 
@@ -217,7 +218,7 @@ sub build_attr_info {
         return $attr;
     }
 
-    return { map { $_->name => build_attr($_) } $root->all_children };
+    return { map { $_->gid => build_attr($_) } $root->all_children };
 }
 
 sub build_child_info {
@@ -229,6 +230,24 @@ sub build_child_info {
 sub indentation {
     my $level = shift;
     return "\N{NO-BREAK SPACE}" x (3 * $level);
+}
+
+sub validate_username {
+    my ($self) = @_;
+
+    my $username = $self->value;
+    my $previous_username = $self->init_value;
+
+    if (defined $username) {
+        unless (defined $previous_username && $previous_username eq $username) {
+            if ($username =~ qr{^deleted editor \#\d+$}i) {
+                $self->add_error(l('This username is reserved for internal use.'));
+            }
+            if ($self->form->ctx->model('Editor')->is_name_used($username)) {
+                $self->add_error(l('Please choose another username, this one is already taken.'));
+            }
+        }
+    }
 }
 
 1;

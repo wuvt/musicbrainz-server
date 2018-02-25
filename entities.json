@@ -69,6 +69,8 @@
         "date_period": true,
         "disambiguation": true,
         "edit_table": true,
+        "ipis": true,
+        "isnis": true,
         "last_updated_column": true,
         "materialized_edit_status": true,
         "mbid": {
@@ -77,6 +79,7 @@
             "relatable": "dedicated"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Artist",
         "plural": "artists",
         "plural_url": "artists",
@@ -124,6 +127,12 @@
     "cdstub": {
         "model": "CDStub"
     },
+    "cdstubtoc": {
+        "model": "CDStubTOC"
+    },
+    "cdtoc": {
+        "model": "CDTOC"
+    },
     "collection": {
         "mbid": {
             "relatable": false
@@ -135,6 +144,9 @@
             "entity": true
         },
         "table": "editor_collection",
+        "type": {
+            "simple": true
+        },
         "url": "collection"
     },
     "collection_type": {
@@ -181,6 +193,7 @@
             "relatable": "overview"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Event",
         "plural": "events",
         "plural_url": "events",
@@ -263,10 +276,12 @@
         "model": "InstrumentType"
     },
     "isrc": {
-        "model": "ISRC"
+        "model": "ISRC",
+        "url": "isrc"
     },
     "iswc": {
-        "model": "ISWC"
+        "model": "ISWC",
+        "url": "iswc"
     },
     "label": {
         "aliases": {
@@ -285,6 +300,8 @@
         "date_period": true,
         "disambiguation": true,
         "edit_table": true,
+        "ipis": true,
+        "isnis": true,
         "last_updated_column": true,
         "materialized_edit_status": true,
         "mbid": {
@@ -293,6 +310,7 @@
             "relatable": "dedicated"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Label",
         "plural": "labels",
         "plural_url": "labels",
@@ -438,6 +456,7 @@
             "relatable": "overview"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Recording",
         "plural": "recordings",
         "plural_url": "recordings",
@@ -482,6 +501,7 @@
             "relatable": "overview"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Release",
         "plural": "releases",
         "plural_url": "releases",
@@ -524,6 +544,7 @@
             "relatable": "overview"
         },
         "merging": true,
+        "meta_table": true,
         "model": "ReleaseGroup",
         "plural": "release_groups",
         "plural_url": "release-groups",
@@ -692,6 +713,7 @@
             "relatable": "overview"
         },
         "merging": true,
+        "meta_table": true,
         "model": "Work",
         "plural": "works",
         "plural_url": "works",

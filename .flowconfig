@@ -1,0 +1,17 @@
+[ignore]
+.*/lib/.*
+.*/node_modules/jsx-control-statements/jsx-control-statements.flow.js
+.*/root/static/build/.*
+.*/t/.*
+/Volumes/.*
+
+[include]
+
+[libs]
+./node_modules/immutable/dist/immutable.js.flow
+./node_modules/jsx-control-statements/jsx-control-statements.latest.flow.js
+./root/types.js
+
+[lints]
+
+[options]

@@ -616,6 +616,28 @@ my %stats = (
         DESC => "Count of all labels",
         SQL => "SELECT COUNT(*) FROM label",
     },
+    "count.label.type" => {
+        DESC => "Distribution of labels by type",
+        CALC => sub {
+            my ($self, $sql) = @_;
+
+            my $data = $sql->select_list_of_lists(
+                "SELECT COALESCE(type.id::text, 'null'), COUNT(label.id) AS count
+                 FROM label_type type
+                 FULL OUTER JOIN label ON label.type = type.id
+                 GROUP BY type.id",
+            );
+
+            my %dist = map { @$_ } @$data;
+            $dist{null} ||= 0;
+
+            +{
+                map {
+                    "count.label.type.".$_ => $dist{$_}
+                } keys %dist
+            };
+        },
+    },
     "count.discid" => {
         DESC => "Count of all disc IDs",
         SQL => "SELECT COUNT(*) FROM cdtoc",
@@ -761,9 +783,9 @@ my %stats = (
             my ($self, $sql) = @_;
 
             my $data = $sql->select_list_of_lists(
-                "SELECT COALESCE(l.iso_code_3::text, 'null'), COUNT(w.gid) AS count
-                FROM work w FULL OUTER JOIN language l
-                    ON w.language=l.id
+                "SELECT COALESCE(l.iso_code_3::text, 'null'), COUNT(wl.work) AS count
+                FROM work_language wl FULL OUTER JOIN language l
+                    ON wl.language=l.id
                 WHERE l.iso_code_2t IS NOT NULL OR l.frequency > 0
                 GROUP BY l.iso_code_3
                 ",

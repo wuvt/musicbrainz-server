@@ -15,6 +15,8 @@ while true; do
     fi
 done
 
+(exec runsvdir /etc/service &>/dev/null &)
+
 exec sudo -E -H -u musicbrainz carton exec -- prove \
     --pgtap-option dbname=musicbrainz_test \
     --pgtap-option host=musicbrainz-test-database \
@@ -23,7 +25,12 @@ exec sudo -E -H -u musicbrainz carton exec -- prove \
     --source Perl \
     --source pgTAP \
     -I lib \
+    t/critic.t \
+    t/flow.sh \
     t/js.t \
+    t/web.js \
+    t/selenium.js \
+    t/create_test_db.t \
     t/pgtap/* \
     t/pgtap/unused-tags/* \
     t/script/*.t \

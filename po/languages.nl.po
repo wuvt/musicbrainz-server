@@ -1,12 +1,13 @@
 # 
 # Translators:
 # Maurits Meulenbelt <email address hidden>, 2012
-# Maurits Meulenbelt <email address hidden>, 2013-2016
+# Maurits Meulenbelt <email address hidden>, 2013-2017
+# Nathan Follens, 2017
 # Nikolai Prokoschenko <email address hidden>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: MusicBrainz\n"
-"PO-Revision-Date: 2016-11-19 14:47+0000\n"
+"PO-Revision-Date: 2017-09-19 12:55+0000\n"
 "Last-Translator: Maurits Meulenbelt <email address hidden>\n"
 "Language-Team: Dutch (http://www.transifex.com/musicbrainz/musicbrainz/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -70,7 +71,7 @@ msgstr "Ainu"
 msgid "Akan"
 msgstr "Akaans"
 
-#. frequency:0 iso_code_3:akk
+#. frequency:1 iso_code_3:akk
 #: DB:language/name:11
 msgid "Akkadian"
 msgstr "Akkadisch"
@@ -620,7 +621,7 @@ msgstr "Oost-Arrernte"
 msgid "Efik"
 msgstr "Efikisch"
 
-#. frequency:0 iso_code_3:egy
+#. frequency:1 iso_code_3:egy
 #: DB:language/name:117
 msgid "Egyptian (Ancient)"
 msgstr "Egyptisch (Antiek)"
@@ -869,6 +870,11 @@ msgstr "Grieks, Antiek"
 #: DB:language/name:204
 msgid "Greenlandic"
 msgstr "Groenlands"
+
+#. frequency:1 iso_code_3:gos
+#: DB:language/name:2534
+msgid "Gronings"
+msgstr "Gronings"
 
 #. frequency:1 iso_code_3:grn
 #: DB:language/name:160
@@ -2518,7 +2524,7 @@ msgstr "Welsh"
 #. frequency:1 iso_code_3:are
 #: DB:language/name:820
 msgid "Western Arrarnta"
-msgstr "West- Arrarnta"
+msgstr "West-Arrarnta"
 
 #. frequency:1 iso_code_3:wal
 #: DB:language/name:452
@@ -2529,6 +2535,11 @@ msgstr "Wolaytta"
 #: DB:language/name:458
 msgid "Wolof"
 msgstr "Wolof"
+
+#. frequency:1 iso_code_3:wya
+#: DB:language/name:7181
+msgid "Wyandot"
+msgstr "Wyandot"
 
 #. frequency:1 iso_code_3:xho
 #: DB:language/name:460

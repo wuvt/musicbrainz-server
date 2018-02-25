@@ -118,7 +118,6 @@ sub external : Private
 {
     my ($self, $c, $form) = @_;
 
-    my @terms;
     my $parsed = _parse_filename($form->field('filename')->value());
     my $term_to_field = {
         artist => 'artist',
@@ -178,7 +177,10 @@ sub external : Private
 sub not_found : Private
 {
     my ($self, $c) = @_;
-    $c->stash( template => 'taglookup/not_found.tt' );
+    $c->stash(
+        current_view => 'Node',
+        component_path => 'taglookup/NotFound.js',
+    );
     $c->detach;
 }
 

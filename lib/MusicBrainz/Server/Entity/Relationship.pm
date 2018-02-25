@@ -17,8 +17,10 @@ extends 'MusicBrainz::Server::Entity';
 with  'MusicBrainz::Server::Entity::Role::Editable';
 with  'MusicBrainz::Server::Entity::Role::LastUpdate';
 
+sub entity_type { 'relationship' }
+
 has 'link_id' => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Int',
 );
 
@@ -28,13 +30,13 @@ has 'link' => (
 );
 
 has 'direction' => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Int',
     default => $DIRECTION_FORWARD
 );
 
 has 'entity0_id' => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Int',
 );
 
@@ -49,7 +51,7 @@ has 'entity0_credit' => (
 );
 
 has 'entity1_id' => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Int',
 );
 
@@ -64,7 +66,7 @@ has 'entity1_credit' => (
 );
 
 has 'link_order' => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Int',
 );
 
@@ -78,6 +80,12 @@ has '_verbose_phrase' => (
     is => 'ro',
     builder => '_build_verbose_phrase',
     lazy => 1
+);
+
+has '_grouping_phrase' => (
+    is => 'ro',
+    builder => '_build_grouping_phrase',
+    lazy => 1,
 );
 
 sub entity_is_orderable {
@@ -95,36 +103,52 @@ sub entity_is_orderable {
 
 sub _source_target_prop {
     my ($self, %opts) = @_;
-    my $is_target = $opts{is_target};
-    my $prop_base = $opts{prop_base} // $self;
+
+    my $prop_base = exists $opts{prop_base} ? $opts{prop_base} : $self;
     my $prop_suffix = $opts{prop_suffix};
     my $prop;
-    if (not $is_target) {
-        $prop = ($self->direction == $DIRECTION_FORWARD) ? 'entity0' : 'entity1';
-    } else {
+    if ($opts{is_target}) {
         $prop = ($self->direction == $DIRECTION_FORWARD) ? 'entity1' : 'entity0';
+    } else {
+        $prop = ($self->direction == $DIRECTION_FORWARD) ? 'entity0' : 'entity1';
     }
     $prop = $prop . '_' . $prop_suffix if $prop_suffix;
     return $prop_base->$prop;
 }
 
-sub source {
+has source => (
+    is => 'ro',
+    isa => 'Linkable',
+    lazy => 1,
+    builder => '_build_source',
+);
+
+sub _build_source {
     return shift->_source_target_prop();
 }
 
-sub source_type {
+has source_type => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    builder => '_build_source_type',
+);
+
+sub _build_source_type {
     my ($self) = @_;
     return $self->_source_target_prop(prop_suffix => 'type', prop_base => $self->link->type);
 }
 
-sub source_cardinality {
-    my ($self) = @_;
-    return $self->_source_target_prop(prop_suffix => 'cardinality', prop_base => $self->link->type);
-}
+has source_credit => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    builder => '_build_source_credit',
+);
 
-sub source_credit {
+sub _build_source_credit {
     my ($self) = @_;
-    return $self->_source_target_prop(prop_suffix => 'credit');
+    return $self->_source_target_prop(prop_suffix => 'credit') // '';
 }
 
 sub source_key {
@@ -134,24 +158,40 @@ sub source_key {
         : $self->source->gid;
 }
 
-sub target {
+has target => (
+    is => 'ro',
+    isa => 'Linkable',
+    lazy => 1,
+    builder => '_build_target',
+);
+
+sub _build_target {
     my ($self) = @_;
     return $self->_source_target_prop(is_target => 1);
 }
 
-sub target_type {
+has target_type => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    builder => '_build_target_type',
+);
+
+sub _build_target_type {
     my ($self) = @_;
     return $self->_source_target_prop(is_target => 1, prop_suffix => 'type', prop_base => $self->link->type);
 }
 
-sub target_cardinality {
-    my ($self) = @_;
-    return $self->_source_target_prop(is_target => 1, prop_suffix => 'cardinality', prop_base => $self->link->type);
-}
+has target_credit => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    builder => '_build_target_credit',
+);
 
-sub target_credit {
+sub _build_target_credit {
     my ($self) = @_;
-    return $self->_source_target_prop(is_target => 1, prop_suffix => 'credit');
+    return $self->_source_target_prop(is_target => 1, prop_suffix => 'credit') // '';
 }
 
 sub target_key
@@ -195,6 +235,10 @@ sub extra_verbose_phrase_attributes
     return $self->_verbose_phrase->[1];
 }
 
+sub grouping_phrase { shift->_grouping_phrase->[0] }
+
+sub extra_grouping_phrase_attributes { shift->_grouping_phrase->[1] }
+
 sub _build_phrase {
     my ($self) = @_;
     $self->_interpolate(
@@ -209,27 +253,44 @@ sub _build_verbose_phrase {
     $self->_interpolate($self->link->type->l_long_link_phrase);
 }
 
+=method _build_grouping_phrase
+
+For ordered relationships (such as those in a series), builds a phrase with
+attributes removed, so that these relationships can remain grouped together
+under the same phrase in our relationships display, even if their attributes
+differ.
+
+=cut
+
+sub _build_grouping_phrase {
+    my ($self) = @_;
+    $self->_interpolate(
+        ($self->direction == $DIRECTION_FORWARD
+            ? $self->link->type->l_link_phrase
+            : $self->link->type->l_reverse_link_phrase),
+        ($self->link->type->orderable_direction > 0),
+    );
+}
+
 sub _interpolate {
-    my ($self, $phrase) = @_;
+    my ($self, $phrase, $for_grouping) = @_;
 
     my @attrs = $self->link->all_attributes;
     my %attrs;
     foreach my $attr (@attrs) {
         my $name = lc $attr->type->root->name;
 
-        if (exists $attrs{$name}) {
-            push @{$attrs{$name}}, $attr->html;
-        } else {
-            $attrs{$name} = [ $attr->html ];
-        }
+        push @{$attrs{$name}}, $attr->html;
     }
     my %extra_attrs = %attrs;
-    my $type_is_orderable = $self->link->type->orderable_direction > 0;
 
-    # Ordered relationships in a series should all share the same link phrase,
-    # even if their attributes differ, so that they remain grouped together
-    # in the relationships display.
-    %attrs = () if $type_is_orderable;
+    # In order to keep relationships grouped together under the same link
+    # phrase, set %attrs (which contains the replacement values) to (). Now,
+    # all attributes will be replaced with the empty string in the phrase,
+    # and moved to @extra_attrs so that they can appear in a comma-separated
+    # list after the relationship target link. (Normally, @extra_attrs only
+    # contains attributes which don't appear in the phrase at all.)
+    %attrs = () if $for_grouping;
 
     my $replace_attrs = sub {
         my ($name, $alt) = @_;
@@ -237,7 +298,7 @@ sub _interpolate {
         # placeholders for entity names which are processed elsewhere
         return "{$name}" if $name eq "entity0" || $name eq "entity1";
 
-        delete $extra_attrs{$name} unless $type_is_orderable;
+        delete $extra_attrs{$name} unless $for_grouping;
         if (!$alt) {
             return '' unless exists $attrs{$name};
             return comma_list(@{ $attrs{$name} });
@@ -290,9 +351,11 @@ around TO_JSON => sub {
         verbosePhrase   => $self->verbose_phrase,
     };
 
-    $json->{beginDate} = $link->begin_date->is_empty ? undef : partial_date_to_hash($link->begin_date);
-    $json->{endDate} = $link->end_date->is_empty ? undef : partial_date_to_hash($link->end_date);
+    $json->{begin_date} = $link->begin_date->is_empty ? undef : partial_date_to_hash($link->begin_date);
+    $json->{end_date} = $link->end_date->is_empty ? undef : partial_date_to_hash($link->end_date);
     $json->{direction} = 'backward' if $self->direction == $DIRECTION_BACKWARD;
+
+    $self->add_linked_entity('link_type', $link->type_id, $link->type);
 
     return $json;
 };

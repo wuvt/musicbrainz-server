@@ -19,7 +19,7 @@ sub BUILD {
 
     $self->_connection(Redis->new(
         encoding => undef,
-        reconnect => 60,
+        reconnect => 5,
         server => $args->{server},
     ));
 
@@ -127,6 +127,12 @@ sub disconnect {
     my ($self) = @_;
 
     $self->_connection->quit;
+}
+
+sub clear {
+    my ($self) = @_;
+
+    $self->_connection->flushdb;
 }
 
 __PACKAGE__->meta->make_immutable;

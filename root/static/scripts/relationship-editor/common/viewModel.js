@@ -3,7 +3,14 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('lodash');
+
+const MB = require('../../common/MB');
+const parseDate = require('../../common/utility/parseDate');
 const request = require('../../common/utility/request');
+const fields = require('./fields');
 
 (function (RE) {
 
@@ -20,7 +27,6 @@ const request = require('../../common/utility/request');
 
     RE.exportTypeInfo = _.once(function (typeInfo, attrInfo) {
         MB.typeInfo = typeInfo;
-        MB.attrInfo = attrInfo;
 
         MB.typeInfoByID = _(typeInfo).values().flatten().transform(mapItems, {}).value();
         MB.attrInfoByID = _(attrInfo).values().transform(mapItems, {}).value();
@@ -47,10 +53,10 @@ const request = require('../../common/utility/request');
             if (type0 !== type1) {
                 (MB.allowedRelations[type1] = MB.allowedRelations[type1] || []).push(type0);
             }
-        }).value();
+        });
 
         // Sort each list of types alphabetically.
-        _(MB.allowedRelations).values().invoke('sort').value();
+        _(MB.allowedRelations).values().invokeMap('sort').value();
 
         _.each(MB.attrInfoByID, function (attr) {
             attr.root = MB.attrInfoByID[attr.rootID];
@@ -58,22 +64,19 @@ const request = require('../../common/utility/request');
     });
 
 
-    RE.ViewModel = aclass({
+    class ViewModel {
 
-        relationshipClass: RE.fields.Relationship,
-        activeDialog: ko.observable(),
-
-        init: function (options) {
+        constructor(options) {
             this.source = options.source;
             this.uniqueID = _.uniqueId("relationship-editor-");
             this.cache = {};
-        },
+        }
 
-        getRelationship: function (data, source) {
+        getRelationship(data, source) {
             return MB.getRelationship(data, source);
-        },
+        }
 
-        removeRelationship: function (relationship) {
+        removeRelationship(relationship) {
             if (relationship.added()) {
                 relationship.remove();
             } else if (relationship.removed()) {
@@ -84,14 +87,21 @@ const request = require('../../common/utility/request');
                 }
                 relationship.removed(true);
             }
-        },
+        }
 
-        _sortedRelationships: function (relationships, source) {
+        _sortedRelationships(relationships, source) {
             return relationships
                 .sortBy(function (r) { return r.lowerCaseTargetName(source) })
                 .sortBy("linkOrder");
         }
+    }
+
+    _.assign(ViewModel.prototype, {
+        relationshipClass: fields.Relationship,
+        activeDialog: ko.observable(),
     });
+
+    exports.ViewModel = ViewModel;
 
 }(MB.relationshipEditor = MB.relationshipEditor || {}));
 
@@ -102,13 +112,19 @@ MB.initRelationshipEditors = function (args) {
 
     // XXX used by series edit form
     sourceData.gid = sourceData.gid || _.uniqueId("tmp-");
+    sourceData.uniqueID = sourceData.id || 'source';
     MB.sourceEntityGID = sourceData.gid;
     MB.sourceEntity = MB.entity(sourceData);
 
     var source = MB.sourceEntity;
     var vmArgs = { source: source, formName: args.formName };
 
-    MB.relationshipEditor.GenericEntityViewModel(vmArgs);
+    let {vmClass} = args;
+    if (!vmClass) {
+        vmClass = require('../generic').GenericEntityViewModel;
+    }
+
+    new vmClass(vmArgs);
 
     var externalLinksEditor = $('#external-links-editor-container')[0];
     if (externalLinksEditor) {
@@ -148,14 +164,14 @@ MB.getRelationship = function (data, source) {
 
     if (viewModel) {
         if (data.id) {
-            var cacheKey = _.pluck(data.entities, "entityType").concat(data.id).join("-");
+            var cacheKey = _.map(data.entities, "entityType").concat(data.id).join("-");
             var cached = viewModel.cache[cacheKey];
 
             if (cached) {
                 return cached;
             }
         }
-        var relationship = viewModel.relationshipClass(data, source, viewModel);
+        var relationship = new viewModel.relationshipClass(data, source, viewModel);
         return data.id ? (viewModel.cache[cacheKey] = relationship) : relationship;
     }
 };
@@ -231,8 +247,8 @@ function addRelationshipsFromQueryString(source) {
         var data = {
             target: target,
             linkTypeID: typeInfo ? typeInfo.id : null,
-            beginDate: parseDateString(rel.begin_date || ''),
-            endDate: parseDateString(rel.end_date || ''),
+            begin_date: parseDate(rel.begin_date || ''),
+            end_date: parseDate(rel.end_date || ''),
             ended: !!Number(rel.ended),
             direction: rel.direction,
             linkOrder: Number(rel.link_order) || 0
@@ -274,8 +290,6 @@ function addRelationshipsFromQueryString(source) {
 
 var uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[345][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-var dateRegex = /(?:-|([0-9]{4}))(?:-(?:-|(0[1-9]|1[0-2]))(?:-(?:-|([0-2][1-9]|3[0-1])))?)?/;
-
 function parseQueryString(queryString) {
     var queryStringRegex = /(?:\\?|&)([A-z0-9\-_.]+)=([^&]+)/g;
     var fields = {};
@@ -295,18 +309,6 @@ function parseQueryString(queryString) {
     }
 
     return fields;
-}
-
-function parseDateString(string) {
-    var match = string.match(dateRegex);
-    if (match) {
-        return {
-            year: match[1] || null,
-            month: match[2] || null,
-            day: match[3] || null
-        };
-    }
-    return null;
 }
 
 function editorMayEditTypes(type0, type1) {

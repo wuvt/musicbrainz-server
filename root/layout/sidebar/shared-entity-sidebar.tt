@@ -3,9 +3,12 @@
 [%~ WRAPPER 'layout/sidebar.tt' ~%]
     [%~ content ~%]
 
-    [%~ IF entity_properties.ratings ~%]
-        [%~ INCLUDE "layout/sidebar/sidebar-rating.tt" entity=entity ~%]
-    [%~ END ~%]
+    [%~ IF entity_properties.ratings;
+            React.embed(c, 'layout/components/sidebar/SidebarRating', {
+                entity => entity,
+            });
+        END
+    ~%]
 
     [%~ IF entity_properties.tags && c.action.name != 'tags' ~%]
         [%~ INCLUDE "layout/sidebar/sidebar-tags.tt" entity=entity tags=top_tags
@@ -13,7 +16,19 @@
         -%]
     [%~ END ~%]
 
-    [%~ INCLUDE "layout/sidebar/sidebar-favicons.tt" source=entity UNLESS entity_type == 'url' ~%]
+    [%- IF entity_type != 'url';
+            React.embed(c, 'layout/components/ExternalLinks', {
+                empty => React.bool(1),
+            });
+        END;
+        IF entity.isa('MusicBrainz::Server::Entity::Release');
+            React.embed(c, 'layout/components/ExternalLinks', {
+                entity => entity.release_group,
+                empty => React.bool(0),
+                heading => l('Release group external links'),
+            });
+        END
+    -%]
 
     <h2 class="editing">[%~ l('Editing') ~%]</h2>
     <ul class="links">
@@ -125,6 +140,6 @@
     [%~ INCLUDE "layout/sidebar/sidebar-licenses.tt" source=entity ~%]
 
     [%~ IF entity.last_updated ~%]
-        <p class="lastupdate">[%~ l('Last updated on {date}', { date => UserDate.format(entity.last_updated) }) ~%]</p>
+        <p class="lastupdate">[%~ l('Last updated on {date}', { date => UserDate.format_pg_string(entity.last_updated) }) ~%]</p>
     [%~ END ~%]
 [%~ END ~%]

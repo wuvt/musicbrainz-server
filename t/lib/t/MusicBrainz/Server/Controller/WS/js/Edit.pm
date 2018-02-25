@@ -8,6 +8,7 @@ use t::MusicBrainz::Server::Controller::RelationshipEditor qw(
 use utf8;
 use JSON;
 use MusicBrainz::Server::Constants qw(
+    $EDIT_RECORDING_EDIT
     $EDIT_RELEASE_CREATE
     $EDIT_RELEASE_EDIT
     $EDIT_RELEASE_ADDRELEASELABEL
@@ -19,6 +20,8 @@ use MusicBrainz::Server::Constants qw(
     $EDIT_RELATIONSHIP_CREATE
     $EDIT_RELATIONSHIP_EDIT
     $EDIT_RELATIONSHIP_DELETE
+    $WS_EDIT_RESPONSE_OK
+    $WS_EDIT_RESPONSE_NO_CHANGES
 );
 use MusicBrainz::Server::Test qw( capture_edits post_json );
 use Test::More;
@@ -130,7 +133,7 @@ test 'previewing/creating/editing a release group and release' => sub {
 
     $response = from_json($mech->content);
 
-    is($response->{edits}->[0]->{message}, 'OK', 'ws response says OK');
+    is($response->{edits}->[0]->{response}, $WS_EDIT_RESPONSE_OK, 'ws response says OK');
 
     my $release_group_id = $response->{edits}->[0]->{entity}->{id};
     $release_edits->[0]->{release_group_id} = $release_group_id;
@@ -166,7 +169,7 @@ test 'previewing/creating/editing a release group and release' => sub {
         entity => {
             scriptID => 112,
             name => 'Vision Creation Newsun',
-            unaccentedName => undef,
+            unaccented_name => undef,
             statusID => 1,
             barcode => '4943674011582',
             packagingID => undef,
@@ -174,47 +177,57 @@ test 'previewing/creating/editing a release group and release' => sub {
             entityType => 'release',
             id => ignore(),
             languageID => 486,
+            length => 0,
             gid => ignore(),
-            annotation => '',
             artist => 'Boredoms plus a fake artist and a trailing join phrase',
             artistCredit => [
                 {
                     joinPhrase => ' plus ',
                     artist => {
-                        annotation => '',
                         area => undef,
-                        begin_date => '',
+                        begin_area_id => undef,
+                        begin_date => undef,
                         comment => '',
                         editsPending => JSON::false,
-                        end_date => '',
+                        end_area_id => undef,
+                        end_date => undef,
                         ended => JSON::false,
                         entityType => 'artist',
+                        gender_id => undef,
                         gid => '0798d15b-64e2-499f-9969-70167b1d8617',
                         id => 39282,
                         name => 'Boredoms',
-                        sortName => 'Boredoms',
-                        unaccentedName => undef,
+                        rating => undef,
+                        rating_count => 0,
+                        sort_name => 'Boredoms',
                         typeID => undef,
+                        unaccented_name => undef,
+                        user_rating => undef,
                     },
                     name => 'Boredoms',
                 },
                 {
                     joinPhrase => ' and a trailing join phrase',
                     artist => {
-                        annotation => '',
                         area => undef,
-                        begin_date => '',
+                        begin_area_id => undef,
+                        begin_date => undef,
                         comment => '',
                         editsPending => JSON::false,
-                        end_date => '',
+                        end_area_id => undef,
+                        end_date => undef,
                         ended => JSON::false,
                         entityType => 'artist',
+                        gender_id => undef,
                         gid => '1e6092a0-73d3-465a-b06a-99c81f7bec37',
                         id => 66666,
                         name => 'a fake artist',
-                        sortName => 'a fake artist',
-                        unaccentedName => undef,
+                        rating => undef,
+                        rating_count => 0,
+                        sort_name => 'a fake artist',
                         typeID => undef,
+                        unaccented_name => undef,
+                        user_rating => undef,
                     },
                     name => 'a fake artist',
                 }
@@ -222,28 +235,31 @@ test 'previewing/creating/editing a release group and release' => sub {
             events => [
                 {
                     country => {
-                        annotation => '',
-                        begin_date => '',
+                        begin_date => undef,
                         code => 'JP',
                         comment => '',
                         containment => [],
                         editsPending => JSON::false,
-                        end_date => '',
+                        end_date => undef,
                         ended => JSON::false,
                         entityType => 'area',
                         gid => '2db42837-c832-3c27-b4a3-08198f75693c',
                         id => 107,
                         name => 'Japan',
-                        unaccentedName => undef,
+                        unaccented_name => undef,
                         typeID => 1,
                         iso_3166_1_codes => ['JP'],
                     },
-                    date => '1999-10-27'
+                    date => {
+                        day => 27,
+                        month => 10,
+                        year => 1999,
+                    },
                 }
             ],
             editsPending => JSON::false,
         },
-        message => 'OK',
+        response => $WS_EDIT_RESPONSE_OK,
     }, 'ws response contains serialized release data');
 
     my $release_id = $response->{edits}->[0]->{entity}->{id};
@@ -393,7 +409,7 @@ test 'previewing/creating/editing a release group and release' => sub {
                 position => 1,
                 id => $medium2_id - 1
             },
-            message => 'OK',
+            response => $WS_EDIT_RESPONSE_OK,
         },
         {
             edit_type => $EDIT_MEDIUM_CREATE,
@@ -401,7 +417,7 @@ test 'previewing/creating/editing a release group and release' => sub {
                 position => 2,
                 id => $medium1_id + 1
             },
-            message => 'OK',
+            response => $WS_EDIT_RESPONSE_OK,
         }
     ], 'ws response contains new medium info');
 
@@ -430,6 +446,13 @@ test 'previewing/creating/editing a release group and release' => sub {
     $c->model('Recording')->load($medium2->all_tracks);
 
     $medium_edits = [
+        {
+            # No changes. Shouldn't cause an error, but should be indicated
+            # in the response.
+            edit_type   => $EDIT_RECORDING_EDIT,
+            name        => $medium2->tracks->[0]->recording->name,
+            to_edit     => $medium2->tracks->[0]->recording->gid,
+        },
         {
             edit_type   => $EDIT_MEDIUM_DELETE,
             medium      => $medium1_id,
@@ -477,6 +500,16 @@ test 'previewing/creating/editing a release group and release' => sub {
             makeVotable => 1,
         }));
     } $c;
+
+    $response = from_json($mech->content);
+
+    cmp_deeply($response, {
+        edits => [
+            {response => $WS_EDIT_RESPONSE_NO_CHANGES},
+            {edit_type => 53, response => $WS_EDIT_RESPONSE_OK},
+            {edit_type => 52, response => $WS_EDIT_RESPONSE_OK},
+        ],
+    });
 
     isa_ok($edits[0], 'MusicBrainz::Server::Edit::Medium::Delete', 'medium 1 edit');
     isa_ok($edits[1], 'MusicBrainz::Server::Edit::Medium::Edit', 'medium 2 edit');
@@ -601,8 +634,8 @@ test 'adding a relationship' => sub {
             { gid => '745c079d-374e-4436-9448-da92dedef3ce' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1999, month => 1, day => 1 },
-        endDate     => { year => 1999, month => 2, day => undef },
+        begin_date   => { year => 1999, month => 1, day => 1 },
+        end_date     => { year => 1999, month => 2, day => undef },
     } ];
 
     my @edits = capture_edits {
@@ -659,8 +692,8 @@ test 'adding a relationship with an invalid date' => sub {
             { gid => '745c079d-374e-4436-9448-da92dedef3ce' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1994, month => 2, day => 29 },
-        endDate     => { year => 1999, month => 2, day => undef },
+        begin_date   => { year => 1994, month => 2, day => 29 },
+        end_date     => { year => 1999, month => 2, day => undef },
     } ];
 
     my @edits = capture_edits {
@@ -696,8 +729,8 @@ test 'editing a relationship' => sub {
             { gid => 'e2a083a9-9942-4d6e-b4d2-8397320b95f7' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1999, month => 1, day => 1 },
-        endDate     => { year => 2009, month => 9, day => 9 },
+        begin_date   => { year => 1999, month => 1, day => 1 },
+        end_date     => { year => 2009, month => 9, day => 9 },
         ended       => 1,
     } ];
 
@@ -761,8 +794,8 @@ test 'editing a relationship with an unchanged attribute' => sub {
             { gid => 'e2a083a9-9942-4d6e-b4d2-8397320b95f7' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1999, month => 1, day => 1 },
-        endDate     => { year => 2009, month => 9, day => 9 },
+        begin_date   => { year => 1999, month => 1, day => 1 },
+        end_date     => { year => 2009, month => 9, day => 9 },
         ended       => 1,
     } ];
 
@@ -825,8 +858,8 @@ test 'removing an attribute from a relationship' => sub {
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
         attributes  => [{%$guitar_attribute, removed => 1}],
-        beginDate   => { year => undef, month => undef, day => undef },
-        endDate     => { year => undef, month => undef, day => undef },
+        begin_date   => { year => undef, month => undef, day => undef },
+        end_date     => { year => undef, month => undef, day => undef },
         ended       => 0,
     } ];
 
@@ -1005,8 +1038,8 @@ test 'Duplicate relationships are ignored' => sub {
             { gid => '745c079d-374e-4436-9448-da92dedef3ce' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1999, month => 1, day => 1 },
-        endDate     => { year => 1999, month => 2, day => undef },
+        begin_date   => { year => 1999, month => 1, day => 1 },
+        end_date     => { year => 1999, month => 2, day => undef },
     } ];
 
     my @edits = capture_edits {
@@ -1023,7 +1056,7 @@ test 'Duplicate relationships are ignored' => sub {
     is(scalar(@edits), 0);
 };
 
-test 'undef relationship beginDate/endDate fields are ignored (MBS-8317)' => sub {
+test 'undef relationship begin_date/end_date fields are ignored (MBS-8317)' => sub {
     my $test = shift;
     my ($c, $mech) = ($test->c, $test->mech);
 
@@ -1040,8 +1073,8 @@ test 'undef relationship beginDate/endDate fields are ignored (MBS-8317)' => sub
             { gid => '745c079d-374e-4436-9448-da92dedef3ce' },
             { gid => '54b9d183-7dab-42ba-94a3-7388a66604b8' }
         ],
-        beginDate   => { year => 1999, month => undef, day => undef },
-        endDate     => { year => 1999, month => undef, day => undef },
+        begin_date   => { year => 1999, month => undef, day => undef },
+        end_date     => { year => 1999, month => undef, day => undef },
     };
 
     my @edits = capture_edits {
@@ -1052,8 +1085,8 @@ test 'undef relationship beginDate/endDate fields are ignored (MBS-8317)' => sub
         edit_type   => $EDIT_RELATIONSHIP_EDIT,
         id          => $edits[0]->entity_id,
         linkTypeID  => 148,
-        beginDate   => undef
-        # implied undef endDate
+        begin_date   => undef
+        # implied undef end_date
     };
 
     @edits = capture_edits {
@@ -1233,7 +1266,7 @@ test 'Releases can be added without any mediums' => sub {
     isa_ok($edits[0], 'MusicBrainz::Server::Edit::ReleaseGroup::Create', 'release group created');
 
     $response = from_json($mech->content);
-    is($response->{edits}->[0]->{message}, 'OK', 'ws response says OK');
+    is($response->{edits}->[0]->{response}, $WS_EDIT_RESPONSE_OK, 'ws response says OK');
 
     my $release_group_id = $response->{edits}->[0]->{entity}->{id};
     $release_edits->[0]->{release_group_id} = $release_group_id;

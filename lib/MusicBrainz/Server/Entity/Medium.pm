@@ -7,6 +7,8 @@ use MusicBrainz::Server::Translation qw( l );
 extends 'MusicBrainz::Server::Entity';
 with 'MusicBrainz::Server::Entity::Role::Editable';
 
+sub entity_type { 'medium' }
+
 has 'position' => (
     is => 'rw',
     isa => 'Int'
@@ -282,6 +284,7 @@ around TO_JSON => sub {
         cdtocs      => [map { $_->cdtoc->toc } $self->all_cdtocs],
         format      => $self->l_format_name,
         formatID    => $self->format_id,
+        name        => $self->name,
         position    => $self->position,
     };
 

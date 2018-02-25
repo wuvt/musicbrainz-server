@@ -168,7 +168,7 @@ sub _search
     my ($self, $c, $entity) = @_;
 
     my $result = $c->model('WebService')->xml_search($entity, $c->stash->{args});
-    if (DBDefs->LUCENE_X_ACCEL_REDIRECT && exists $result->{redirect_url}) {
+    if (DBDefs->SEARCH_X_ACCEL_REDIRECT && exists $result->{redirect_url}) {
         $c->res->headers->header(
             'X-Accel-Redirect' => $result->{redirect_url}
         );
@@ -443,6 +443,7 @@ sub linked_works
     my ($self, $c, $stash, $works) = @_;
 
     $c->model('ISWC')->load_for_works(@$works);
+    $c->model('Language')->load_for_works(@$works);
 
     $self->_tags_and_ratings($c, 'Work', $works, $stash);
     $self->_aliases($c, 'Work', $works, $stash);

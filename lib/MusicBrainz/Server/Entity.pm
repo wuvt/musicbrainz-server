@@ -3,6 +3,8 @@ package MusicBrainz::Server::Entity;
 use Moose;
 use MusicBrainz::Server::Data::Utils qw( ref_to_type );
 
+with 'MusicBrainz::Server::Entity::Role::LinkedEntities';
+
 has 'id' => (
     is => 'rw',
     isa => 'Int'
@@ -16,8 +18,6 @@ sub TO_JSON {
     return {
         entityType => $entity_type,
         id => $self->id,
-        $self->can('name') ? (name => $self->name) : (),
-        $self->can('unaccented_name') ? (unaccentedName => $self->unaccented_name) : (),
     };
 }
 

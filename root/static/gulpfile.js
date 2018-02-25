@@ -1,12 +1,13 @@
 const canonicalJSON = require('canonical-json');
+const EventEmitter = require('events');
 const fs = require('fs');
 const gulp = require('gulp');
 const less = require('gulp-less');
 const rev = require('gulp-rev');
 const streamify = require('gulp-streamify');
 const _ = require('lodash');
+const mergeStream = require('merge-stream');
 const path = require('path');
-const po2json = require('po2json');
 const Q = require('q');
 const shellQuote = require('shell-quote');
 const shell = require('shelljs');
@@ -14,9 +15,16 @@ const File = require('vinyl');
 const source = require('vinyl-source-stream');
 const yarb = require('yarb');
 
-const {findObjectFile} = require('../server/gettext');
+const poFile = require('../server/gettext/poFile');
+const DBDefs = require('./scripts/common/DBDefs');
 
-const CACHED_BUNDLES = {};
+// This may need to be increased when a new bundle is added, to silence
+// warnings of the form "Possible EventEmitter memory leak detected."
+EventEmitter.defaultMaxListeners = 32;
+
+process.env.NODE_ENV = DBDefs.DEVELOPMENT_SERVER ? 'development' : 'production';
+
+const SCRIPT_BUNDLES = {};
 const CHECKOUT_DIR = path.resolve(__dirname, '../../');
 const PO_DIR = path.resolve(CHECKOUT_DIR, 'po');
 const ROOT_DIR = path.resolve(CHECKOUT_DIR, 'root');
@@ -26,16 +34,24 @@ const BUILD_DIR = process.env.MBS_STATIC_BUILD_DIR || path.resolve(STATIC_DIR, '
 const SCRIPTS_DIR = path.resolve(STATIC_DIR, 'scripts');
 const IMAGES_DIR = path.resolve(STATIC_DIR, 'images');
 
-const revManifest = {};
+const revManifestContents = {};
 
-const JED_OPTIONS_EN = {
-  domain: 'mb_server',
-  locale_data: {
-    mb_server: {'': {}},
-  },
-};
+// This file must exist for any task that runs.
+const REV_MANIFEST_PATH = path.join(BUILD_DIR, 'rev-manifest.json');
+if (!fs.existsSync(REV_MANIFEST_PATH)) {
+  fs.writeFileSync(REV_MANIFEST_PATH, '{}');
+}
 
-function writeResource(stream) {
+const revManifestBundle = runYarb('rev-manifest.js', function (b) {
+  b.expose(path.join(BUILD_DIR, 'rev-manifest.json'), 'rev-manifest.json');
+});
+
+const JED_DATA_PATH = path.join(SCRIPTS_DIR, 'common/i18n/jedData.json');
+const jedDataBundle = runYarb('common/i18n/jedData.json', function (b) {
+  b.expose(JED_DATA_PATH, 'jed-data');
+});
+
+function writeResources(stream, writeManifest = true) {
   var deferred = Q.defer();
 
   stream
@@ -51,40 +67,75 @@ function writeResource(stream) {
       transformer: {
         parse: JSON.parse,
         stringify: function (contents) {
-          return canonicalJSON(_.assign(revManifest, contents));
+          return canonicalJSON(_.assign(revManifestContents, contents));
         },
       },
     }))
     .pipe(gulp.dest(BUILD_DIR))
     .on('finish', function () {
-      deferred.resolve();
+      if (writeManifest) {
+        writeResources(bundleScripts(revManifestBundle, 'rev-manifest.js'), false)
+          .done(deferred.resolve);
+      } else {
+        deferred.resolve();
+      }
     });
 
   return deferred.promise;
 }
 
-function buildStyles(callback) {
-  return writeResource(
-    gulp.src([
-      path.resolve(STYLES_DIR, 'common.less'),
-      path.resolve(STYLES_DIR, 'icons.less'),
-      path.resolve(STYLES_DIR, 'statistics.less'),
-    ], {base: STATIC_DIR})
-    .pipe(less({
-      rootpath: '/static/',
-      relativeUrls: true,
-      plugins: [
-        new (require('less-plugin-clean-css'))({compatibility: 'ie8'})
-      ]
-    }))
-  ).done(callback);
+const STYLE_GLOBS = [
+  'common.less',
+  'icons.less',
+  'statistics.less',
+];
+
+function buildStyles() {
+  return gulp.src(
+    STYLE_GLOBS.map(x => path.resolve(STYLES_DIR, x)),
+    {base: STATIC_DIR}
+  ).pipe(less({
+    rootpath: '/static/',
+    relativeUrls: true,
+    plugins: [
+      new (require('less-plugin-clean-css'))({compatibility: 'ie8'})
+    ]
+  }));
 }
 
-function transformBundle(bundle) {
-  const DBDefs = require('./scripts/common/DBDefs');
+function bundleScripts(bundle, name) {
+  return bundle
+    .bundle()
+    .on('error', console.error)
+    .pipe(source('scripts/' + name));
+}
+
+function runYarb(resourceName, vinyl, callback) {
+  if (!vinyl || typeof vinyl === 'function') {
+    callback = vinyl;
+    vinyl = new File({
+      base: STATIC_DIR,
+      path: path.resolve(SCRIPTS_DIR, resourceName),
+    });
+    vinyl.contents = fs.createReadStream(vinyl.path);
+  }
+
+  var bundle = yarb(vinyl, {
+    debug: DBDefs.DEVELOPMENT_SERVER,
+  });
 
   bundle.transform('babelify');
   bundle.transform('envify', {global: true});
+  bundle.transform('insert-module-globals', {
+    global: true,
+    vars: {
+      L: function (file) {
+        if (/leaflet\.markercluster/.test(file)) {
+          return "require('leaflet/dist/leaflet-src')";
+        }
+      },
+    },
+  });
 
   if (!DBDefs.DEVELOPMENT_SERVER) {
     bundle.transform('uglifyify', {
@@ -101,47 +152,12 @@ function transformBundle(bundle) {
     });
   }
 
-  return bundle;
-}
-
-function runYarb(resourceName, callback) {
-  const DBDefs = require('./scripts/common/DBDefs');
-
-  if (CACHED_BUNDLES[resourceName]) {
-    return CACHED_BUNDLES[resourceName];
-  }
-
-  const vinyl = new File({
-    base: STATIC_DIR,
-    path: path.resolve(SCRIPTS_DIR, resourceName),
-  });
-  vinyl.contents = fs.createReadStream(vinyl.path);
-
-  var bundle = transformBundle(yarb(vinyl, {
-    debug: DBDefs.DEVELOPMENT_SERVER,
-  }));
-
   if (callback) {
     callback(bundle);
   }
 
-  CACHED_BUNDLES[resourceName] = bundle;
+  SCRIPT_BUNDLES[resourceName] = bundle;
   return bundle;
-}
-
-function bundleScripts(b, resourceName) {
-  return b.bundle().on('error', console.log).pipe(source('scripts/' + resourceName));
-}
-
-function writeScript(b, resourceName) {
-  return writeResource(bundleScripts(b, resourceName));
-}
-
-function createLangVinyl(lang, jedOptions) {
-  return new File({
-    path: path.resolve(SCRIPTS_DIR, `jed-${lang}.js`),
-    contents: new Buffer('module.exports = ' + canonicalJSON(jedOptions) + ';\n'),
-  });
 }
 
 function langToPosix(lang) {
@@ -150,143 +166,151 @@ function langToPosix(lang) {
   });
 }
 
-function buildScripts() {
-  const DBDefs = require('./scripts/common/DBDefs');
+const commonBundle = runYarb('common.js', function (b) {
+  b.external(revManifestBundle);
+  b.external(jedDataBundle);
 
-  process.env.NODE_ENV = DBDefs.DEVELOPMENT_SERVER ? 'development' : 'production';
-
-  var commonBundle = runYarb('common.js');
-
-  // The client JS needs access to rev-manifest.json too. We obviously can't
-  // know its contents yet. So, create an empty Vinyl and expose this as the
-  // global ID "rev-manifest.json" for modules to require(). Later, once the
-  // `revManifest` object is populated, we can set the contents buffer on this
-  // currently-empty Vinyl.
-  const manifestContents = new File({
-    path: path.resolve(BUILD_DIR, 'rev-manifest.json'),
-    contents: null,
-  });
-
-  const manifestBundle = runYarb('rev-manifest.js');
-  manifestBundle.expose(manifestContents, 'rev-manifest.json');
-  commonBundle.external(manifestBundle);
-
-  _(DBDefs.MB_LANGUAGES || '')
-    .split(/\s+/)
-    .compact()
-    .without('en')
-    .map(langToPosix)
-    .transform(function (result, lang) {
-      var srcPo = shellQuote.quote([findObjectFile('mb_server', lang, 'po')]);
-      var tmpPo = shellQuote.quote([path.resolve(PO_DIR, `javascript.${lang}.po`)]);
-
-      // msggrep's -N option supports wildcards which use fnmatch internally.
-      // The '*' cannot match path separators, so we must generate a list of
-      // possible terminal paths.
-      let scriptsDir = shellQuote.quote([SCRIPTS_DIR]);
-      let nestedDirs = shell.exec(`find ${scriptsDir} -type d`, {silent: true}).output.split('\n');
-      let msgLocations = _(nestedDirs)
-        .compact()
-        .map(dir => '-N ' + shellQuote.quote(['..' + dir.replace(CHECKOUT_DIR, '') + '/*.js']))
-        .join(' ');
-
-      // Create a temporary .po file containing only the strings used by root/static/scripts.
-      shell.exec(`msggrep ${msgLocations} ${srcPo} -o ${tmpPo}`);
-
-      result[lang] = po2json.parseFileSync(tmpPo, {format: 'jed1.x', domain: 'mb_server'});
-
-      fs.unlinkSync(tmpPo);
-    }, {})
-    .assign({en: JED_OPTIONS_EN})
-    .each(function (jedOptions, lang) {
-      var bundle = transformBundle(yarb().expose(createLangVinyl(lang, jedOptions), 'jed-data'));
-      commonBundle.external(bundle);
-      writeScript(bundle, 'jed-' + lang + '.js');
+  // Map DBDefs.js to DBDefs-client.js on disk. (The actual requires have to
+  // remain constant for the node renderer.)
+  b.require(
+    new File({
+      path: path.resolve(SCRIPTS_DIR, 'common', 'DBDefs.js'),
+      contents: fs.readFileSync(
+        path.resolve(SCRIPTS_DIR, 'common', 'DBDefs-client.js')),
     })
-    .value();
+  );
+});
 
-  var editBundle = runYarb('edit.js', function (b) {
-    b.external(commonBundle);
+const GETTEXT_DOMAINS = [
+  'attributes',
+  'countries',
+  'instrument_descriptions',
+  'instruments',
+  'languages',
+  'mb_server',
+  'relationships',
+  'scripts',
+  'statistics',
+];
+
+_(DBDefs.MB_LANGUAGES || '')
+  .split(/\s+/)
+  .compact()
+  .without('en')
+  .map(langToPosix)
+  .each(function (lang) {
+    // We handle the mb_server domain specially by filtering out strings that
+    // don't appear in any JavaScript file.
+    var srcPo = shellQuote.quote([poFile.find('mb_server', lang)]);
+    var tmpPo = shellQuote.quote([path.resolve(PO_DIR, `javascript.${lang}.po`)]);
+
+    // msggrep's -N option supports wildcards which use fnmatch internally.
+    // The '*' cannot match path separators, so we must generate a list of
+    // possible terminal paths.
+    let scriptsDir = shellQuote.quote([SCRIPTS_DIR]);
+    let nestedDirs = shell.exec(`find ${scriptsDir} -type d`, {silent: true}).output.split('\n');
+    let msgLocations = _(nestedDirs)
+      .compact()
+      .map(dir => '-N ' + shellQuote.quote(['..' + dir.replace(CHECKOUT_DIR, '') + '/*.js']))
+      .join(' ');
+
+    // Create a temporary .po file containing only the strings used by root/static/scripts.
+    shell.exec(`msggrep ${msgLocations} ${srcPo} -o ${tmpPo}`);
+
+    GETTEXT_DOMAINS.forEach(function (domain) {
+      let jedData;
+
+      if (domain === 'mb_server') {
+        jedData = poFile.load('javascript', lang, 'mb_server');
+        fs.unlinkSync(tmpPo);
+      } else {
+        jedData = poFile.load(domain, lang);
+        jedData.domain = 'mb_server';
+      }
+
+      const langString = JSON.stringify(lang);
+      const source = `
+        const jedData = require('jed-data');
+        const newData = ${JSON.stringify(jedData)};
+        if (jedData[${langString}]) {
+          jedData[${langString}].locale_data.${domain} = newData.locale_data.${domain};
+        } else {
+          jedData[${langString}] = newData;
+        }
+        jedData.locale = ${langString};`;
+
+      const bundleName = `jed-${lang}-${domain}.js`;
+
+      const langVinyl = new File({
+        path: path.resolve(SCRIPTS_DIR, bundleName),
+        contents: new Buffer(source),
+      });
+
+      runYarb(bundleName, langVinyl, function (b) {
+        b.external(jedDataBundle);
+      });
+    });
   });
 
-  var editNotesReceivedBundle = runYarb('edit/notes-received.js', function (b) {
-    b.external(commonBundle);
-  });
+runYarb('area/places-map.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var guessCaseBundle = runYarb('guess-case.js', function (b) {
-    b.external(commonBundle);
-  });
+runYarb('debug.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var placeBundle = runYarb('place.js', function (b) {
-    b.external(editBundle).external(guessCaseBundle);
-  });
+const editBundle = runYarb('edit.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var releaseEditorBundle = runYarb('release-editor.js', function (b) {
-    b.external(commonBundle).external(editBundle);
-  });
+runYarb('edit/notes-received.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var seriesBundle = runYarb('series.js', function (b) {
-    b.external(editBundle).external(guessCaseBundle);
-  });
+const guessCaseBundle = runYarb('guess-case.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var statisticsBundle = runYarb('statistics.js', function (b) {
-    b.external(commonBundle);
-  });
+const placeMapBundle = runYarb('place/map.js', function (b) {
+  b.external(commonBundle);
+});
 
-  var timelineBundle = runYarb('timeline.js', function (b) {
-    b.external(commonBundle);
-  });
+runYarb('place.js', function (b) {
+  b.external(placeMapBundle).external(editBundle).external(guessCaseBundle);
+});
 
-  var urlBundle = runYarb('url.js', function (b) {
-    b.external(editBundle);
-  });
+runYarb('release-editor.js', function (b) {
+  b.external(commonBundle).external(editBundle);
+});
 
-  var votingBundle = runYarb('voting.js', function (b) {
-    b.external(commonBundle);
-  });
+runYarb('series.js', function (b) {
+  b.external(editBundle).external(guessCaseBundle);
+});
 
-  var workBundle = runYarb('work.js', function (b) {
-    b.external(editBundle).external(guessCaseBundle);
-  });
+runYarb('statistics.js', function (b) {
+  b.external(commonBundle);
+});
 
-  return Q.all([
-    writeScript(commonBundle, 'common.js'),
-    writeScript(editBundle, 'edit.js'),
-    writeScript(editNotesReceivedBundle, 'edit-notes-received.js'),
-    writeScript(guessCaseBundle, 'guess-case.js'),
-    writeScript(placeBundle, 'place.js'),
-    writeScript(releaseEditorBundle, 'release-editor.js'),
-    writeScript(seriesBundle, 'series.js'),
-    writeScript(statisticsBundle, 'statistics.js'),
-    writeScript(timelineBundle, 'timeline.js'),
-    writeScript(urlBundle, 'url.js'),
-    writeScript(votingBundle, 'voting.js'),
-    writeScript(workBundle, 'work.js'),
-    writeScript(runYarb('debug.js', function (b) {
-      b.external(commonBundle);
-    }), 'debug.js')
-  ]).then(function () {
-    manifestContents.contents = new Buffer(canonicalJSON(revManifest));
+runYarb('timeline.js', function (b) {
+  b.external(commonBundle);
+});
 
-    // Note that writeResource will change the contents of revManifest, and
-    // write a new rev-manifest.json, before we write our bundled version with
-    // the contents above. This is okay, because the client will never need
-    // to lookup "rev-manifest.js". It'll be included on every page by the
-    // server, which'll have access to the final rev-manifest.json on disk.
-    return writeScript(manifestBundle, 'rev-manifest.js');
-  });
-}
+runYarb('url.js', function (b) {
+  b.external(editBundle);
+});
 
-function buildImages() {
-  return Q.all([
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'entity/*'), {base: STATIC_DIR})),
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'icons/*'), {base: STATIC_DIR})),
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'image404-125.png'), {base: STATIC_DIR})),
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'layout/*'), {base: STATIC_DIR})),
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'licenses/*'), {base: STATIC_DIR})),
-    writeResource(gulp.src(path.join(IMAGES_DIR, 'logos/*'), {base: STATIC_DIR})),
-  ]);
-}
+runYarb('voting.js', function (b) {
+  b.external(commonBundle);
+});
+
+runYarb('work.js', function (b) {
+  b.external(editBundle).external(guessCaseBundle);
+});
+
+runYarb('commons-image.js', function (b) {
+  b.external(commonBundle);
+});
 
 gulp.task('watch', ['default'], function () {
   let watch = require('gulp-watch');
@@ -294,52 +318,88 @@ gulp.task('watch', ['default'], function () {
   watch(path.resolve(STATIC_DIR, '**/*.less'), function () {
     process.stdout.write('Rebuilding styles ... ');
 
-    buildStyles(function () {
+    writeResources(buildStyles()).done(function () {
       process.stdout.write('done.\n');
     });
   });
 
-  function rebundle(b, resourceName, file) {
-    var rebuild = false;
-
+  function shouldRebuild(b, resourceName, file) {
     switch (file.event) {
       case 'add':
-        rebuild = true;
-        break;
+        return true;
       case 'change':
       case 'unlink':
-        rebuild = b.has(file.path);
-        break;
+        return b.has(file.path);
     }
-
-    if (rebuild) {
-      process.stdout.write(`Rebuilding ${resourceName} (${file.event}: ${file.path}) ... `);
-      writeScript(b, resourceName).done(function () {
-        process.stdout.write('done.\n');
-      });
-    }
+    return false;
   }
 
   watch(path.resolve(SCRIPTS_DIR, '**/*.js'), function (file) {
-    _.each(CACHED_BUNDLES, function (bundle, resourceName) {
-      rebundle(bundle, resourceName, file);
+    const changed = {};
+
+    _.each(SCRIPT_BUNDLES, function (bundle, resourceName) {
+      if (shouldRebuild(bundle, resourceName, file)) {
+        changed[resourceName] = bundle;
+      }
     });
+
+    if (!_.isEmpty(changed)) {
+      const changedNames = Object.keys(changed).sort().join(', ');
+
+      process.stdout.write(`Rebuilding ${changedNames} ... `);
+
+      writeResources(mergeStream.apply(null, _.map(changed, bundleScripts)))
+        .done(function () {
+          process.stdout.write('done.\n');
+        });
+    }
   });
 });
 
-gulp.task('tests', function () {
-  process.env.NODE_ENV = 'development';
+function createTestsTask(name, source) {
+  gulp.task(name, function () {
+    process.env.NODE_ENV = 'development';
 
-  return bundleScripts(
-    runYarb('tests/browser-runner.js', function (b) {
-      b.expose(createLangVinyl('en', JED_OPTIONS_EN), 'jed-data');
-    }),
-    'tests.js'
-  ).pipe(gulp.dest(BUILD_DIR));
-});
+    var deferred = Q.defer();
+
+    bundleScripts(
+        runYarb(source)
+          .expose(path.join(BUILD_DIR, 'rev-manifest.json'), 'rev-manifest.json'),
+        name + '.js'
+      )
+      .pipe(gulp.dest(BUILD_DIR))
+      .on('finish', function () { deferred.resolve() });
+
+    return deferred.promise;
+  });
+}
+
+createTestsTask('tests', 'tests/browser-runner.js');
+createTestsTask('web-tests', 'tests/index-web.js');
 
 gulp.task('default', function () {
-  // Scripts cannot be built without images or styles. The client JS needs
-  // access to the final paths for these resources.
-  return Q.all([buildImages(), buildStyles()]).then(buildScripts);
+  const IMAGE_GLOBS = [
+    'entity/*',
+    'icons/*',
+    'image404-125.png',
+    'layout/*',
+    'leaflet/*',
+    'licenses/*',
+    'logos/*',
+  ];
+
+  return writeResources(mergeStream.apply(null, [
+    gulp.src(
+      IMAGE_GLOBS.map(x => path.join(IMAGES_DIR, x)),
+      {base: STATIC_DIR}
+    ),
+
+    // The rev-manifest.js bundle can't be written until all other resources
+    // are written (because we obviously don't know its contents otherwise,
+    // which includes the final hashes of every resource). This is handled
+    // by writeResources.
+    _.map(_.omit(SCRIPT_BUNDLES, 'rev-manifest.js'), bundleScripts),
+
+    buildStyles()
+  ]));
 });

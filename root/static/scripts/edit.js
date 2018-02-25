@@ -1,9 +1,3 @@
-const global = require('./global');
-
-const sha1 = require("../lib/sha1/sha1");
-global.hex_sha1 = sha1.hex_sha1;
-global.rstr_sha1 = sha1.rstr_sha1;
-
 require("knockout-arraytransforms");
 require("../lib/knockout/knockout-delegatedEvents");
 
@@ -22,6 +16,7 @@ require("./edit/forms");
 require("./edit/validation");
 require("./edit/externalLinks");
 require("./edit/utility/guessFeat");
+require("./edit/utility/toggleEnded");
 require("./edit/MB/Control/Area");
 require("./edit/components/ArtistCreditEditor");
 require("./edit/components/forms");

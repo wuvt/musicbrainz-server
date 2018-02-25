@@ -99,7 +99,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
 # replication_control.current_schema_sequence.
 # This is required, there is no default in order to prevent it changing without
 # manual intervention.
-sub DB_SCHEMA_SEQUENCE { 23 }
+sub DB_SCHEMA_SEQUENCE { 24 }
 
 # What type of server is this?
 # * RT_MASTER - This is a master replication server.  Changes are allowed, and
@@ -153,7 +153,8 @@ sub DB_SCHEMA_SEQUENCE { 23 }
 sub WEB_SERVER                { "www.musicbrainz.example.com" }
 # Relevant only if SSL redirects are enabled
 # sub WEB_SERVER_SSL            { "localhost" }
-# sub LUCENE_SERVER             { "search.musicbrainz.org" }
+# sub SEARCH_SERVER             { "search.musicbrainz.org" }
+# sub SEARCH_ENGINE             { "LUCENE" }
 # Used, for example, to have emails sent from the beta server list the
 # main server
 # sub WEB_SERVER_USED_IN_EMAIL  { my $self = shift; $self->WEB_SERVER }
@@ -391,8 +392,10 @@ sub WEB_SERVER                { "www.musicbrainz.example.com" }
 # (note: will still only use languages in MB_LANGUAGES)
 # sub LANGUAGE_FALLBACK_TO_BROWSER{ 1 }
 
-# Set this to an email address and the server will email any bugs to you
-# sub EMAIL_BUGS { undef }
+# Bugs can be sent to a Sentry instance (https://sentry.io) via these settings.
+# The DSNs can be found on the project configuration page.
+# sub SENTRY_DSN { undef }
+# sub SENTRY_DSN_PUBLIC { undef }
 
 # Configure which html validator should be used.  If you run tests
 # often, you should probably run a local copy of the validator.  See

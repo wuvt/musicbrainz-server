@@ -1,41 +1,64 @@
+// @flow
 // This file is part of MusicBrainz, the open internet music database.
 // Copyright (C) 2015 MetaBrainz Foundation
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
-const Immutable = require('immutable');
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('lodash');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const PropTypes = React.PropTypes;
 
-const {VIDEO_ATTRIBUTE_ID, VIDEO_ATTRIBUTE_GID} = require('../common/constants');
+const {
+    FAVICON_CLASSES,
+    VIDEO_ATTRIBUTE_ID,
+    VIDEO_ATTRIBUTE_GID,
+  } = require('../common/constants');
 const {compare, l} = require('../common/i18n');
+const MB = require('../common/MB');
 const isPositiveInteger = require('./utility/isPositiveInteger');
 const HelpIcon = require('./components/HelpIcon');
 const RemoveButton = require('./components/RemoveButton');
+const {linkTypeOptions} = require('./forms');
 const URLCleanup = require('./URLCleanup');
 const validation = require('./validation');
 
-var LinkState = Immutable.Record({
-  url: '',
-  type: null,
-  relationship: null,
-  video: false
-});
+type LinkStateT = {
+  url: string,
+  type: number|null,
+  relationship: number|null,
+  video: boolean,
+};
 
-class ExternalLinksEditor extends React.Component {
-  constructor(props) {
+type LinksEditorProps = {
+  sourceType: string,
+  typeOptions: Array<React.Element<'option'>>,
+  initialLinks: Array<LinkStateT>,
+  errorObservable: (bool) => void,
+};
+
+type LinksEditorState = {
+  links: Array<LinkStateT>,
+};
+
+class ExternalLinksEditor extends React.Component<LinksEditorProps, LinksEditorState> {
+  constructor(props: LinksEditorProps) {
     super(props);
     this.state = {links: withOneEmptyLink(props.initialLinks)};
   }
 
-  setLinkState(index, state, callback) {
-    this.setState({links: withOneEmptyLink(this.state.links.mergeIn([index], state), index)}, callback);
+  setLinkState(index: number,
+               state: $Shape<LinkStateT>,
+               callback?: () => void) {
+    const newLinks: Array<LinkStateT> = this.state.links.concat();
+    newLinks[index] = Object.assign({}, newLinks[index], state);
+    this.setState({links: withOneEmptyLink(newLinks, index)}, callback);
   }
 
-  handleUrlChange(index, event) {
-    var url = event.target.value;
-    var link = this.state.links.get(index);
+  handleUrlChange(index: number, event: SyntheticEvent<HTMLInputElement>) {
+    var url = event.currentTarget.value;
+    var link = this.state.links[index];
 
     // Allow adding spaces while typing, they'll be trimmed on blur
     if (url.trim() !== link.url.trim()) {
@@ -56,8 +79,8 @@ class ExternalLinksEditor extends React.Component {
     });
   }
 
-  handleUrlBlur(index, event) {
-    var url = event.target.value;
+  handleUrlBlur(index: number, event: SyntheticEvent<HTMLInputElement>) {
+    var url = event.currentTarget.value;
     var trimmed = url.trim();
 
     if (url !== trimmed) {
@@ -65,16 +88,18 @@ class ExternalLinksEditor extends React.Component {
     }
   }
 
-  handleTypeChange(index, event) {
-    this.setLinkState(index, {type: +event.target.value || null});
+  handleTypeChange(index: number, event: SyntheticEvent<HTMLSelectElement>) {
+    this.setLinkState(index, {type: +event.currentTarget.value || null});
   }
 
-  handleVideoChange(index, event) {
-    this.setLinkState(index, {video: event.target.checked});
+  handleVideoChange(index: number, event: SyntheticEvent<HTMLInputElement>) {
+    this.setLinkState(index, {video: event.currentTarget.checked});
   }
 
-  removeLink(index) {
-    this.setState({links: this.state.links.remove(index)}, () => {
+  removeLink(index: number) {
+    const newLinks = this.state.links.concat();
+    newLinks.splice(index, 1);
+    this.setState({links: newLinks}, () => {
       $(ReactDOM.findDOMNode(this))
         .find('tr:gt(' + (index - 1) + ') button.remove:first, ' +
               'tr:lt(' + (index + 1) + ') button.remove:last')
@@ -83,15 +108,15 @@ class ExternalLinksEditor extends React.Component {
   }
 
   getOldLinksHash() {
-    return _(this.props.initialLinks.toJS())
+    return _(this.props.initialLinks)
       .filter(link => isPositiveInteger(link.relationship))
-      .indexBy('relationship')
+      .keyBy('relationship')
       .value();
   }
 
   getEditData() {
     var oldLinks = this.getOldLinksHash();
-    var newLinks = _.indexBy(this.state.links.toJS(), 'relationship');
+    var newLinks = _.keyBy(this.state.links, 'relationship');
 
     return {
       oldLinks: oldLinks,
@@ -100,7 +125,9 @@ class ExternalLinksEditor extends React.Component {
     };
   }
 
-  getFormData(startingPrefix, startingIndex, pushInput) {
+  getFormData(startingPrefix: string,
+              startingIndex: number,
+              pushInput: (string, string, string) => void) {
     var index = 0;
     var backward = this.props.sourceType > 'url';
     var {oldLinks, newLinks, allLinks} = this.getEditData();
@@ -113,10 +140,10 @@ class ExternalLinksEditor extends React.Component {
       var prefix = startingPrefix + '.' + (startingIndex + (index++));
 
       if (isPositiveInteger(relationship)) {
-        pushInput(prefix, 'relationship_id', relationship);
+        pushInput(prefix, 'relationship_id', String(relationship));
 
         if (!newLinks[relationship]) {
-          pushInput(prefix, 'removed', 1);
+          pushInput(prefix, 'removed', '1');
         }
       }
 
@@ -126,14 +153,14 @@ class ExternalLinksEditor extends React.Component {
         pushInput(prefix + '.attributes.0', 'type.gid', VIDEO_ATTRIBUTE_GID);
       } else if ((oldLinks[relationship] || {}).video) {
         pushInput(prefix + '.attributes.0', 'type.gid', VIDEO_ATTRIBUTE_GID);
-        pushInput(prefix + '.attributes.0', 'removed', 1);
+        pushInput(prefix + '.attributes.0', 'removed', '1');
       }
 
       if (backward) {
-        pushInput(prefix, 'backward', 1);
+        pushInput(prefix, 'backward', '1');
       }
 
-      pushInput(prefix, 'link_type_id', link.type || '');
+      pushInput(prefix, 'link_type_id', String(link.type) || '');
     });
   }
 
@@ -141,10 +168,10 @@ class ExternalLinksEditor extends React.Component {
     this.props.errorObservable(false);
 
     var oldLinks = this.getOldLinksHash();
-    var linksArray = this.state.links.toArray();
+    var linksArray = this.state.links;
 
-    var linksByTypeAndUrl = _(linksArray).concat(this.props.initialLinks.toArray())
-          .uniq((link) => link.relationship).groupBy(linkTypeAndUrlString).value();
+    var linksByTypeAndUrl = _(linksArray).concat(this.props.initialLinks)
+          .uniqBy((link) => link.relationship).groupBy(linkTypeAndUrlString).value();
 
     return (
       <table id="external-links-editor" className="row-form">
@@ -169,6 +196,13 @@ class ExternalLinksEditor extends React.Component {
               error = l('This relationship type is deprecated and should not be used.');
             } else if ((!isPositiveInteger(link.relationship) || (oldLink && link.url !== oldLink.url)) && checker && !checker(link.url)) {
               error = l('This URL is not allowed for the selected link type, or is incorrectly formatted.');
+            } else if ((!isPositiveInteger(link.relationship) || (oldLink && link.url !== oldLink.url)) && /^(https?:\/\/)?([^.\/]+\.)?wikipedia\.org\/.*#/.test(link.url)) {
+              // Kludge for MBS-9515 to be replaced with the more general MBS-9516
+              error = l('Links to specific sections of Wikipedia articles are not allowed. Please remove “{fragment}” if still appropriate. See the {url|guidelines}.', {
+                __react: true,
+                fragment: <span className='url-quote'>{link.url.replace(/^(?:https?:\/\/)?(?:[^.\/]+\.)?wikipedia\.org\/[^#]*#(.*)$/, '#$1')}</span>,
+                url: { href: '/relationship/' + typeInfo.gid, target: '_blank' }
+              });
             } else if ((linksByTypeAndUrl[linkTypeAndUrlString(link)] || []).length > 1) {
               error = l('This relationship already exists.');
             }
@@ -184,7 +218,7 @@ class ExternalLinksEditor extends React.Component {
                 type={link.type}
                 video={link.video}
                 errorMessage={error || ''}
-                isOnlyLink={this.state.links.size === 1}
+                isOnlyLink={this.state.links.length === 1}
                 urlMatchesType={typeInfo.gid === URLCleanup.guessType(this.props.sourceType, link.url)}
                 removeCallback={_.bind(this.removeLink, this, index)}
                 urlChangeCallback={_.bind(this.handleUrlChange, this, index)}
@@ -201,21 +235,16 @@ class ExternalLinksEditor extends React.Component {
   }
 }
 
-ExternalLinksEditor.propTypes = {
-  sourceType: PropTypes.string.isRequired,
-  typeOptions: PropTypes.arrayOf(PropTypes.element).isRequired,
-  initialLinks: PropTypes.instanceOf(Immutable.List).isRequired,
-  errorObservable: function (props, propName) {
-    if (propName === 'errorObservable' && !ko.isObservable(props[propName])) {
-      return new Error('errorObservable should be an observable');
-    }
-  }
+type LinkTypeSelectProps = {
+  children: Array<React.Element<'option'>>,
+  type: number|null,
+  typeChangeCallback: (number, SyntheticEvent<HTMLSelectElement>) => void,
 };
 
-class LinkTypeSelect extends React.Component {
+class LinkTypeSelect extends React.Component<LinkTypeSelectProps> {
   render() {
     return (
-      <select value={this.props.type} onChange={this.props.typeChangeCallback} className="link-type">
+      <select value={this.props.type || ''} onChange={this.props.typeChangeCallback} className="link-type">
         <option value="">{'\xA0'}</option>
         {this.props.children}
       </select>
@@ -223,12 +252,22 @@ class LinkTypeSelect extends React.Component {
   }
 }
 
-LinkTypeSelect.propTypes = {
-  type: PropTypes.number,
-  typeChangeCallback: PropTypes.func.isRequired
+type LinkProps = {
+  url: string,
+  type: number|null,
+  video: boolean,
+  errorMessage: string,
+  isOnlyLink: boolean,
+  urlMatchesType: boolean,
+  removeCallback: (number) => void,
+  urlChangeCallback: (number, SyntheticEvent<HTMLInputElement>) => void,
+  urlBlurCallback: (number, SyntheticEvent<HTMLInputElement>) => void,
+  typeChangeCallback: (number, SyntheticEvent<HTMLSelectElement>) => void,
+  videoChangeCallback: (number, SyntheticEvent<HTMLInputElement>) => void,
+  typeOptions: Array<React.Element<'option'>>,
 };
 
-class ExternalLink extends React.Component {
+class ExternalLink extends React.Component<LinkProps> {
   render() {
     var props = this.props;
     var typeInfo = MB.typeInfoByID[props.type] || {};
@@ -249,7 +288,7 @@ class ExternalLink extends React.Component {
 
     var showTypeSelection = props.errorMessage ? true : !(props.urlMatchesType || isEmpty(props));
     if (!showTypeSelection && props.urlMatchesType) {
-      faviconClass = _.find(MB.faviconClasses, (value, key) => props.url.indexOf(key) > 0);
+      faviconClass = _.find(FAVICON_CLASSES, (value, key) => props.url.indexOf(key) > 0);
     }
 
     return (
@@ -289,23 +328,20 @@ class ExternalLink extends React.Component {
   }
 }
 
-ExternalLink.propTypes = {
-  url: PropTypes.string.isRequired,
-  type: PropTypes.number,
-  video: PropTypes.bool.isRequired,
-  errorMessage: PropTypes.string.isRequired,
-  isOnlyLink: PropTypes.bool.isRequired,
-  urlMatchesType: PropTypes.bool.isRequired,
-  removeCallback: PropTypes.func.isRequired,
-  urlChangeCallback: PropTypes.func.isRequired,
-  urlBlurCallback: PropTypes.func.isRequired,
-  typeChangeCallback: PropTypes.func.isRequired,
-  videoChangeCallback: PropTypes.func.isRequired,
-  typeOptions: PropTypes.arrayOf(PropTypes.element).isRequired
+const defaultLinkState: LinkStateT = {
+  url: '',
+  type: null,
+  relationship: null,
+  video: false,
 };
 
+function newLinkState(state: $Shape<LinkStateT>) {
+  _.defaults(state, defaultLinkState);
+  return state;
+}
+
 function linkTypeAndUrlString(link) {
-  return link.type + '\0' + link.url;
+  return (link.type || '') + '\0' + link.url;
 }
 
 function isEmpty(link) {
@@ -326,7 +362,7 @@ function withOneEmptyLink(links, dontRemove) {
   });
 
   if (emptyCount === 0) {
-    return links.push(new LinkState({relationship: _.uniqueId('new-')}));
+    return links.concat(newLinkState({relationship: _.uniqueId('new-')}));
   } else if (emptyCount > 1 && _.size(canRemove)) {
     return links.filter((link, index) => !canRemove[index]);
   } else {
@@ -334,17 +370,38 @@ function withOneEmptyLink(links, dontRemove) {
   }
 }
 
-function parseRelationships(relationships) {
+type RelationshipTargetT = {
+  entityType: string,
+  name: string,
+  relationships?: Array<RelationshipT>,
+};
+
+type RelationshipAttributeTypeT = {
+  gid: string,
+};
+
+type RelationshipAttributeT = {
+  type: RelationshipAttributeTypeT,
+};
+
+type RelationshipT = {
+  attributes: Array<RelationshipAttributeT>,
+  id: number,
+  linkTypeID: number,
+  target: RelationshipTargetT,
+};
+
+function parseRelationships(relationships?: Array<RelationshipT>) {
   return _.transform(relationships || [], function (accum, data) {
     var target = data.target;
 
     if (target.entityType === 'url') {
-      accum.push(new LinkState({
+      accum.push({
         relationship: data.id,
         url: target.name,
         type: data.linkTypeID,
-        video: _.any(data.attributes, (attr) => attr.type.gid === VIDEO_ATTRIBUTE_GID)
-      }));
+        video: _.some(data.attributes, (attr) => attr.type.gid === VIDEO_ATTRIBUTE_GID)
+      });
     }
   });
 }
@@ -405,7 +462,13 @@ function isShortened(url) {
   });
 }
 
-MB.createExternalLinksEditor = function (options) {
+type InitialOptionsT = {
+  errorObservable?: (boolean) => void,
+  mountPoint: Element,
+  sourceData: RelationshipTargetT,
+};
+
+MB.createExternalLinksEditor = function (options: InitialOptionsT) {
   var sourceData = options.sourceData;
   var sourceType = sourceData.entityType;
   var entityTypes = [sourceType, 'url'].sort().join('-');
@@ -416,7 +479,7 @@ MB.createExternalLinksEditor = function (options) {
     if (MB.hasSessionStorage) {
       let submittedLinks = window.sessionStorage.getItem('submittedLinks');
       if (submittedLinks) {
-        initialLinks = JSON.parse(submittedLinks).filter(l => !isEmpty(l)).map(LinkState);
+        initialLinks = JSON.parse(submittedLinks).filter(l => !isEmpty(l)).map(newLinkState);
       }
     }
   } else {
@@ -429,7 +492,11 @@ MB.createExternalLinksEditor = function (options) {
     }
 
     _.each(urls, function (data) {
-      initialLinks.push(new LinkState({url: data.text || "", type: data.link_type_id, relationship: _.uniqueId('new-')}));
+      initialLinks.push(newLinkState({
+        url: data.text || "",
+        type: data.link_type_id,
+        relationship: _.uniqueId('new-'),
+      }));
     });
   }
 
@@ -445,7 +512,7 @@ MB.createExternalLinksEditor = function (options) {
     // Only run the URL cleanup on seeded URLs, i.e. URLs that don't have an
     // existing relationship ID.
     if (!isPositiveInteger(link.relationship)) {
-      return link.merge({
+      return Object.assign({}, link, {
         relationship: _.uniqueId('new-'),
         url: URLCleanup.cleanURL(link.url) || link.url,
       });
@@ -454,7 +521,7 @@ MB.createExternalLinksEditor = function (options) {
   });
 
   var typeOptions = (
-    MB.forms.linkTypeOptions({children: MB.typeInfo[entityTypes]}, /^url-/.test(entityTypes))
+    linkTypeOptions({children: MB.typeInfo[entityTypes]}, /^url-/.test(entityTypes))
       .map((data) => <option value={data.value} disabled={data.disabled} key={data.value}>{data.text}</option>)
   );
 
@@ -464,7 +531,7 @@ MB.createExternalLinksEditor = function (options) {
     <ExternalLinksEditor
       sourceType={sourceData.entityType}
       typeOptions={typeOptions}
-      initialLinks={Immutable.List(initialLinks)}
+      initialLinks={initialLinks}
       errorObservable={errorObservable} />,
     options.mountPoint
   );

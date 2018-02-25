@@ -3,7 +3,7 @@
 // Licensed under the GPL version 2, or (at your option) any later version:
 // http://www.gnu.org/licenses/gpl-2.0.txt
 
-const L = require('../lib/leaflet/leaflet-src');
+const L = require('leaflet/dist/leaflet-src');
 const ko = require('knockout');
 const _ = require('lodash');
 
@@ -13,6 +13,7 @@ const initializeArea = require('./edit/MB/Control/Area').Area;
 const {initializeBubble} = require('./edit/MB/Control/Bubble');
 const {errorField} = require('./edit/validation');
 const {initialize_guess_case} = require('./guess-case/MB/Control/GuessCase');
+const {map, marker} = require('./place/map');
 
 initialize_guess_case('place', 'id-edit-place');
 initializeArea('span.area.autocomplete');
@@ -22,9 +23,16 @@ var bubble = initializeBubble('#coordinates-bubble', 'input[name=edit-place\\.co
 
 // The map is hidden by default, which means it can't position itself correctly.
 // This tells it to update its position once it's visible.
-bubble.after("show", _.once(function () {
+const afterBubbleShow = _.once(function () {
     map.invalidateSize();
-}));
+});
+
+const bubbleShow = bubble.show;
+
+bubble.show = function () {
+    bubbleShow.apply(this, arguments);
+    afterBubbleShow();
+};
 
 map.on('click', function (e) {
     if (map.getZoom() > 11) {

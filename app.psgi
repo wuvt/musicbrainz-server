@@ -38,7 +38,7 @@ BEGIN {
 use MusicBrainz::Server;
 
 BEGIN {
-    if (DBDefs->RENDERER_HOST eq '') {
+    if (DBDefs->FORK_RENDERER) {
         if (my $child = fork) {
             use POSIX;
             my $action = POSIX::SigAction->new(sub {
@@ -48,7 +48,8 @@ BEGIN {
             $action->safe(1);
             POSIX::sigaction(SIGTERM, $action);
         } else {
-            exec './script/start_renderer.pl';
+            exec './script/start_renderer.pl',
+                 '--socket', DBDefs->RENDERER_SOCKET;
         }
     }
 }

@@ -10,6 +10,7 @@ const _ = require('lodash');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
+const Frag = require('../../../../components/Frag');
 const Autocomplete = require('../../common/components/Autocomplete');
 const {l} = require('../../common/i18n');
 const {
@@ -57,6 +58,15 @@ function setAutoJoinPhrases(names) {
 
   return names;
 }
+
+const makeHiddenInput = (data) => (
+  <input
+    key={data.name}
+    name={data.name}
+    type="hidden"
+    value={nonEmpty(data.value) ? data.value : ''}
+  />
+);
 
 class ArtistCreditEditor extends React.Component {
   constructor(props) {
@@ -144,7 +154,7 @@ class ArtistCreditEditor extends React.Component {
       return;
     }
 
-    const $button = $(this.refs.button);
+    const $button = $(this._editButton);
     let position = {of: $button[0], collision: 'fit none', within: $('body')};
     let maxWidth;
     let tailClass;
@@ -226,7 +236,7 @@ class ArtistCreditEditor extends React.Component {
   hide(stealFocus = true) {
     const $bubble = $('#artist-credit-bubble').hide();
     if (stealFocus) {
-      this.refs.button.focus();
+      this._editButton.focus();
     }
     // Defer until after the doneCallback() executes (if done() called us).
     _.defer(function () {
@@ -345,8 +355,8 @@ class ArtistCreditEditor extends React.Component {
     }
 
     return (
-      <frag>
-        <table className="artist-credit-editor">
+      <Frag>
+        <table key="artist-credit-editor" className="artist-credit-editor">
           <tbody>
             <tr>
               <td>
@@ -374,19 +384,21 @@ class ArtistCreditEditor extends React.Component {
                   showStatus={false} />
               </td>
               <td className="open-ac-cell">
-                <button className="open-ac" ref="button" type="button" onClick={this.toggleBubble}>
+                <button
+                  className="open-ac"
+                  ref={button => this._editButton = button}
+                  type="button"
+                  onClick={this.toggleBubble}>
                   {l('Edit')}
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-        <If condition={this.props.hiddenInputs}>
-          <For each="data" of={this.getHiddenInputs()}>
-            <input type="hidden" name={data.name} value={nonEmpty(data.value) ? data.value : ''} />
-          </For>
-        </If>
-      </frag>
+        {this.props.hiddenInputs
+          ? this.getHiddenInputs().map(makeHiddenInput)
+          : null}
+      </Frag>
     );
   }
 }

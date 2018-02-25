@@ -14,7 +14,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MusicBrainz\n"
-"PO-Revision-Date: 2016-10-01 01:09+0000\n"
+"PO-Revision-Date: 2017-09-19 12:56+0000\n"
 "Last-Translator: Michael Wiencek <email address hidden>\n"
 "Language-Team: Finnish (http://www.transifex.com/musicbrainz/musicbrainz/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -124,6 +124,14 @@ msgstr ""
 msgid "BookBrainz page for"
 msgstr ""
 
+#: DB:link_type/link_phrase:919
+msgid "CD Baby"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:919
+msgid "CD Baby page for"
+msgstr ""
+
 #: DB:link_type/link_phrase:8 DB:link_type/link_phrase:227
 msgid "DJ-mix of"
 msgstr ""
@@ -196,6 +204,12 @@ msgstr "Discogs"
 #: DB:link_type/reverse_link_phrase:90 DB:link_type/reverse_link_phrase:705
 msgid "Discogs page for"
 msgstr "Discogs-sivuna"
+
+#: DB:link_attribute_type/description:1020
+msgid ""
+"For indicating the step-spouse of the artist's parent, or the sibling "
+"relationship with the children of such a spouse"
+msgstr ""
 
 #: DB:link_attribute_type/description:580
 msgid ""
@@ -272,6 +286,10 @@ msgstr ""
 
 #: DB:link_type/description:173
 msgid "Indicates a pictorial image (JPEG, GIF, PNG) of an artist."
+msgstr ""
+
+#: DB:link_attribute_type/description:1019
+msgid "Indicates a sibling with whom the artist has only one parent in common"
 msgstr ""
 
 #: DB:link_type/description:842
@@ -733,13 +751,13 @@ msgid ""
 "Local time a band's performance is scheduled to start, formatted HH:MM."
 msgstr ""
 
-#: DB:link_type/link_phrase:215 DB:link_type/link_phrase:189
-#: DB:link_type/link_phrase:462
+#: DB:link_type/link_phrase:215 DB:link_type/link_phrase:462
+#: DB:link_type/link_phrase:189
 msgid "Myspace"
 msgstr "Myspace"
 
-#: DB:link_type/reverse_link_phrase:215 DB:link_type/reverse_link_phrase:189
-#: DB:link_type/reverse_link_phrase:462
+#: DB:link_type/reverse_link_phrase:215 DB:link_type/reverse_link_phrase:462
+#: DB:link_type/reverse_link_phrase:189
 msgid "Myspace page for"
 msgstr "Myspace-sivuna"
 
@@ -776,35 +794,57 @@ msgid "Points to the Internet Movie Database page for this place."
 msgstr ""
 
 #: DB:link_type/description:358
-msgid "Points to the Wikidata page for this area."
+msgid ""
+"Points to the Wikidata page for this area, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:352
-msgid "Points to the Wikidata page for this artist."
+msgid ""
+"Points to the Wikidata page for this artist, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:790
-msgid "Points to the Wikidata page for this event."
+msgid ""
+"Points to the Wikidata page for this event, and will be used to fetch "
+"Wikipedia summaries and images"
+msgstr ""
+
+#: DB:link_type/description:733
+msgid ""
+"Points to the Wikidata page for this instrument, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:354
-msgid "Points to the Wikidata page for this label."
+msgid ""
+"Points to the Wikidata page for this label, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:594
-msgid "Points to the Wikidata page for this place"
+msgid ""
+"Points to the Wikidata page for this place, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:353
-msgid "Points to the Wikidata page for this release group."
+msgid ""
+"Points to the Wikidata page for this release group, and will be used to "
+"fetch Wikipedia summaries"
 msgstr ""
 
 #: DB:link_type/description:749
-msgid "Points to the Wikidata page for this series."
+msgid ""
+"Points to the Wikidata page for this series, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:351
-msgid "Points to the Wikidata page for this work."
+msgid ""
+"Points to the Wikidata page for this work, and will be used to fetch "
+"Wikipedia summaries and images"
 msgstr ""
 
 #: DB:link_type/description:89
@@ -905,6 +945,18 @@ msgstr ""
 #: DB:link_type/long_link_phrase:877
 msgid ""
 "The lyrics for {entity1} were {additional:additionally} written in {entity0}"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:274
+msgid "The score for {entity1} can be downloaded for free at {entity0}"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:912
+msgid "The score for {entity1} can be purchased for download at {entity0}"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:913
+msgid "The score for {entity1} can be purchased for mail-order at {entity0}"
 msgstr ""
 
 #: DB:link_attribute_type/description:3
@@ -1014,11 +1066,6 @@ msgid ""
 "pieces of content into a coherent and aesthetically-pleasing sleeve design."
 msgstr ""
 
-#: DB:link_type/description:274
-msgid ""
-"This describes a URL where a score / sheet music for the work can be found."
-msgstr ""
-
 #: DB:link_type/description:202
 msgid ""
 "This describes a situation where a label has changed its name, either for "
@@ -1033,8 +1080,8 @@ msgstr ""
 #: DB:link_type/description:200
 msgid ""
 "This describes a situation where one label is (or was) a subsidiary of "
-"another label, during a given period of time.​ This should be used either to"
-" describe the fact a label is a subdivision of another one, or, through "
+"another label, during a given period of time. This should be used either to "
+"describe the fact a label is a subdivision of another one, or, through "
 "corporate acquisition of the former label, has become a subdivision of "
 "another one."
 msgstr ""
@@ -1047,7 +1094,7 @@ msgstr ""
 
 #: DB:link_type/description:201
 msgid ""
-"This describes a situation where one label is reissuing, under its own name, (part of) another label's catalog.​ This can happen in at least three cases:\n"
+"This describes a situation where one label is reissuing, under its own name, (part of) another label's catalog. This can happen in at least three cases:\n"
 "<ul>\n"
 "<li>A label acquires a lease on another label's catalog, for a period of time, in a specific region of the world.</li>\n"
 "<li>A label buys the rights to a defunct label's catalog, or buys a label (with its catalog) and dismantles it.</li>\n"
@@ -1074,7 +1121,7 @@ msgstr ""
 msgid ""
 "This describes an engineer responsible for either connecting disparate "
 "elements of the audio recording, or otherwise redistributing material "
-"recorded in the sessions.​ This is usually secondary, or additional to the "
+"recorded in the sessions. This is usually secondary, or additional to the "
 "work done by the mix engineer. It can also involve streamlining a longer "
 "track to around the 3 minute mark in order to make it suitable for radio "
 "play (a \"radio edit\")."
@@ -1090,7 +1137,7 @@ msgstr ""
 #: DB:link_type/description:143
 msgid ""
 "This describes an engineer responsible for using a mixing console to mix a "
-"recorded track into a single piece of music suitable for release.​ For "
+"recorded track into a single piece of music suitable for release. For "
 "remixing, see <a href=\"/relationship/7950be4d-13a3-48e7-906b-"
 "5af562e39544\">remixer</a>."
 msgstr ""
@@ -1098,13 +1145,13 @@ msgstr ""
 #: DB:link_type/description:26
 msgid ""
 "This describes an engineer responsible for using a mixing console to mix a "
-"recorded track into a single piece of music suitable for release.​ For "
+"recorded track into a single piece of music suitable for release. For "
 "remixing, see <a href=\"/relationship/ac6a86db-f757-4815-a07e-"
 "744428d2382b\">remixer</a>."
 msgstr ""
 
-#: DB:link_type/description:28 DB:link_type/description:138
-msgid "This describes an engineer who performed a general engineering role.​"
+#: DB:link_type/description:138 DB:link_type/description:28
+msgid "This describes an engineer who performed a general engineering role."
 msgstr ""
 
 #: DB:link_type/description:103
@@ -1153,6 +1200,12 @@ msgstr ""
 msgid "This indicates an artist cancelled their appearance at an event."
 msgstr ""
 
+#: DB:link_type/description:917
+msgid ""
+"This indicates an artist reconstructed a work (usually one where the score "
+"was lost) to make it ready for performance."
+msgstr ""
+
 #: DB:link_type/description:151
 msgid ""
 "This indicates an artist who conducted an orchestra, band or choir on this "
@@ -1191,7 +1244,7 @@ msgid ""
 msgstr ""
 
 #: DB:link_type/description:305
-msgid "This indicates that a person is, or was, a conductor for a group.​"
+msgid "This indicates that a person is, or was, a conductor for a group."
 msgstr ""
 
 #: DB:link_type/description:137
@@ -1231,11 +1284,11 @@ msgstr ""
 #: DB:link_type/description:228
 msgid ""
 "This indicates that a recording is a compilation of several other "
-"recordings.​ This applies to one long recording that contains multiple "
-"songs, one after the other, in which the audio material of the original "
-"recordings has not been altered. If the tracks are pitched or blended into "
-"each other, the <a href=\"/relationship/451076df-61cf-46ab-9921-555cab2f050d"
-"\">DJ-mix relationship type</a> may be more appropriate."
+"recordings. This applies to one long recording that contains multiple songs,"
+" one after the other, in which the audio material of the original recordings"
+" has not been altered. If the tracks are pitched or blended into each other,"
+" the <a href=\"/relationship/451076df-61cf-46ab-9921-555cab2f050d\">DJ-mix "
+"relationship type</a> may be more appropriate."
 msgstr ""
 
 #: DB:link_type/description:894
@@ -1247,17 +1300,17 @@ msgstr ""
 
 #: DB:link_type/description:3
 msgid ""
-"This indicates that a release was released in support of another "
-"release.​This allows a release to be linked to its supporting singles, EPs, "
-"and remix releases. A 'supporting release' is one which is released to "
-"increase sales of an album or to create publicity for an album."
+"This indicates that a release was released in support of another release. "
+"This allows a release to be linked to its supporting singles, EPs, and remix"
+" releases. A 'supporting release' is one which is released to increase sales"
+" of an album or to create publicity for an album."
 msgstr ""
 
 #: DB:link_type/description:11
 msgid ""
 "This indicates that a single or EP release group includes at least one track"
-" taken from an album release group.​ This allows a release group to be "
-"linked to its associated singles and EPs."
+" taken from an album release group. This allows a release group to be linked"
+" to its associated singles and EPs."
 msgstr ""
 
 #: DB:link_type/description:281
@@ -1298,6 +1351,12 @@ msgstr ""
 msgid ""
 "This indicates that an event is made up of multiple parts (e.g. a festival "
 "happening on multiple venues over the course of a few days)."
+msgstr ""
+
+#: DB:link_type/description:916
+msgid ""
+"This indicates that an instrument is a hybrid of two or more other "
+"instruments."
 msgstr ""
 
 #: DB:link_type/description:2
@@ -1357,8 +1416,8 @@ msgstr ""
 #: DB:link_type/description:293 DB:link_type/description:282
 #: DB:link_type/description:295 DB:link_type/description:297
 #: DB:link_type/description:296 DB:link_type/description:298
-#: DB:link_type/description:158 DB:link_type/description:41
-#: DB:link_type/description:294
+#: DB:link_type/description:294 DB:link_type/description:158
+#: DB:link_type/description:41
 msgid ""
 "This indicates the artist who arranged a tune into a form suitable for "
 "performance. 'Arrangement' is used as a catch-all term for all processes "
@@ -1375,6 +1434,12 @@ msgstr ""
 #: DB:link_type/description:53
 msgid ""
 "This indicates the chorus master of a choir which performed on this release."
+msgstr ""
+
+#: DB:link_attribute_type/description:1018
+msgid ""
+"This indicates the linked entity translated something, rather than being the"
+" original writer."
 msgstr ""
 
 #: DB:link_type/description:361
@@ -1463,15 +1528,25 @@ msgstr ""
 
 #: DB:link_type/description:349
 msgid ""
-"This indicates the rights society associated with a release.​ The rights "
+"This indicates the rights society associated with a release. The rights "
 "society is an organization which collects royalties on behalf of the "
 "artists."
+msgstr ""
+
+#: DB:link_type/description:914
+msgid ""
+"This indicates the work is dedicated to a specific area. This is most common"
+" for classical works, but also exists in other genres to a degree."
 msgstr ""
 
 #: DB:link_type/description:846
 msgid ""
 "This indicates the work is dedicated to a specific person. This is most "
 "common for classical works, but also exists in other genres to a degree."
+msgstr ""
+
+#: DB:link_type/description:915
+msgid "This indicates where a feed for this podcast can be found."
 msgstr ""
 
 #: DB:link_type/description:17
@@ -1513,7 +1588,7 @@ msgstr ""
 
 #: DB:link_type/description:226
 msgid ""
-"This is used to link a karaoke version of a song to the original song.​<br/><br/>\n"
+"This is used to link a karaoke version of a song to the original song.<br/><br/>\n"
 "A karaoke version is a version of the song with the main vocals removed, designed to be used for karaoke. These are generally produced from the original masters by muting the main vocal track or by using post-processing filters to remove the vocals. Karaoke versions can be found labelled in numerous different ways other than \"karaoke\": instrumental (even if backing vocals are still present), off vocal, backing track, etc."
 msgstr ""
 
@@ -1755,7 +1830,7 @@ msgstr ""
 #: DB:link_type/description:132
 msgid ""
 "This links a recording to the artist who did the programming for electronic "
-"instruments used on the recording.​ In the most cases, the 'electronic "
+"instruments used on the recording. In the most cases, the 'electronic "
 "instrument' is either a synthesizer or a drum machine."
 msgstr ""
 
@@ -1789,7 +1864,7 @@ msgstr ""
 #: DB:link_type/description:65
 msgid ""
 "This links a release group to an artist, to indicate that it is a tribute "
-"album.​ Tribute albums often have a title in the form \"A Tribute to "
+"album. Tribute albums often have a title in the form \"A Tribute to "
 "Artist\", and they consist of covers of songs by the target artist, played "
 "by other (sometimes very unknown) bands, to honor the target artist. Often "
 "they are various artist compilations, but a single artist can perform the "
@@ -1814,7 +1889,7 @@ msgstr ""
 #: DB:link_type/description:37
 msgid ""
 "This links a release to the artist who did the programming for electronic "
-"instruments used on the release.​ In the most cases, the 'electronic "
+"instruments used on the release. In the most cases, the 'electronic "
 "instrument' is either a synthesizer or a drum machine."
 msgstr ""
 
@@ -1977,13 +2052,17 @@ msgstr ""
 
 #: DB:link_type/description:184
 msgid ""
-"This links an artist to an online discography of their works.​ The "
+"This links an artist to an online discography of their works. The "
 "discography should provide a summary of most, if not all, releases by the "
 "artist, and be as comprehensive as possible."
 msgstr ""
 
 #: DB:link_type/description:718
 msgid "This links an artist to its page at Bandcamp."
+msgstr ""
+
+#: DB:link_type/description:919
+msgid "This links an artist to its page at CD Baby."
 msgstr ""
 
 #: DB:link_type/description:178
@@ -2150,6 +2229,16 @@ msgid ""
 "information on Wikipedia</a>)"
 msgstr ""
 
+#: DB:link_type/description:920
+msgid ""
+"This points to the <a href=\"//viaf.org/\">VIAF</a> page for this place. "
+"VIAF is an international project to make a common authority file available "
+"to libraries across the world. An authority file is similar to an MBID for "
+"libraries. (<a "
+"href=\"//en.wikipedia.org/wiki/Virtual_International_Authority_File\">more "
+"information on Wikipedia</a>)"
+msgstr ""
+
 #: DB:link_type/description:312
 msgid ""
 "This points to the <a href=\"//viaf.org/\">VIAF</a> page for this work. VIAF is an international project to make a common authority file available to libraries across the world. An authority file is similar to an MBID for libraries. (<a href=\"//en.wikipedia.org/wiki/Virtual_International_Authority_File\">more information on Wikipedia</a>)\n"
@@ -2203,7 +2292,7 @@ msgstr ""
 msgid ""
 "This relationship indicates the artist is the <a "
 "href=\"//en.wikipedia.org/wiki/Sound_recording_copyright_symbol\">phonographic"
-" copyright</a> holder for this release. ​"
+" copyright</a> holder for this release."
 msgstr ""
 
 #: DB:link_type/description:709
@@ -2228,14 +2317,14 @@ msgstr ""
 msgid ""
 "This relationship indicates the label is the <a "
 "href=\"//en.wikipedia.org/wiki/Sound_recording_copyright_symbol\">phonographic"
-" copyright</a> holder for this recording. ​"
+" copyright</a> holder for this recording."
 msgstr ""
 
 #: DB:link_type/description:711
 msgid ""
 "This relationship indicates the label is the <a "
 "href=\"//en.wikipedia.org/wiki/Sound_recording_copyright_symbol\">phonographic"
-" copyright</a> holder for this release. ​"
+" copyright</a> holder for this release."
 msgstr ""
 
 #: DB:link_type/description:708
@@ -2291,6 +2380,12 @@ msgstr ""
 #: DB:link_type/description:859
 msgid ""
 "This relationship links a concert tour to the artist(s) the tour is by."
+msgstr ""
+
+#: DB:link_type/description:918
+msgid ""
+"This relationship links an instrument to the company that invented or "
+"designed it."
 msgstr ""
 
 #: DB:link_type/description:896
@@ -2402,10 +2497,6 @@ msgid ""
 "Note about CD Baby: Many CD Baby releases are also available (usually with bigger covers) on Amazon.com."
 msgstr ""
 
-#: DB:link_type/description:270
-msgid "This relationship type is <strong>deprecated</strong>."
-msgstr ""
-
 #: DB:link_type/description:15
 msgid ""
 "This relationship type is used to indicate that a release group is a cover version of another release group, i.e. when an artist performs a new rendition of another artist's album.<br/>\n"
@@ -2455,6 +2546,24 @@ msgstr ""
 msgid ""
 "This relationship type is used to link to a page where the release can be "
 "purchased for mail order."
+msgstr ""
+
+#: DB:link_type/description:274
+msgid ""
+"This relationship type is used to link to a page where the score / sheet "
+"music for this work can be legally downloaded for free."
+msgstr ""
+
+#: DB:link_type/description:912
+msgid ""
+"This relationship type is used to link to a page where the score / sheet "
+"music for this work can be legally purchased for download."
+msgstr ""
+
+#: DB:link_type/description:913
+msgid ""
+"This relationship type is used to link to a page where the score / sheet "
+"music for this work can be legally purchased for mail order."
 msgstr ""
 
 #: DB:link_type/description:215
@@ -2630,36 +2739,36 @@ msgstr "VGMdb"
 msgid "VGMdb page for"
 msgstr "VGMdb-sivuna"
 
-#: DB:link_type/link_phrase:311 DB:link_type/link_phrase:310
-#: DB:link_type/reverse_link_phrase:312
+#: DB:link_type/link_phrase:920 DB:link_type/link_phrase:311
+#: DB:link_type/link_phrase:310 DB:link_type/reverse_link_phrase:312
 msgid "VIAF ID"
 msgstr "VIAF-tunniste"
 
-#: DB:link_type/link_phrase:312 DB:link_type/reverse_link_phrase:311
-#: DB:link_type/reverse_link_phrase:310
+#: DB:link_type/link_phrase:312 DB:link_type/reverse_link_phrase:920
+#: DB:link_type/reverse_link_phrase:311 DB:link_type/reverse_link_phrase:310
 msgid "VIAF ID for"
 msgstr "VIAF-tunnisteena"
 
-#: DB:link_type/link_phrase:790 DB:link_type/link_phrase:749
-#: DB:link_type/link_phrase:352 DB:link_type/link_phrase:353
-#: DB:link_type/link_phrase:354 DB:link_type/link_phrase:358
-#: DB:link_type/link_phrase:594 DB:link_type/link_phrase:733
-#: DB:link_type/reverse_link_phrase:351 DB:link_type/reverse_link_phrase:733
-#: DB:link_type/long_link_phrase:733
+#: DB:link_type/link_phrase:733 DB:link_type/link_phrase:358
+#: DB:link_type/link_phrase:352 DB:link_type/link_phrase:354
+#: DB:link_type/link_phrase:594 DB:link_type/link_phrase:353
+#: DB:link_type/link_phrase:749 DB:link_type/link_phrase:790
+#: DB:link_type/reverse_link_phrase:351
 msgid "Wikidata"
 msgstr "Wikidata"
 
-#: DB:link_type/link_phrase:351 DB:link_type/reverse_link_phrase:790
-#: DB:link_type/reverse_link_phrase:749 DB:link_type/reverse_link_phrase:352
-#: DB:link_type/reverse_link_phrase:353 DB:link_type/reverse_link_phrase:354
-#: DB:link_type/reverse_link_phrase:358 DB:link_type/reverse_link_phrase:594
+#: DB:link_type/link_phrase:351 DB:link_type/reverse_link_phrase:733
+#: DB:link_type/reverse_link_phrase:358 DB:link_type/reverse_link_phrase:352
+#: DB:link_type/reverse_link_phrase:354 DB:link_type/reverse_link_phrase:594
+#: DB:link_type/reverse_link_phrase:353 DB:link_type/reverse_link_phrase:749
+#: DB:link_type/reverse_link_phrase:790
 msgid "Wikidata page for"
 msgstr "Wikidata-sivuna"
 
 #: DB:link_type/link_phrase:789 DB:link_type/link_phrase:355
-#: DB:link_type/link_phrase:89 DB:link_type/link_phrase:216
-#: DB:link_type/link_phrase:179 DB:link_type/link_phrase:595
-#: DB:link_type/link_phrase:731 DB:link_type/link_phrase:744
+#: DB:link_type/link_phrase:89 DB:link_type/link_phrase:744
+#: DB:link_type/link_phrase:216 DB:link_type/link_phrase:179
+#: DB:link_type/link_phrase:595 DB:link_type/link_phrase:731
 #: DB:link_type/reverse_link_phrase:279 DB:link_type/reverse_link_phrase:731
 #: DB:link_type/long_link_phrase:731
 msgid "Wikipedia"
@@ -2667,8 +2776,8 @@ msgstr "Wikipedia"
 
 #: DB:link_type/link_phrase:279 DB:link_type/reverse_link_phrase:789
 #: DB:link_type/reverse_link_phrase:355 DB:link_type/reverse_link_phrase:89
-#: DB:link_type/reverse_link_phrase:216 DB:link_type/reverse_link_phrase:179
-#: DB:link_type/reverse_link_phrase:595 DB:link_type/reverse_link_phrase:744
+#: DB:link_type/reverse_link_phrase:744 DB:link_type/reverse_link_phrase:216
+#: DB:link_type/reverse_link_phrase:179 DB:link_type/reverse_link_phrase:595
 msgid "Wikipedia page for"
 msgstr "Wikipedia-sivuna"
 
@@ -2842,7 +2951,7 @@ msgstr ""
 msgid "child of"
 msgstr "on lapsi vanhemmalle"
 
-#: DB:link_type/link_phrase:735 DB:link_type/link_phrase:109
+#: DB:link_type/link_phrase:735
 msgid "children"
 msgstr "lapset"
 
@@ -2996,10 +3105,11 @@ msgid "crowdfunding page for"
 msgstr ""
 
 #: DB:link_type/reverse_link_phrase:868 DB:link_type/reverse_link_phrase:846
+#: DB:link_type/reverse_link_phrase:914
 msgid "dedicated to"
 msgstr ""
 
-#: DB:link_type/link_phrase:846
+#: DB:link_type/link_phrase:846 DB:link_type/link_phrase:914
 msgid "dedicated works"
 msgstr ""
 
@@ -3073,6 +3183,14 @@ msgstr "lataa musiikkia ilmaiseksi"
 #: DB:link_type/reverse_link_phrase:176
 msgid "download purchase page for"
 msgstr "ostettavissa ladattavaksi sivustona"
+
+#: DB:link_type/link_phrase:912
+msgid "download purchase page for the score of"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:274
+msgid "download score for free"
+msgstr ""
 
 #: DB:link_type/reverse_link_phrase:238
 msgid "earliest release"
@@ -3159,6 +3277,10 @@ msgstr "perustajat"
 msgid "free download page for"
 msgstr "lataa ilmaiseksi sivuna"
 
+#: DB:link_type/link_phrase:274
+msgid "free download page for the score of"
+msgstr ""
+
 #: DB:link_type/reverse_link_phrase:194
 msgid "free music streaming page for"
 msgstr ""
@@ -3178,6 +3300,11 @@ msgstr ""
 #: DB:link_type/long_link_phrase:187
 msgid "get the music"
 msgstr "musiikki hankittavissa"
+
+#: DB:link_type/link_phrase:911 DB:link_type/reverse_link_phrase:911
+#: DB:link_type/long_link_phrase:911
+msgid "get the score"
+msgstr ""
 
 #: DB:link_attribute_type/name:194
 msgid "guest"
@@ -3211,6 +3338,10 @@ msgstr ""
 msgid "had an engineer position at"
 msgstr ""
 
+#: DB:link_attribute_type/name:1019
+msgid "half"
+msgstr ""
+
 #: DB:link_type/long_link_phrase:77
 msgid "has Amazon ASIN"
 msgstr "omaa Amazon ASIN -tunnisteen"
@@ -3219,7 +3350,12 @@ msgstr "omaa Amazon ASIN -tunnisteen"
 msgid "has Bandcamp page at"
 msgstr "omaa Bandcamp-sivun"
 
-#: DB:link_type/long_link_phrase:311 DB:link_type/long_link_phrase:310
+#: DB:link_type/long_link_phrase:919
+msgid "has CD Baby page at"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:920 DB:link_type/long_link_phrase:311
+#: DB:link_type/long_link_phrase:310
 msgid "has VIAF ID at"
 msgstr "omaa VIAF-tunnisteen"
 
@@ -3252,8 +3388,8 @@ msgstr "omaa Geonames-sivun"
 msgid "has a Last.fm page at"
 msgstr ""
 
-#: DB:link_type/long_link_phrase:215 DB:link_type/long_link_phrase:189
-#: DB:link_type/long_link_phrase:462
+#: DB:link_type/long_link_phrase:215 DB:link_type/long_link_phrase:462
+#: DB:link_type/long_link_phrase:189
 msgid "has a Myspace page at"
 msgstr "omaa Myspace-sivun"
 
@@ -3280,17 +3416,17 @@ msgstr "omaa SoundCloud-sivun"
 msgid "has a VGMdb page at"
 msgstr "omaa VGMdb-sivun"
 
-#: DB:link_type/long_link_phrase:790 DB:link_type/long_link_phrase:749
-#: DB:link_type/long_link_phrase:352 DB:link_type/long_link_phrase:353
-#: DB:link_type/long_link_phrase:354 DB:link_type/long_link_phrase:358
-#: DB:link_type/long_link_phrase:594
+#: DB:link_type/long_link_phrase:733 DB:link_type/long_link_phrase:358
+#: DB:link_type/long_link_phrase:352 DB:link_type/long_link_phrase:354
+#: DB:link_type/long_link_phrase:594 DB:link_type/long_link_phrase:353
+#: DB:link_type/long_link_phrase:749 DB:link_type/long_link_phrase:790
 msgid "has a Wikidata page at"
 msgstr "omaa Wikidata-sivun"
 
 #: DB:link_type/long_link_phrase:789 DB:link_type/long_link_phrase:355
-#: DB:link_type/long_link_phrase:89 DB:link_type/long_link_phrase:216
-#: DB:link_type/long_link_phrase:179 DB:link_type/long_link_phrase:595
-#: DB:link_type/long_link_phrase:744
+#: DB:link_type/long_link_phrase:89 DB:link_type/long_link_phrase:744
+#: DB:link_type/long_link_phrase:216 DB:link_type/long_link_phrase:179
+#: DB:link_type/long_link_phrase:595
 msgid "has a Wikipedia page at"
 msgstr "omaa Wikipedia-sivun"
 
@@ -3335,7 +3471,6 @@ msgid "has a logo at"
 msgstr "omaa logon"
 
 #: DB:link_type/long_link_phrase:25 DB:link_type/long_link_phrase:129
-#: DB:link_type/long_link_phrase:270
 msgid "has a miscellaneous role on"
 msgstr "oma sekalaisen roolin "
 
@@ -3440,6 +3575,10 @@ msgstr "omaa kansitaidetta"
 msgid "has derived instrument"
 msgstr ""
 
+#: DB:link_type/reverse_link_phrase:916
+msgid "has hybrids"
+msgstr ""
+
 #: DB:link_type/long_link_phrase:725
 msgid "has imprint"
 msgstr ""
@@ -3491,10 +3630,6 @@ msgstr ""
 msgid "has show notes at"
 msgstr ""
 
-#: DB:link_type/long_link_phrase:110
-msgid "has sibling(s)"
-msgstr "omaa sisaruksen"
-
 #: DB:link_type/long_link_phrase:823
 msgid "has subseries"
 msgstr ""
@@ -3505,6 +3640,10 @@ msgstr ""
 
 #: DB:link_type/long_link_phrase:69
 msgid "has {additional} samples taken from"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:110
+msgid "has {half:half-}{step}sibling"
 msgstr ""
 
 #: DB:link_type/link_phrase:794
@@ -3532,10 +3671,10 @@ msgstr ""
 msgid "holds copyright for"
 msgstr ""
 
-#: DB:link_type/link_phrase:869 DB:link_type/link_phrase:711
-#: DB:link_type/link_phrase:867 DB:link_type/link_phrase:710
-#: DB:link_type/long_link_phrase:869 DB:link_type/long_link_phrase:711
-#: DB:link_type/long_link_phrase:867 DB:link_type/long_link_phrase:710
+#: DB:link_type/link_phrase:869 DB:link_type/link_phrase:710
+#: DB:link_type/link_phrase:867 DB:link_type/link_phrase:711
+#: DB:link_type/long_link_phrase:869 DB:link_type/long_link_phrase:710
+#: DB:link_type/long_link_phrase:867 DB:link_type/long_link_phrase:711
 msgid "holds phonographic copyright for"
 msgstr ""
 
@@ -3545,6 +3684,10 @@ msgstr ""
 
 #: DB:link_type/reverse_link_phrase:801
 msgid "hosts"
+msgstr ""
+
+#: DB:link_type/link_phrase:916
+msgid "hybrid of"
 msgstr ""
 
 #: DB:link_type/description:732
@@ -3588,11 +3731,12 @@ msgstr ""
 msgid "interviews"
 msgstr ""
 
-#: DB:link_type/link_phrase:896 DB:link_type/long_link_phrase:896
+#: DB:link_type/link_phrase:896 DB:link_type/reverse_link_phrase:918
+#: DB:link_type/long_link_phrase:896
 msgid "invented"
 msgstr ""
 
-#: DB:link_type/reverse_link_phrase:896
+#: DB:link_type/link_phrase:918 DB:link_type/reverse_link_phrase:896
 msgid "invented by"
 msgstr ""
 
@@ -3607,6 +3751,10 @@ msgstr ""
 #: DB:link_type/long_link_phrase:228
 msgid "is a compilation of"
 msgstr "on kokoelma"
+
+#: DB:link_type/long_link_phrase:916
+msgid "is a hybrid of"
+msgstr ""
 
 #: DB:link_type/long_link_phrase:17
 msgid "is a live performance of"
@@ -3691,12 +3839,12 @@ msgstr "on aiempi {translated} {parody}versio"
 msgid "is the original for the transliterated/translated track listing"
 msgstr ""
 
-#: DB:link_type/long_link_phrase:109
-msgid "is the parent of"
-msgstr "on vanhempi henkilölle"
-
 #: DB:link_type/long_link_phrase:349
 msgid "is the rights society associated with"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:109
+msgid "is the {step}parent of"
 msgstr ""
 
 #: DB:link_type/long_link_phrase:722
@@ -3769,8 +3917,7 @@ msgstr "päälaulu"
 msgid "legal name"
 msgstr "virallinen nimi"
 
-#: DB:link_type/link_phrase:22 DB:link_type/link_phrase:142
-#: DB:link_type/reverse_link_phrase:22 DB:link_type/reverse_link_phrase:142
+#: DB:link_type/link_phrase:142 DB:link_type/reverse_link_phrase:142
 msgid "legal representation"
 msgstr ""
 
@@ -3839,6 +3986,10 @@ msgstr "sanoitussivuna"
 #: DB:link_type/reverse_link_phrase:175 DB:link_type/reverse_link_phrase:79
 msgid "mail-order purchase page for"
 msgstr "postimyyntisivustona"
+
+#: DB:link_type/link_phrase:913
+msgid "mail-order purchase page for the score of"
+msgstr ""
 
 #: DB:link_type/link_phrase:798
 msgid "main performer at"
@@ -3949,12 +4100,12 @@ msgid "minor"
 msgstr ""
 
 #: DB:link_type/link_phrase:25 DB:link_type/link_phrase:129
-#: DB:link_type/link_phrase:162 DB:link_type/link_phrase:270
+#: DB:link_type/link_phrase:162
 msgid "miscellaneous roles"
 msgstr "sekalaiset roolit"
 
 #: DB:link_type/reverse_link_phrase:25 DB:link_type/reverse_link_phrase:129
-#: DB:link_type/reverse_link_phrase:162 DB:link_type/reverse_link_phrase:270
+#: DB:link_type/reverse_link_phrase:162
 msgid "miscellaneous support"
 msgstr "sekalainen tuki"
 
@@ -4103,10 +4254,6 @@ msgstr "muu laulu"
 msgid "parent label"
 msgstr ""
 
-#: DB:link_type/reverse_link_phrase:109
-msgid "parents"
-msgstr "vanhemmat"
-
 #: DB:link_attribute_type/name:511
 msgid "parody"
 msgstr "parodia"
@@ -4188,8 +4335,8 @@ msgstr ""
 msgid "personal relationship"
 msgstr "henkilösuhde"
 
-#: DB:link_type/reverse_link_phrase:869 DB:link_type/reverse_link_phrase:711
-#: DB:link_type/reverse_link_phrase:867 DB:link_type/reverse_link_phrase:710
+#: DB:link_type/reverse_link_phrase:869 DB:link_type/reverse_link_phrase:710
+#: DB:link_type/reverse_link_phrase:867 DB:link_type/reverse_link_phrase:711
 msgid "phonographic copyright by"
 msgstr ""
 
@@ -4201,6 +4348,14 @@ msgstr ""
 #: DB:link_type/reverse_link_phrase:173 DB:link_type/reverse_link_phrase:396
 #: DB:link_type/reverse_link_phrase:732
 msgid "picture of"
+msgstr ""
+
+#: DB:link_type/link_phrase:915
+msgid "podcast feed"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:915
+msgid "podcast feed for"
 msgstr ""
 
 #: DB:link_type/link_phrase:808
@@ -4309,7 +4464,7 @@ msgstr ""
 msgid "provided booking for"
 msgstr ""
 
-#: DB:link_type/long_link_phrase:22 DB:link_type/long_link_phrase:142
+#: DB:link_type/long_link_phrase:142
 msgid "provided legal representation for"
 msgstr ""
 
@@ -4327,6 +4482,10 @@ msgstr ""
 
 #: DB:link_type/long_link_phrase:27 DB:link_type/long_link_phrase:125
 msgid "provided {additional} graphic design on"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:22
+msgid "provided {additional} legal representation for"
 msgstr ""
 
 #: DB:link_type/link_phrase:206 DB:link_type/link_phrase:127
@@ -4360,12 +4519,28 @@ msgstr "osta ladattavaa musiikkia"
 msgid "purchase music for mail-order"
 msgstr "osta musiikkia postimyynnistä"
 
+#: DB:link_type/reverse_link_phrase:912
+msgid "purchase score for download"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:913
+msgid "purchase score for mail-order"
+msgstr ""
+
 #: DB:link_attribute_type/name:952
 msgid "re"
 msgstr ""
 
 #: DB:link_attribute_type/description:952
 msgid "re-[role]"
+msgstr ""
+
+#: DB:link_type/link_phrase:917 DB:link_type/long_link_phrase:917
+msgid "reconstructed"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:917
+msgid "reconstructed by"
 msgstr ""
 
 #: DB:link_type/reverse_link_phrase:810 DB:link_type/reverse_link_phrase:809
@@ -4509,14 +4684,6 @@ msgstr ""
 msgid "samples IMDb entry"
 msgstr ""
 
-#: DB:link_type/reverse_link_phrase:274
-msgid "score"
-msgstr "nuotit"
-
-#: DB:link_type/link_phrase:274
-msgid "score for"
-msgstr "nuotit"
-
 #: DB:link_type/link_phrase:811 DB:link_type/link_phrase:816
 #: DB:link_type/link_phrase:817
 msgid "setlist.fm"
@@ -4534,10 +4701,6 @@ msgstr ""
 #: DB:link_type/reverse_link_phrase:729
 msgid "show notes for"
 msgstr ""
-
-#: DB:link_type/link_phrase:110 DB:link_type/reverse_link_phrase:110
-msgid "siblings"
-msgstr "sisaruksia"
 
 #: DB:link_type/reverse_link_phrase:121
 msgid "signed"
@@ -4581,6 +4744,10 @@ msgstr ""
 
 #: DB:link_type/reverse_link_phrase:287
 msgid "standalone website for"
+msgstr ""
+
+#: DB:link_attribute_type/name:1020
+msgid "step"
 msgstr ""
 
 #: DB:link_type/link_phrase:194
@@ -4689,6 +4856,10 @@ msgstr "käännetty"
 
 #: DB:link_type/reverse_link_phrase:883
 msgid "translated at"
+msgstr ""
+
+#: DB:link_attribute_type/name:1018
+msgid "translator"
 msgstr ""
 
 #: DB:link_attribute_type/name:477
@@ -4812,10 +4983,6 @@ msgstr ""
 msgid "was the concertmaster for"
 msgstr "oli konserttimestari"
 
-#: DB:link_type/description:733
-msgid "wikidata"
-msgstr ""
-
 #: DB:link_type/description:731
 msgid "wikipedia"
 msgstr ""
@@ -4835,10 +5002,6 @@ msgstr "työskentelee äänittäjänä kohteessa"
 #: DB:link_type/long_link_phrase:701
 msgid "works as an engineer at"
 msgstr "työskentelee studioteknikkona kohteessa"
-
-#: DB:link_type/long_link_phrase:24
-msgid "wrote {additional} liner notes for"
-msgstr "kirjoittanut {additional:lisäksi} kansiteksit kohteelle"
 
 #: DB:link_type/link_phrase:293 DB:link_type/link_phrase:295
 #: DB:link_type/link_phrase:297 DB:link_type/long_link_phrase:293
@@ -4958,8 +5121,8 @@ msgstr ""
 msgid "{additional:additionally} {assistant} {associate} {co:co-}mastered"
 msgstr "{additional:additionally} {assistant} {associate} {co:co-}masteroi"
 
-#: DB:link_type/link_phrase:143 DB:link_type/link_phrase:26
-#: DB:link_type/long_link_phrase:143 DB:link_type/long_link_phrase:26
+#: DB:link_type/link_phrase:26 DB:link_type/link_phrase:143
+#: DB:link_type/long_link_phrase:26 DB:link_type/long_link_phrase:143
 msgid "{additional:additionally} {assistant} {associate} {co:co-}mixed"
 msgstr "{additional:additionally} {assistant} {associate} {co:co-}miksasi"
 
@@ -4978,8 +5141,8 @@ msgid ""
 "{additional:additionally} {assistant} {associate} {co:co-}sound engineered"
 msgstr "toimi {additional:lisä}{assistant}{associate}{co:co-}ääniteknikkona"
 
-#: DB:link_type/link_phrase:28 DB:link_type/link_phrase:138
-#: DB:link_type/long_link_phrase:28 DB:link_type/long_link_phrase:138
+#: DB:link_type/link_phrase:138 DB:link_type/link_phrase:28
+#: DB:link_type/long_link_phrase:138 DB:link_type/long_link_phrase:28
 msgid ""
 "{additional:additionally} {assistant} {associate} "
 "{co:co-}{executive:executive }engineered"
@@ -5057,6 +5220,10 @@ msgstr "{additional} suunnittelu/kuvitus"
 msgid "{additional} graphic design"
 msgstr "{additional} graafinen suunnittelu"
 
+#: DB:link_type/link_phrase:22 DB:link_type/reverse_link_phrase:22
+msgid "{additional} legal representation"
+msgstr ""
+
 #: DB:link_type/link_phrase:57 DB:link_type/reverse_link_phrase:57
 #: DB:link_type/reverse_link_phrase:169
 msgid "{additional} librettist"
@@ -5071,8 +5238,8 @@ msgid "{additional} libretto writing location for"
 msgstr ""
 
 #: DB:link_type/link_phrase:24 DB:link_type/reverse_link_phrase:24
-msgid "{additional} liner notes"
-msgstr "{additional} kansitekstit"
+msgid "{additional} liner notes {translator}"
+msgstr ""
 
 #: DB:link_type/reverse_link_phrase:56 DB:link_type/reverse_link_phrase:165
 msgid "{additional} lyricist"
@@ -5152,7 +5319,7 @@ msgstr ""
 msgid "{additional} {assistant} {associate} {co:co-}mastering"
 msgstr "{additional} {assistant} {associate} {co:co-}masterointi"
 
-#: DB:link_type/reverse_link_phrase:143 DB:link_type/reverse_link_phrase:26
+#: DB:link_type/reverse_link_phrase:26 DB:link_type/reverse_link_phrase:143
 msgid "{additional} {assistant} {associate} {co:co-}mixer"
 msgstr "{additional} {assistant} {associate} {co:co-}miksaus"
 
@@ -5160,7 +5327,7 @@ msgstr "{additional} {assistant} {associate} {co:co-}miksaus"
 msgid "{additional} {assistant} {associate} {co:co-}sound engineer"
 msgstr "{additional} {assistant} {associate} {co:co-}ääniteknikko"
 
-#: DB:link_type/reverse_link_phrase:28 DB:link_type/reverse_link_phrase:138
+#: DB:link_type/reverse_link_phrase:138 DB:link_type/reverse_link_phrase:28
 msgid ""
 "{additional} {assistant} {associate} {co:co-}{executive:executive }engineer"
 msgstr "{additional} {assistant} {associate} {co:co-}{executive:executive }teknikko"
@@ -5287,12 +5454,16 @@ msgstr ""
 msgid "{entity1} has lyrics available at {entity0}"
 msgstr ""
 
-#: DB:link_type/long_link_phrase:274
-msgid "{entity1} has score available at {entity0}"
-msgstr ""
-
 #: DB:link_type/long_link_phrase:123 DB:link_type/long_link_phrase:20
 msgid "{entity1} has {additional} photography by {entity0}"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:918
+msgid "{entity1} invented {entity0}"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:915
+msgid "{entity1} is a feed for podcast {entity0}"
 msgstr ""
 
 #: DB:link_type/long_link_phrase:743
@@ -5312,6 +5483,7 @@ msgid "{entity1} is a tribute to {entity0}"
 msgstr ""
 
 #: DB:link_type/long_link_phrase:868 DB:link_type/long_link_phrase:846
+#: DB:link_type/long_link_phrase:914
 msgid "{entity1} is dedicated to {entity0}"
 msgstr ""
 
@@ -5467,6 +5639,10 @@ msgstr ""
 msgid "{entity1} was {re}mastered in {entity0}"
 msgstr ""
 
+#: DB:link_type/link_phrase:110 DB:link_type/reverse_link_phrase:110
+msgid "{half:half-}{step}siblings"
+msgstr ""
+
 #: DB:link_type/link_phrase:278
 msgid ""
 "{live} {medley:medley including a} {partial} {instrumental} {cover} "
@@ -5491,6 +5667,14 @@ msgstr ""
 msgid "{re}mastering location for"
 msgstr ""
 
+#: DB:link_type/link_phrase:109
+msgid "{step}children"
+msgstr ""
+
+#: DB:link_type/reverse_link_phrase:109
+msgid "{step}parents"
+msgstr ""
+
 #: DB:link_type/reverse_link_phrase:15
 msgid "{translated} {parody:parodies|covers}"
 msgstr ""
@@ -5501,6 +5685,10 @@ msgstr ""
 
 #: DB:link_type/reverse_link_phrase:241
 msgid "{translated} {parody} version of"
+msgstr ""
+
+#: DB:link_type/long_link_phrase:24
+msgid "{translator:translated|wrote} {additional} liner notes for"
 msgstr ""
 
 #: DB:link_type/long_link_phrase:85 DB:link_type/long_link_phrase:268

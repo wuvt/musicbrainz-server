@@ -11,13 +11,26 @@ m4_define(`apt_purge', `apt-get purge --auto-remove -y $1')
 
 m4_define(`sudo_mb', `sudo -E -H -u musicbrainz $1')
 
+m4_define(`CHROME_DEB', `google-chrome-stable_current_amd64.deb')
+
+m4_define(`CHROME_DRIVER', `chromedriver_linux64.zip')
+
+m4_define(`NODEJS_DEB', `nodejs_9.5.0-1nodesource1_amd64.deb')
+
 m4_define(
     `install_javascript',
     `m4_dnl
-COPY package.json npm-shrinkwrap.json ./
-RUN apt_install(``git nodejs nodejs-legacy npm'') && \
-    sudo_mb(``npm install$1'') && \
-    apt_purge(``git npm'')
+COPY docker/yarn_pubkey.txt /tmp/
+COPY package.json yarn.lock ./
+RUN apt-key add /tmp/yarn_pubkey.txt && \
+    rm /tmp/yarn_pubkey.txt && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt_install(``git python-minimal yarn'') && \
+    cd /tmp && \
+    curl -sLO https://deb.nodesource.com/node_9.x/pool/main/n/nodejs/NODEJS_DEB && \
+    dpkg -i NODEJS_DEB && \
+    cd - && \
+    sudo_mb(``yarn install$1'')
 COPY .babelrc ./')
 
 m4_define(
@@ -27,7 +40,11 @@ install_javascript(`$1')
 
 COPY gulpfile.js ./
 COPY root/ root/
-COPY script/compile_resources.sh script/dbdefs_to_js.pl script/
+COPY \
+    script/compile_resources.sh \
+    script/dbdefs_to_js.pl \
+    script/start_renderer.pl \
+    script/
 
 RUN chown_mb(`MBS_ROOT `/tmp/ttc'')')
 
@@ -48,6 +65,7 @@ libxml2-dev')
 m4_define(
     `mbs_run_deps',
     `m4_dnl
+bzip2 m4_dnl
 ca-certificates m4_dnl
 libdb5.3 m4_dnl
 libexpat1 m4_dnl
@@ -117,10 +135,42 @@ COPY admin/ admin/
 COPY app.psgi entities.json ./
 COPY bin/ bin/
 COPY docker/scripts/mbs_constants.sh /etc/
+COPY docker/scripts/consul-template-dedup-prefix /usr/local/bin/
 COPY lib/ lib/
+COPY script/functions.sh script/`git_info' script/
 
 RUN chown_mb(`MBS_ROOT')')
 
-m4_define(`git_info', `ENV `GIT_INFO' GIT_INFO')
+m4_define(
+    `git_info',
+    `m4_dnl
+m4_pushdef(`git_info', ``git_info'')
+ENV `GIT_BRANCH' GIT_BRANCH
+ENV `GIT_MSG' GIT_MSG
+ENV `GIT_SHA' GIT_SHA
+m4_popdef(`git_info')')
+
+m4_define(
+    `install_new_xz_utils',
+    `m4_dnl
+COPY docker/lasse_collin_pubkey.txt /tmp/
+
+RUN apt_install(``autoconf automake build-essential gettext libtool'') && \
+    cd /tmp && \
+    sudo_mb(``gpg --import lasse_collin_pubkey.txt'') && \
+    rm lasse_collin_pubkey.txt && \
+    wget https://tukaani.org/xz/xz-5.2.3.tar.gz && \
+    wget https://tukaani.org/xz/xz-5.2.3.tar.gz.sig && \
+    sudo_mb(``gpg --verify xz-5.2.3.tar.gz.sig'') && \
+    rm xz-5.2.3.tar.gz.sig && \
+    tar xvzf xz-5.2.3.tar.gz && \
+    cd xz-5.2.3 && \
+    ./configure --disable-shared --prefix=/usr/local/ && \
+    make && \
+    make install && \
+    cd ../ && \
+    rm -r xz-5.2.3* && \
+    apt_purge(``autoconf automake libtool'') && \
+    cd /home/musicbrainz')
 
 m4_divert`'m4_dnl

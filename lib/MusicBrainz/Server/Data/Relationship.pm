@@ -24,7 +24,12 @@ use MusicBrainz::Server::Data::Utils qw(
     ref_to_type
     type_to_model
 );
-use MusicBrainz::Server::Constants qw( entities_with $PART_OF_AREA_LINK_TYPE );
+use MusicBrainz::Server::Constants qw(
+    $PART_OF_AREA_LINK_TYPE
+    %ENTITIES_WITH_RELATIONSHIP_CREDITS
+    @RELATABLE_ENTITIES
+    entities_with
+);
 use Scalar::Util 'weaken';
 use List::AllUtils qw( any part uniq );
 use List::UtilsBy qw( nsort_by partition_by );
@@ -33,14 +38,7 @@ no if $] >= 5.018, warnings => "experimental::smartmatch";
 
 extends 'MusicBrainz::Server::Data::Entity';
 
-Readonly my @TYPES => sort (entities_with(['mbid', 'relatable']));
-
-my %TYPES = map { $_ => 1} @TYPES;
-
-sub all_link_types
-{
-    return @TYPES;
-}
+my %TYPES = map { $_ => 1} @RELATABLE_ENTITIES;
 
 sub _entity_class
 {
@@ -273,19 +271,19 @@ sub load_subset {
 
 sub load {
     my ($self, @objs) = @_;
-    return $self->_load_subset(\@TYPES, 0, @objs);
+    return $self->_load_subset(\@RELATABLE_ENTITIES, 0, @objs);
 }
 
 sub load_cardinal {
     my ($self, @objs) = @_;
-    return $self->_load_subset(\@TYPES, 1, @objs);
+    return $self->_load_subset(\@RELATABLE_ENTITIES, 1, @objs);
 }
 
 sub generate_table_list {
     my ($self, $type, @end_types) = @_;
     # Generate a list of all possible type combinations
     my @types;
-    @end_types = @TYPES unless @end_types;
+    @end_types = @RELATABLE_ENTITIES unless @end_types;
     foreach my $t (@end_types) {
         if ($type le $t) {
             push @types, ["l_${type}_${t}", 'entity0', 'entity1'];
@@ -303,8 +301,8 @@ sub all_pairs
 
     # Generate a list of all possible type combinations
     my @all;
-    for my $l0 (@TYPES) {
-        for my $l1 (@TYPES) {
+    for my $l0 (@RELATABLE_ENTITIES) {
+        for my $l1 (@RELATABLE_ENTITIES) {
             next if $l1 lt $l0;
             push @all, [ $l0, $l1 ];
         }
@@ -338,7 +336,7 @@ sub merge_entities {
 
         # Unless the rename_credits option is given, preserve implicit (empty)
         # relationship credits by copying the existing entity names into them.
-        if ($type eq 'artist' && !$opts{rename_credits}) {
+        if ($ENTITIES_WITH_RELATIONSHIP_CREDITS{$type} && !$opts{rename_credits}) {
             my $target_table = $self->c->model(type_to_model($type))->_main_table;
 
             $self->sql->do(
@@ -561,7 +559,7 @@ sub _check_series_type {
     my $series = $self->c->model('Series')->get_by_id($series_id);
     $self->c->model('SeriesType')->load($series);
 
-    if ($series->type->entity_type ne $entity_type) {
+    if ($series->type->item_entity_type ne $entity_type) {
         die "Incorrect entity type for part of series relationship";
     }
 }

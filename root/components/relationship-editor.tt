@@ -32,13 +32,13 @@
     <td class="section" data-bind="text: MB.i18n.addColon(MB.i18n.strings.entityName[source.entityType])"></td>
     <td>
       <span data-bind="html: source.html({ 'target': '_blank', creditedAs: relationship().creditField(source)() })"></span>
-      <!-- ko template: {name: "template.dialog-entity-credit", data: {entity: source, relationship: relationship()}} --><!-- /ko -->
+      <!-- ko template: {name: "template.dialog-entity-credit", data: {entity: source, relationship: relationship(), role: "source"}} --><!-- /ko -->
     </td>
   </tr>
 </script>
 
 <script type="text/html" id="template.dialog-entity-credit">
-  <!-- ko if: entity.entityType === 'artist' -->
+  <!-- ko if: MB.constants.ENTITIES_WITH_RELATIONSHIP_CREDITS[entity.entityType] -->
     <div>
       <label>
         [% l('Credited as:') %]
@@ -47,10 +47,35 @@
     </div>
     <div>
       <label>
-        <input type="checkbox" data-bind="checked: $parent.changeAllRelationshipCredits" />
-        <span data-bind="html: MB.i18n.l('Change all relationship credits for {entity} on the page.', {entity: entity.html({target: '_blank'})})">
+        <input type="checkbox" data-bind="checked: $parent.changeOtherRelationshipCredits[role]" />
+        <span data-bind="html: MB.i18n.l('Change credits for other {entity} relationships on the page.', {entity: entity.html()})">
         </span>
       </label>
+    </div>
+    <div data-bind="visible: $parent.changeOtherRelationshipCredits[role]">
+      <div>
+        <label>
+          <input type="radio" value="all" data-bind="checked: $parent.selectedRelationshipCredits[role]" />
+          [% l('All of these relationships.'); %]
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" value="same-entity-types" data-bind="checked: $parent.selectedRelationshipCredits[role]" />
+          <span data-bind="html: MB.i18n.l('Only relationships to {entity_type} entities.',
+                                           {entity_type: MB.i18n.strings.entityName[relationship.target(entity).entityType].toLocaleLowerCase()})">
+          </span>
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" value="same-relationship-type" data-bind="checked: $parent.selectedRelationshipCredits[role]" />
+          <span data-bind="html: MB.i18n.l('Only “{relationship_type}” relationships to {entity_type} entities.',
+                                           {relationship_type: $parent.linkTypeName(),
+                                            entity_type: MB.i18n.strings.entityName[relationship.target(entity).entityType].toLocaleLowerCase()})">
+          </span>
+        </label>
+      </div>
     </div>
   <!-- /ko -->
 </script>
@@ -66,7 +91,7 @@
         <input class="name" type="text" data-bind="relationshipEditorAutocomplete: $data" />
       </span>
       <div class="error" data-bind="text: targetEntityError()"></div>
-      <!-- ko template: {name: "template.dialog-entity-credit", data: {entity: relationship().target(source), relationship: relationship()}} --><!-- /ko -->
+      <!-- ko template: {name: "template.dialog-entity-credit", data: {entity: relationship().target(source), relationship: relationship(), role: "target"}} --><!-- /ko -->
     </td>
   </tr>
 </script>
@@ -127,11 +152,11 @@
   <!-- ko if: relationship().hasDates() -->
     <!-- ko template: {
               name: "template.dialog-date",
-              data: { label: "[% l('Begin date:') | html | js %]", date: relationship().period.beginDate }
+              data: { label: "[% l('Begin date:') | html | js %]", date: relationship().begin_date }
             } --><!-- /ko -->
     <!-- ko template: {
               name: "template.dialog-date",
-              data: { label: "[% l('End date:') | html | js %]", date: relationship().period.endDate }
+              data: { label: "[% l('End date:') | html | js %]", date: relationship().end_date }
             } --><!-- /ko -->
     <!-- ko with: datePeriodError() -->
     <tr>
@@ -140,9 +165,10 @@
     </tr>
     <!-- /ko -->
     <tr>
-      <td colspan="2">
+      <td></td>
+      <td>
         <label>
-          <input type="checkbox" data-bind="checked: relationship().period.ended" />
+          <input type="checkbox" data-bind="checked: relationship().ended, disable: relationship().disableEndedCheckBox" />
           [% l('This relationship has ended.') %]
         </label>
       </td>
@@ -155,11 +181,11 @@
     <!-- ko with: relationship.formatDatePeriod() -->
       (<!-- ko text: $data --><!-- /ko -->)
     <!-- /ko -->
-    <!-- ko if: relationship.period.ended() && !relationship.formatDatePeriod() -->
+    <!-- ko if: relationship.ended() && !relationship.formatDatePeriod() -->
       [% bracketed(l('ended')) | html %]
     <!-- /ko -->
   <!-- /ko -->
-  <!-- ko with: relationship.phraseAndExtraAttributes()[2] -->
+  <!-- ko with: relationship.phraseAndExtraAttributes()[2 + (forGrouping ? 3 : 0)] -->
     (<!-- ko text: $data --><!-- /ko -->)
   <!-- /ko -->
 </script>

@@ -505,15 +505,7 @@ sub _create_instance {
     MusicBrainz::Server::Edit::Exceptions::Forbidden->throw
         unless ($editor->id == $EDITOR_MODBOT || $edit->editor_may_edit(\%opts));
 
-    try {
-        $edit->initialize(%opts);
-    } catch {
-        if (ref($_) =~ /^MusicBrainz::Server::Edit::Exceptions::(NoChanges|FailedDependency|DuplicateViolation|NeedsDisambiguation)$/) {
-            confess $_;
-        } else {
-            croak join "\n\n", "Could not create $class edit", Dumper(\%opts), $_;
-        }
-    };
+    $edit->initialize(%opts);
 
     return $edit;
 }
@@ -879,8 +871,7 @@ sub insert_votes_and_notes {
         for my $note (@notes) {
             my $edit_id = $note->{edit_id};
             my $edit = $edits->{$edit_id};
-            defined $edit && $edit->editor_may_add_note($editor)
-                or next;
+            next unless defined $edit && $edit->editor_may_add_note($editor);
             $self->c->model('EditNote')->add_note(
                 $edit_id,
                 {

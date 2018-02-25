@@ -17,6 +17,8 @@ with 'MusicBrainz::Server::Entity::Role::Comment';
 with 'MusicBrainz::Server::Entity::Role::Area';
 with 'MusicBrainz::Server::Entity::Role::Type' => { model => 'LabelType' };
 
+sub entity_type { 'label' }
+
 has 'label_code' => (
     is => 'rw',
     isa => 'Int'
@@ -32,6 +34,15 @@ sub format_label_code
 }
 
 sub _appearances_table_types { ("release", "release_group", "work", "recording") }
+
+around TO_JSON => sub {
+    my ($orig, $self) = @_;
+
+    my $json = $self->$orig;
+    $json->{label_code} = $self->label_code;
+
+    return $json;
+};
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

@@ -29,10 +29,24 @@
             <li><a href="[% c.uri_for_action('/report/show', 'ArtistsDisambiguationSameName') %]">[% l('Artists with disambiguation the same as the name') %]</a></li>
         </ul>
 
+        [% IF c.user.is_account_admin -%]
+        <h2>[% l('Editors') %]</h2>
+
+        <ul>
+            <li><a href="[% c.uri_for_action('/report/show', 'LimitedEditors') %]">[% l('Beginner/limited editors') %]</a></li>
+        </ul>
+
+        [% END -%]
         <h2>[% l('Events') %]</h2>
 
         <ul>
             <li><a href="[% c.uri_for_action('/report/show', 'DuplicateEvents') %]">[% l('Possibly duplicate events') %]</a></li>
+        </ul>
+
+        <h2>[% l('Instruments') %]</h2>
+
+        <ul>
+            <li><a href="[% c.uri_for_action('/report/show', 'InstrumentsWithoutAnImage') %]">[% l('Instruments without an image') %]</a></li>
         </ul>
 
         <h2>[% l('Labels') %]</h2>
@@ -94,6 +108,7 @@
             <li><a href="[% c.uri_for_action('/report/show', 'ReleasesWithNoMediums') %]">[% l('Releases with no mediums') %]</a></li>
             <li><a href="[% c.uri_for_action('/report/show', 'ReleasesWithoutVACredit') %]">[% l('Releases not credited to "Various Artists" but linked to VA') %]</a></li>
             <li><a href="[% c.uri_for_action('/report/show', 'ReleasesWithoutVALink') %]">[% l('Releases credited to "Various Artists" but not linked to VA') %]</a></li>
+            <li><a href="[% c.uri_for_action('/report/show', 'ReleasesMissingDiscIDs') %]">[% l('Releases missing disc IDs') %]</a></li>
         </ul>
 
         <h2>[% l('Recordings') %]</h2>
@@ -108,6 +123,7 @@
             <li><a href="[% c.uri_for_action('/report/show', 'AnnotationsRecordings') %]">[% l('Recordings with annotations') %]</a></li>
             <li><a href="[% c.uri_for_action('/report/show', 'RecordingsWithoutVACredit') %]">[% l('Recordings not credited to "Various Artists" but linked to VA') %]</a></li>
             <li><a href="[% c.uri_for_action('/report/show', 'RecordingsWithoutVALink') %]">[% l('Recordings credited to "Various Artists" but not linked to VA') %]</a></li>
+            <li><a href="[% c.uri_for_action('/report/show', 'RecordingsSameNameDifferentArtistsSameName') %]">[% l('Recordings with the same name by different artists with the same name') %]</a></li>
         </ul>
 
         <h2>[% l('Places') %]</h2>

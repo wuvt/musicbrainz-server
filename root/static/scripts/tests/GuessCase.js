@@ -7,7 +7,12 @@ const _ = require('lodash');
 const test = require('tape');
 
 const setCookie = require('../common/utility/setCookie');
+const gc = require('../guess-case/MB/GuessCase/Main');
 const modes = require('../guess-case/modes');
+
+setCookie('guesscase_roman', 'false');
+gc.CFG_UC_UPPERCASED = 'false';
+gc.mode = modes.English;
 
 test('Sortname', function (t) {
     t.plan(6);
@@ -30,7 +35,7 @@ test('Sortname', function (t) {
         }
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         var result = MB.GuessCase.artist.sortname(test.input, test.person);
         t.equal(result, test.expected, test.input);
     });
@@ -64,7 +69,7 @@ test('Sortname', function (t) {
         */
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         var result = MB.GuessCase.label.sortname(test.input);
         t.equal(result, test.expected, test.input);
     });
@@ -94,7 +99,7 @@ test('Artist', function (t) {
         }
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         var result = MB.GuessCase.artist.guess(test.input);
 
         var prefix = test.bug ? test.bug + ', ' : '';
@@ -118,7 +123,7 @@ test('Label', function (t) {
         { input: 'No Label',  expected: '[unknown]' }
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         var result = MB.GuessCase.label.guess(test.input);
         t.equal(result, test.expected, test.input);
     });
@@ -150,7 +155,7 @@ test('Recording', function (t) {
 });
 
 test('Work', function (t) {
-    t.plan(11);
+    t.plan(18);
 
     var tests = [
         {
@@ -176,6 +181,41 @@ test('Work', function (t) {
         {
             input: "acte 1, no. 7: chœur: «voyons brigadier»",
             expected: "Acte 1, no. 7 : Chœur : « voyons brigadier »",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "La chenille",
+            expected: "La Chenille",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "Le téléphone",
+            expected: "Le Téléphone",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "Le tire-bouchon",
+            expected: "Le Tire-bouchon",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "Les corons",
+            expected: "Les Corons",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "L'envie",
+            expected: "L’Envie",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "L’envie",
+            expected: "L’Envie",
+            mode: "French", roman: false, keepuppercase: false
+        },
+        {
+            input: "La patience est le courage de la vertu.",
+            expected: "La patience est le courage de la vertu.",
             mode: "French", roman: false, keepuppercase: false
         },
         {
@@ -210,7 +250,7 @@ test('Work', function (t) {
         }
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         setCookie('guesscase_roman', String(test.roman));
         gc.CFG_UC_UPPERCASED = test.keepuppercase;
         gc.mode = modes[test.mode];
@@ -327,7 +367,7 @@ test('BugFixes', function (t) {
         */
     ];
 
-    $.each(tests, function (idx, test) {
+    _.each(tests, function (test, idx) {
         gc.mode = modes[test.mode];
 
         var result = MB.GuessCase.work.guess(test.input);

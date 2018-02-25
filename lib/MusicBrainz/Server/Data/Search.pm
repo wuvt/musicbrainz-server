@@ -45,6 +45,7 @@ use MusicBrainz::Server::Entity::Series;
 use MusicBrainz::Server::Entity::SeriesOrderingType;
 use MusicBrainz::Server::Entity::SeriesType;
 use MusicBrainz::Server::Entity::SearchResult;
+use MusicBrainz::Server::Entity::WorkLanguage;
 use MusicBrainz::Server::Entity::WorkType;
 use MusicBrainz::Server::Exceptions;
 use MusicBrainz::Server::Data::Artist;
@@ -206,7 +207,6 @@ sub search
         }
 
         my $extra_columns = '';
-        $extra_columns .= 'entity.language,' if $type eq 'work';
         $extra_columns .= 'entity.address, entity.area, entity.begin_date_year, entity.begin_date_month, entity.begin_date_day,
                 entity.end_date_year, entity.end_date_month, entity.end_date_day, entity.ended,' if $type eq 'place';
         $extra_columns .= 'entity.description,' if $type eq 'instrument';
@@ -400,6 +400,7 @@ sub schema_fixup
             if (defined $data->{$json_prop})
             {
                 my $area = delete $data->{$json_prop};
+                $area = $self->schema_fixup_type($area, 'area');
                 $area->{gid} = $area->{id};
                 $area->{id} = 1;
                 $data->{$prop} = MusicBrainz::Server::Entity::Area->new($area);
@@ -658,10 +659,19 @@ sub schema_fixup
             ];
         }
 
-        if (defined $data->{language}) {
-            $data->{language} = MusicBrainz::Server::Entity::Language->new({
-                iso_code_3 => $data->{language}
-            });
+        my @languages = @{ $data->{languages} // [] };
+        if (!@languages && defined $data->{language}) {
+            push @languages, $data->{language};
+        }
+
+        if (@languages) {
+            $data->{languages} = [map {
+                MusicBrainz::Server::Entity::WorkLanguage->new({
+                    language => MusicBrainz::Server::Entity::Language->new({
+                        iso_code_3 => $_,
+                    }),
+                })
+            } @languages];
         }
 
         if (defined $data->{'iswcs'}) {
@@ -733,14 +743,22 @@ sub external_search
 
     $query = uri_escape_utf8($query);
     $type =~ s/release_group/release-group/;
-    my $search_url = sprintf("http://%s/ws/2/%s/?query=%s&offset=%s&max=%s&fmt=jsonnew&dismax=%s&web=1",
-                                 DBDefs->LUCENE_SERVER,
+
+    my $search_url_string;
+    if (DBDefs->SEARCH_ENGINE eq 'LUCENE') {
+        my $dismax = $adv ? 'false' : 'true';
+        $search_url_string = "http://%s/ws/2/%s/?query=%s&offset=%s&max=%s&fmt=jsonnew&dismax=$dismax&web=1";
+    } else {
+        my $def_type = $adv ? 'lucene' : 'dismax';
+        $search_url_string = "http://%s/%s/select?q=%s&start=%s&rows=%s&wt=mbjson&defType=$def_type&fl=score";
+    }
+
+    my $search_url = sprintf($search_url_string,
+                                 DBDefs->SEARCH_SERVER,
                                  $type,
                                  $query,
                                  $offset,
-                                 $limit,
-                                 $adv ? 'false' : 'true',
-                                 );
+                                 $limit);
 
     # Dispatch the search request.
     my $response = get_chunked_with_retry($self->c->lwp, $search_url);
@@ -1010,9 +1028,16 @@ sub xml_search
     }
 
     $query = uri_escape_utf8($query);
-    my $search_url = sprintf("http://%s/ws/%d/%s/?query=%s&offset=%s&max=%s&fmt=xml",
-                                 DBDefs->LUCENE_SERVER,
-                                 $version,
+
+    my $search_url_string;
+    if (DBDefs->SEARCH_ENGINE eq 'LUCENE') {
+        $search_url_string = "http://%s/ws/$version/%s/?query=%s&offset=%s&max=%s&fmt=xml";
+    } else {
+        $search_url_string = "http://%s/%s/select?q=%s&start=%s&rows=%s&wt=mbxml&fl=score";
+    }
+
+    my $search_url = sprintf($search_url_string,
+                                 DBDefs->SEARCH_SERVER,
                                  $type,
                                  $query,
                                  $offset,

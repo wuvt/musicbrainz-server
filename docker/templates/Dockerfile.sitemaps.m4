@@ -1,10 +1,15 @@
 m4_include(`server_base.m4')m4_dnl
 
-RUN apt_install(`libxml2 rsync')
+RUN apt_install(`libxml2')
 
 copy_common_mbs_files
 
-COPY docker/musicbrainz-sitemaps/consul-template.conf /etc/
+COPY docker/musicbrainz-sitemaps/consul-template-sitemaps.conf /etc/
+
+COPY \
+    docker/musicbrainz-sitemaps/sitemaps.service \
+    /etc/service/sitemaps/run
+RUN chmod 755 /etc/service/sitemaps/run
 
 COPY docker/musicbrainz-sitemaps/crontab /var/spool/cron/crontabs/musicbrainz
 

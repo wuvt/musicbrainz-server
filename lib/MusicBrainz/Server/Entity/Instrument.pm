@@ -16,6 +16,8 @@ with 'MusicBrainz::Server::Entity::Role::Type' => { model => 'InstrumentType' };
 use MooseX::Types::Structured qw( Dict );
 use MooseX::Types::Moose qw( ArrayRef Object Str );
 
+sub entity_type { 'instrument' }
+
 sub l_name {
     my $self = shift;
     if ($self->comment) {
@@ -40,7 +42,7 @@ around TO_JSON => sub {
 
     return {
         %{ $self->$orig },
-        description => $self->l_description,
+        description => $self->description,
     };
 };
 

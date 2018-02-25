@@ -3,9 +3,10 @@ use utf8;
 use JSON;
 use Test::Routine;
 use Test::More;
-use MusicBrainz::Server::Test ws_test_json => {
-    version => 2
-};
+use MusicBrainz::Server::Test::WS qw(
+    ws2_test_json
+    ws2_test_json_unauthorized
+);
 
 with 't::Mechanize', 't::Context';
 
@@ -13,7 +14,7 @@ test 'basic release lookup' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'basic release lookup',
+    ws2_test_json 'basic release lookup',
     '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6' =>
         {
             id => "b3b7e934-445b-4c68-a097-730c6a6d47e6",
@@ -58,7 +59,7 @@ test 'basic release lookup, inc=annotation' => sub {
     MusicBrainz::Server::Test->prepare_test_database($c, '+webservice');
     MusicBrainz::Server::Test->prepare_test_database($c, '+webservice_annotation');
 
-    ws_test_json 'basic release lookup, inc=annotation',
+    ws2_test_json 'basic release lookup, inc=annotation',
     '/release/adcf7b48-086e-48ee-b420-1001f88d672f?inc=annotation' =>
         {
             id => "adcf7b48-086e-48ee-b420-1001f88d672f",
@@ -98,6 +99,50 @@ test 'basic release lookup, inc=annotation' => sub {
         };
 };
 
+test 'basic release lookup, inc=ratings' => sub {
+
+    MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
+
+    # MBS-9129: inc=ratings should be a no-op on a release
+    ws2_test_json 'basic release lookup, inc=ratings',
+    '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6?inc=ratings' =>
+        {
+            id => "b3b7e934-445b-4c68-a097-730c6a6d47e6",
+            title => "Summer Reggae! Rainbow",
+            status => "Pseudo-Release",
+            "status-id" => "41121bb9-3413-3818-8a9a-9742318349aa",
+            quality => "normal",
+            "text-representation" => {
+                language => "jpn",
+                script => "Latn",
+            },
+            "cover-art-archive" => {
+                artwork => JSON::false,
+                count => 0,
+                front => JSON::false,
+                back => JSON::false,
+                darkened => JSON::false,
+            },
+            date => "2001-07-04",
+            country => "JP",
+            "release-events" => [{
+                date => "2001-07-04",
+                "area" => {
+                    disambiguation => '',
+                    "id" => "2db42837-c832-3c27-b4a3-08198f75693c",
+                    "name" => "Japan",
+                    "sort-name" => "Japan",
+                    "iso-3166-1-codes" => ["JP"],
+                },
+            }],
+            barcode => "4942463511227",
+            asin => "B00005LA6G",
+            disambiguation => "",
+            packaging => JSON::null,
+            "packaging-id" => JSON::null,
+        };
+};
+
 test 'basic release with tags' => sub {
 
     my $c = shift->c;
@@ -106,7 +151,7 @@ test 'basic release with tags' => sub {
     MusicBrainz::Server::Test->prepare_test_database(
         $c, "INSERT INTO release_tag (count, release, tag) VALUES (1, 123054, 114);");
 
-    ws_test_json 'basic release with tags',
+    ws2_test_json 'basic release with tags',
     '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6?inc=tags' =>
         {
             id => "b3b7e934-445b-4c68-a097-730c6a6d47e6",
@@ -194,7 +239,7 @@ EOSQL
         "packaging-id" => JSON::null,
     };
 
-    ws_test_json 'basic release with collections',
+    ws2_test_json 'basic release with collections',
         '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6?inc=collections' => {
             %$common_release_json,
             collections => [
@@ -210,7 +255,7 @@ EOSQL
             ],
         };
 
-    ws_test_json 'basic release with private collections',
+    ws2_test_json 'basic release with private collections',
         '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6?inc=user-collections' => {
             %$common_release_json,
             collections => [
@@ -240,7 +285,7 @@ test 'release lookup with artists + aliases' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup with artists + aliases',
+    ws2_test_json 'release lookup with artists + aliases',
     '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=artists+aliases' =>
         {
             id => "aff4a693-5970-4e2e-bd46-e2ee49c22de7",
@@ -300,7 +345,7 @@ test 'release lookup with labels and recordings' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup with labels and recordings',
+    ws2_test_json 'release lookup with labels and recordings',
     '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=labels+recordings' =>
         {
             id => "aff4a693-5970-4e2e-bd46-e2ee49c22de7",
@@ -355,6 +400,7 @@ test 'release lookup with labels and recordings' => sub {
                     tracks => [
                         {
                             id => "ec60f5e2-ed8a-391d-90cd-bf119c50f6a0",
+                            position => 1,
                             number => "1",
                             title => "the Love Bug",
                             length => 243000,
@@ -368,6 +414,7 @@ test 'release lookup with labels and recordings' => sub {
                         },
                         {
                             id => "2519283c-93d9-30de-a0ba-75f99ca25604",
+                            position => 2,
                             number => "2",
                             length => 222000,
                             title => "the Love Bug (Big Bug NYC remix)",
@@ -381,6 +428,7 @@ test 'release lookup with labels and recordings' => sub {
                         },
                         {
                             id => "4ffc18f0-96cc-3e1f-8192-cf0d0c489beb",
+                            position => 3,
                             number => "3",
                             length => 333000,
                             title => "the Love Bug (cover)",
@@ -400,7 +448,7 @@ test 'release lookup with release-groups' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup with release-groups',
+    ws2_test_json 'release lookup with release-groups',
     '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=artist-credits+release-groups' =>
         {
             id => "aff4a693-5970-4e2e-bd46-e2ee49c22de7",
@@ -470,11 +518,114 @@ test 'release lookup with release-groups' => sub {
         };
 };
 
+test 'release lookup with release-group and ratings' => sub {
+
+    # MBS-9129: Rating requests apply to the release's RG, if any.
+
+    MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
+
+    ws2_test_json 'release lookup with release-groups and ratings',
+    '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=release-groups+ratings' =>
+        {
+            id => "aff4a693-5970-4e2e-bd46-e2ee49c22de7",
+            title => "the Love Bug",
+            status => "Official",
+            "status-id" => "4e304316-386d-3409-af2e-78857eec5cfe",
+            quality => "normal",
+            disambiguation => "",
+            packaging => JSON::null,
+            "packaging-id" => JSON::null,
+            "text-representation" => { language => "eng", script => "Latn" },
+            "cover-art-archive" => {
+                artwork => JSON::true,
+                count => 1,
+                front => JSON::true,
+                back => JSON::false,
+                darkened => JSON::false,
+            },
+            date => "2004-03-17",
+            country => "JP",
+            "release-events" => [{
+                date => "2004-03-17",
+                "area" => {
+                    disambiguation => '',
+                    "id" => "2db42837-c832-3c27-b4a3-08198f75693c",
+                    "name" => "Japan",
+                    "sort-name" => "Japan",
+                    "iso-3166-1-codes" => ["JP"],
+                },
+            }],
+            barcode => "4988064451180",
+            asin => "B0001FAD2O",
+            "release-group" => {
+                id => "153f0a09-fead-3370-9b17-379ebd09446b",
+                title => "the Love Bug",
+                disambiguation => "",
+                "first-release-date" => "2004-03-17",
+                "primary-type" => "Single",
+                "primary-type-id" => "d6038452-8ee0-3f68-affc-2de9a1ede0b9",
+                "secondary-types" => [],
+                "secondary-type-ids" => [],
+                rating => { "votes-count" => 0, value => JSON::null },
+            }
+        };
+
+    ws2_test_json 'release lookup with release-groups and user ratings',
+    '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=release-groups+user-ratings' =>
+        {
+            id => "aff4a693-5970-4e2e-bd46-e2ee49c22de7",
+            title => "the Love Bug",
+            status => "Official",
+            "status-id" => "4e304316-386d-3409-af2e-78857eec5cfe",
+            quality => "normal",
+            disambiguation => "",
+            packaging => JSON::null,
+            "packaging-id" => JSON::null,
+            "text-representation" => { language => "eng", script => "Latn" },
+            "cover-art-archive" => {
+                artwork => JSON::true,
+                count => 1,
+                front => JSON::true,
+                back => JSON::false,
+                darkened => JSON::false,
+            },
+            date => "2004-03-17",
+            country => "JP",
+            "release-events" => [{
+                date => "2004-03-17",
+                "area" => {
+                    disambiguation => '',
+                    "id" => "2db42837-c832-3c27-b4a3-08198f75693c",
+                    "name" => "Japan",
+                    "sort-name" => "Japan",
+                    "iso-3166-1-codes" => ["JP"],
+                },
+            }],
+            barcode => "4988064451180",
+            asin => "B0001FAD2O",
+            "release-group" => {
+                id => "153f0a09-fead-3370-9b17-379ebd09446b",
+                title => "the Love Bug",
+                disambiguation => "",
+                "first-release-date" => "2004-03-17",
+                "primary-type" => "Single",
+                "primary-type-id" => "d6038452-8ee0-3f68-affc-2de9a1ede0b9",
+                "secondary-types" => [],
+                "secondary-type-ids" => [],
+                "user-rating" => { value => JSON::null },
+            }
+        }, { username => 'the-anti-kuno', password => 'notreally' };
+
+    ws2_test_json_unauthorized 'release lookup with release-groups and user ratings, bad credentials',
+    '/release/aff4a693-5970-4e2e-bd46-e2ee49c22de7?inc=release-groups+user-ratings',
+    { username => 'the-anti-kuno', password => 'wrong' };
+};
+
 test 'release lookup with discids and puids' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup with discids and puids',
+    ws2_test_json 'release lookup with discids and puids',
     '/release/b3b7e934-445b-4c68-a097-730c6a6d47e6?inc=discids+puids+recordings' =>
         {
             id => "b3b7e934-445b-4c68-a097-730c6a6d47e6",
@@ -533,6 +684,7 @@ test 'release lookup with discids and puids' => sub {
                     tracks => [
                         {
                             id => "3b9d0128-ed86-3c2c-af24-c331a3798875",
+                            position => 1,
                             number => "1",
                             title => "Summer Reggae! Rainbow",
                             length => 296026,
@@ -546,6 +698,7 @@ test 'release lookup with discids and puids' => sub {
                         },
                         {
                             id => "c7c21691-6f85-3ec7-9b08-e431c3b310a5",
+                            position => 2,
                             number => "2",
                             title => "Hello! Mata Aou Ne (7nin Matsuri version)",
                             length => 213106,
@@ -559,6 +712,7 @@ test 'release lookup with discids and puids' => sub {
                         },
                         {
                             id => "e436c057-ca19-36c6-9f1e-dc4ada2604b0",
+                            position => 3,
                             number => "3",
                             title => "Summer Reggae! Rainbow (Instrumental)",
                             length => 292800,
@@ -578,7 +732,7 @@ test 'release lookup, barcode is NULL' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup, barcode is NULL',
+    ws2_test_json 'release lookup, barcode is NULL',
     '/release/fbe4eb72-0f24-3875-942e-f581589713d4' =>
         {
             id => "fbe4eb72-0f24-3875-942e-f581589713d4",
@@ -621,7 +775,7 @@ test 'release lookup, barcode is  empty string' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup, barcode is empty string',
+    ws2_test_json 'release lookup, barcode is empty string',
     '/release/dd66bfdd-6097-32e3-91b6-67f47ba25d4c' =>
         {
             id => "dd66bfdd-6097-32e3-91b6-67f47ba25d4c",
@@ -664,7 +818,7 @@ test 'release lookup, relation attributes' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup, relation attributes',
+    ws2_test_json 'release lookup, relation attributes',
     '/release/28fc2337-985b-3da9-ac40-ad6f28ff0d8e?inc=release-rels+artist-rels' =>
         {
             disambiguation => '',
@@ -766,7 +920,7 @@ test 'release lookup, track artists have no tags' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database(shift->c, '+webservice');
 
-    ws_test_json 'release lookup, track artists have no tags',
+    ws2_test_json 'release lookup, track artists have no tags',
     '/release/4f5a6b97-a09b-4893-80d1-eae1f3bfa221?inc=artists+recordings+tags+artist-rels+recording-level-rels'
     => {
         'artist-credit' => [ {
@@ -803,6 +957,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '9b9a84b5-0a41-38f6-859f-36cb22ac813c',
                     length => 267560,
+                    position => 1,
                     number => '1',
                     recording => {
                         disambiguation => '',
@@ -837,6 +992,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => 'f38b8e31-a10d-3973-8c1f-10923ee61adc',
                     length => 230506,
+                    position => 2,
                     number => '2',
                     recording => {
                         disambiguation => '',
@@ -870,6 +1026,7 @@ test 'release lookup, track artists have no tags' => sub {
                     id => 'd17bed32-940a-3fcc-9210-a5d7c516b4bb',
                     length => 237133,
                     number => '3',
+                    position => 3,
                     recording => {
                         disambiguation => '',
                         id => '6e89c516-b0b6-4735-a758-38e31855dcb6',
@@ -901,6 +1058,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '001bc675-ba25-32bc-9914-d5d9e22c3c44',
                     length => 229826,
+                    position => 4,
                     number => '4',
                     recording => {
                         disambiguation => '',
@@ -933,6 +1091,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => 'c009176f-ff26-3f5f-bd16-46cede30ebe6',
                     length => 217440,
+                    position => 5,
                     number => '5',
                     recording => {
                         disambiguation => '',
@@ -965,6 +1124,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '70454e43-b39b-3ca7-8c50-ae235b5ef358',
                     length => 227293,
+                    position => 6,
                     number => '6',
                     recording => {
                         disambiguation => '',
@@ -997,6 +1157,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '1b5da50c-e20f-3762-839c-5a0eea89d6a5',
                     length => 244506,
+                    position => 7,
                     number => '7',
                     recording => {
                         disambiguation => '',
@@ -1029,6 +1190,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => 'f1b5bd23-ad01-3c0c-a49a-cf8e99088369',
                     length => 173960,
+                    position => 8,
                     number => '8',
                     recording => {
                         disambiguation => '',
@@ -1061,6 +1223,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '928f2274-5694-35f9-92da-a1fc565867cf',
                     length => 208706,
+                    position => 9,
                     number => '9',
                     recording => {
                         disambiguation => '',
@@ -1093,6 +1256,7 @@ test 'release lookup, track artists have no tags' => sub {
                 {
                     id => '40727388-237d-34b2-8a3a-288878e5c883',
                     length => 320067,
+                    position => 10,
                     number => '10',
                     recording => {
                         disambiguation => '',
@@ -1181,7 +1345,7 @@ test 'release lookup, pregap track' => sub {
         name => 'Blind Melon'
     }]);
 
-    ws_test_json 'release lookup, pregap track',
+    ws2_test_json 'release lookup, pregap track',
     '/release/ec0d0122-b559-4aa1-a017-7068814aae57?inc=artists+recordings+artist-credits'
     => {
         %artist_credit,
@@ -1207,6 +1371,7 @@ test 'release lookup, pregap track' => sub {
                 id => '1a0ba71b-fb23-3931-a426-cd204a82a90e',
                 title => 'Hello Goodbye [hidden track]',
                 length => 128000,
+                position => 0,
                 number => '0',
                 %artist_credit,
                 recording => {
@@ -1223,6 +1388,7 @@ test 'release lookup, pregap track' => sub {
                     id => '7b84af2d-96b3-3c50-a667-e7d10e8b000d',
                     title => 'Galaxie',
                     length => 211133,
+                    position => 1,
                     number => '1',
                     %artist_credit,
                     recording => {
@@ -1238,6 +1404,7 @@ test 'release lookup, pregap track' => sub {
                     id => 'e9f7ca98-ba9d-3276-97a4-26475c9f4527',
                     title => '2 X 4',
                     length => 240400,
+                    position => 2,
                     number => '2',
                     %artist_credit,
                     recording => {
@@ -1271,7 +1438,7 @@ test 'MBS-7914' => sub {
 
     MusicBrainz::Server::Test->prepare_test_database($c, '+mbs-7914');
 
-    ws_test_json 'track aliases are included (MBS-7914)',
+    ws2_test_json 'track aliases are included (MBS-7914)',
     '/release/a3ea3821-5955-4cee-b44f-4f7da8a332f7?inc=artists+media+recordings+artist-credits+aliases' => {
         aliases => [],
         'artist-credit' => [{
@@ -1337,6 +1504,7 @@ test 'MBS-7914' => sub {
                 }],
                 id => '8ac89142-1318-490a-bed2-5b0c89b251b2',
                 length => JSON::null,
+                position => 1,
                 number => '1',
                 recording => {
                     aliases => [],

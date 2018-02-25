@@ -1,4 +1,3 @@
-/admin/config.user.sh
 /admin/vh_httpd.conf
 /admin/startup.pl
 /admin/apache/vh_mb_backend.conf
@@ -7,7 +6,14 @@
 /admin/replication/hooks/post-process
 /docker/Dockerfile.*
 /root/robots.txt
+# Symlinks to node_modules/leaflet/
+/root/static/images/leaflet/layers-2x.png
+/root/static/images/leaflet/layers.png
+/root/static/images/leaflet/marker-icon-2x.png
+/root/static/images/leaflet/marker-icon.png
+/root/static/images/leaflet/marker-shadow.png
 /root/static/scripts/common/DBDefs.js
+/root/static/scripts/common/DBDefs-client.js
 /blib
 /lib/DBDefs.pm
 /lib/DBDefs.pm.bak

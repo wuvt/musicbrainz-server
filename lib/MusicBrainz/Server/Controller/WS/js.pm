@@ -12,6 +12,7 @@ use MusicBrainz::Server::Data::Search qw( escape_query alias_query );
 use MusicBrainz::Server::Constants qw( entities_with );
 use MusicBrainz::Server::Validation qw( is_guid );
 use Readonly;
+use Scalar::Util qw( blessed );
 use Text::Trim;
 use Time::Piece;
 
@@ -36,9 +37,6 @@ my $ws_defs = Data::OptList::mkopt([
     "events" => {
         method => 'GET'
     },
-    "error" => {
-        method => 'POST'
-    }
 ]);
 
 with 'MusicBrainz::Server::WebService::Validator' =>
@@ -296,32 +294,26 @@ sub events : Chained('root') PathPart('events') {
     $c->res->body(encode_json($events));
 }
 
-sub error : Chained('root') PathPart('error') {
-    my ($self, $c) = @_;
-
-    $self->check_login($c, 'not logged in');
-
-    my $body = $self->get_json_request_body($c);
-    $self->detach_with_error($c, 'missing parameters') unless $body->{error};
-    $self->critical_error($c, $body->{error}, encode_json({ message => "OK" }), 200);
-}
-
 sub detach_with_error : Private {
     my ($self, $c, $error, $status) = @_;
 
     $c->res->content_type('application/json; charset=utf-8');
-    $c->res->body(encode_json({ error => $error }));
+    $c->res->body(encode_json({
+        error => (blessed($error) ? "$error" : $error),
+    }));
     $c->res->status($status // 400);
     $c->detach;
 }
 
 sub critical_error : Private {
-    my ($self, $c, $error, $response_body, $status) = @_;
+    my ($self, $c, $error, $status) = @_;
 
-    $c->error($error);
     $c->stash->{error_body_in_stash} = 1;
-    $c->stash->{body} = $response_body;
-    $c->stash->{status} = $status;
+    $c->stash->{body} = encode_json({
+        error => (blessed($error) ? "$error" : $error),
+    });
+    $c->stash->{status} = $status // 400;
+    die $error;
 }
 
 sub get_json_request_body : Private {

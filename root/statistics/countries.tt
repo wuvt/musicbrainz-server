@@ -1,5 +1,3 @@
-[%- PROCESS "statistics/macros-header.tt" -%]
-
 [%- MACRO country_entry(country) BLOCK -%]
 <tr class="[% loop.parity %]">
     <td class="t">[% loop.count %]</td>
@@ -16,6 +14,7 @@
 [%- END -%]
 
 [% WRAPPER 'statistics/layout.tt' title=l('Countries') full_width=1 page='countries' %]
+[%- PROCESS "statistics/macros-header.tt" -%]
 
 <p>[%- l('Last updated: {date}', { date => date_collected }) -%]</p>
 
@@ -40,12 +39,12 @@
 
 [%- script_manifest('statistics.js') -%]
 
-<script type="text/javascript">//<![CDATA[
+<script type="text/javascript">
   $('table.tbl').tablesorter({
       widgets: [ 'indexFirstColumn', 'evenRowClasses' ],
       headers: { 0: {sorter: false}, 2: { sorter: 'fancyNumber' }, 3: { sorter: 'fancyNumber' }, 4: { sorter: 'fancyNumber' }, 5: { sorter: 'fancyNumber' } },
       sortList: [ [5,1], [1,0] ] // order by descending number of entities, then name
   });
-//]]></script>
+</script>
 
 [% END %]

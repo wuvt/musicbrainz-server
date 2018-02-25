@@ -4,6 +4,14 @@ use parent 'DBDefs::Default';
 use MusicBrainz::Server::DatabaseConnectionFactory;
 
 MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
+    # Selenium tests require READWRITE access.
+    READWRITE => {
+        database    => 'musicbrainz_test',
+        host        => 'musicbrainz-test-database',
+        password    => '',
+        port        => 5432,
+        username    => 'musicbrainz',
+    },
     SYSTEM => {
         database    => 'template1',
         host        => 'musicbrainz-test-database',
@@ -50,11 +58,19 @@ sub DATASTORE_REDIS_ARGS {
     };
 }
 
-sub DB_SCHEMA_SEQUENCE { 23 }
+sub DB_SCHEMA_SEQUENCE { 24 }
+
+sub DB_STAGING_TESTING_FEATURES { 1 }
 
 sub DEVELOPMENT_SERVER { 0 }
 
-sub GIT_INFO { return }
+sub FORK_RENDERER { 0 }
+
+sub GIT_BRANCH { return }
+
+sub GIT_MSG { return }
+
+sub GIT_SHA { return }
 
 sub HTML_VALIDATOR { 'http://html5-validator:8888?out=json' }
 

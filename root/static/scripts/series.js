@@ -2,7 +2,7 @@ const _ = require('lodash');
 const ko = require('knockout');
 
 const {SERIES_ORDERING_TYPE_AUTOMATIC} = require('./common/constants');
-const {lp} = require('./common/i18n');
+const {lp_attributes} = require('./common/i18n/attributes');
 const initializeDuplicateChecker = require('./edit/check-duplicates');
 
 $(function () {
@@ -24,20 +24,23 @@ $(function () {
 
   series.orderingTypeID($orderingType.val());
 
-  series.typeBubble = MB.Control.BubbleDoc().extend({
-    canBeShown: function () {
-      return !!series.type();
-    }
-  });
+  series.typeBubble = new MB.Control.BubbleDoc();
 
-  series.orderingTypeBubble = MB.Control.BubbleDoc();
+  series.typeBubble.canBeShown = function () {
+    return !!series.type();
+  };
+
+  series.orderingTypeBubble = new MB.Control.BubbleDoc();
 
   ko.computed(function () {
     series.type(MB.seriesTypesByID[series.typeID()]);
   });
 
   series.orderingTypeDescription = ko.computed(function () {
-    return lp(MB.orderingTypesByID[series.orderingTypeID()].description, 'series_ordering_type');
+    return lp_attributes(
+      MB.orderingTypesByID[series.orderingTypeID()].description,
+      'series_ordering_type',
+    );
   });
 
   var seriesHasItems = ko.computed(function () {

@@ -8,11 +8,13 @@ const _ = require('lodash');
 const ko = require('knockout');
 
 const {ENTITIES, MAX_RECENT_ENTITIES} = require('../../constants');
+const MB_entity = require('../../entity');
 const i18n = require('../../i18n');
 const commaOnlyList = require('../../i18n/commaOnlyList');
 const {artistCreditFromArray, reduceArtistCredit} = require('../../immutable-entities');
 const MB = require('../../MB');
 const clean = require('../../utility/clean');
+const formatDate = require('../../utility/formatDate');
 const formatTrackLength = require('../../utility/formatTrackLength');
 const isBlank = require('../../utility/isBlank');
 
@@ -156,7 +158,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                 return;
             }
 
-            if (event.type === "keyup" && !_.contains([8, 40], event.keyCode)) {
+            if (event.type === "keyup" && !_.includes([8, 40], event.keyCode)) {
                 return;
             }
 
@@ -199,9 +201,9 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
     _dataToEntity: function (data) {
         try {
             if (this.options.entityConstructor) {
-                return this.options.entityConstructor(data);
+                return new this.options.entityConstructor(data);
             }
-            return MB.entity(data, this.entity);
+            return MB_entity(data, this.entity);
         } catch (e) {
             return data;
         }
@@ -570,9 +572,9 @@ MB.Control.autocomplete_formatters = {
             comment.push(item.primaryAlias);
         }
 
-        if (item.sortName && !isLatin(item.name) && item.sortName != item.name && !item.primaryAlias)
+        if (item.sort_name && !isLatin(item.name) && item.sort_name != item.name && !item.primaryAlias)
         {
-            comment.push(item.sortName);
+            comment.push(item.sort_name);
         }
 
         if (item.comment)
@@ -659,10 +661,11 @@ MB.Control.autocomplete_formatters = {
                 countryHTML = `<span class="flag flag-${country.code}"><abbr title="${country.name}">${country.code}</abbr></span>`;
             }
 
+            const date = formatDate(event.date);
             appendComment(
                 $a,
-                (event.date ? _.escape(event.date) : '') +
-                (countryHTML ? maybeParentheses(countryHTML, event.date) : '')
+                date +
+                (countryHTML ? maybeParentheses(countryHTML, date) : '')
             );
         });
 
@@ -675,7 +678,7 @@ MB.Control.autocomplete_formatters = {
                     appendComment(
                         $a,
                         name +
-                        maybeParentheses(_.first(catalogNumbers) + ' … ' + _.last(catalogNumbers), name)
+                        maybeParentheses(_.head(catalogNumbers) + ' … ' + _.last(catalogNumbers), name)
                     );
                 } else {
                     _.each(releaseLabels, function (releaseLabel) {
@@ -683,8 +686,7 @@ MB.Control.autocomplete_formatters = {
                         appendComment($a, name + maybeParentheses(getCatalogNumber(releaseLabel), name));
                     });
                 }
-            })
-            .value();
+            });
 
         if (item.barcode) {
             appendComment($a, item.barcode);
@@ -734,9 +736,10 @@ MB.Control.autocomplete_formatters = {
         var a = $("<a>").text(item.name);
         var comment = [];
 
-        if (item.language)
-        {
-            a.prepend('<span class="autocomplete-length">' + item.language + '</span>');
+        if (item.languages && item.languages.length) {
+            a.prepend('<span class="autocomplete-language">' +
+                      _.escape(commaOnlyList(item.languages)) +
+                      '</span>');
         }
 
         if (item.primaryAlias && item.primaryAlias != item.name)
@@ -934,7 +937,7 @@ function getCatalogNumber(releaseLabel) {
 }
 
 function renderContainingAreas(area) {
-    return commaOnlyList(_(area.containment).pluck('name').value());
+    return commaOnlyList(_(area.containment).map('name').value());
 }
 
 /*
@@ -966,7 +969,7 @@ MB.Control.EntityAutocomplete = function (options) {
 
     if (!options.entity) {
         // guess the entity from span classes.
-        _.any(_.keys(ENTITIES), function (entity) {
+        _.some(_.keys(ENTITIES), function (entity) {
             entity = entity.replace(/_/g, '-');
             if ($inputs.hasClass(entity)) {
                 options.entity = entity;
@@ -978,7 +981,7 @@ MB.Control.EntityAutocomplete = function (options) {
     $name.autocomplete(options);
     var autocomplete = $name.data("ui-autocomplete");
 
-    autocomplete.currentSelection(MB.entity({
+    autocomplete.currentSelection(MB_entity({
         name: $name.val(),
         id: $inputs.find("input.id").val(),
         gid: $inputs.find("input.gid").val()
@@ -1006,12 +1009,7 @@ ko.bindingHandlers.autocomplete = {
     init: function (element, valueAccessor) {
         var options = valueAccessor();
 
-        var autocomplete = $(element).autocomplete(options)
-            .data("ui-autocomplete");
-
-        if (options.artistCredit) {
-            options.artistCredit.setAutocomplete(autocomplete, element);
-        }
+        $(element).autocomplete(options);
     }
 };
 

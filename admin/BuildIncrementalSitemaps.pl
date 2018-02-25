@@ -7,7 +7,11 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 
 use MooseX::Runnable::Run;
-run_application 'MusicBrainz::Server::Sitemap::Incremental', @ARGV;
+use MusicBrainz::Sentry qw( capture_exceptions );
+
+capture_exceptions(sub {
+    run_application 'MusicBrainz::Server::Sitemap::Incremental', @ARGV;
+});
 
 =head1 SYNOPSIS
 
@@ -29,7 +33,6 @@ Options:
     --replication-access-uri    URI to request replication packets from
                                 (default:
                                 https://metabrainz.org/api/musicbrainz)
-    --worker-count              number of worker processes to use (default: 1)
 =cut
 
 =head1 COPYRIGHT

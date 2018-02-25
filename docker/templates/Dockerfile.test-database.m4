@@ -1,5 +1,5 @@
 m4_include(`macros.m4')m4_dnl
-FROM postgres:9.5.4
+FROM postgres:9.5.6
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -31,8 +31,13 @@ COPY admin/ admin/
 COPY lib/ lib/
 COPY script/ script/
 COPY t/sql/initial.sql t/sql/
+COPY entities.json entities.json
+
+RUN mkdir -p '/home/musicbrainz/dumps' && \
+    chown -R postgres:postgres /home/musicbrainz/dumps
 
 COPY docker/musicbrainz-test-database/DBDefs.pm lib/
+COPY docker/scripts/import_db.sh docker/scripts/
 
 COPY \
     docker/musicbrainz-test-database/create_test_db.sh \

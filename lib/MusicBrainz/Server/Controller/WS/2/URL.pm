@@ -8,6 +8,11 @@ use Readonly;
 my $ws_defs = Data::OptList::mkopt([
      url => {
                          method   => 'GET',
+                         required => [ qw(query) ],
+                         optional => [ qw(fmt limit offset) ],
+     },
+     url => {
+                         method   => 'GET',
                          linked   => [ qw(resource) ],
                          inc      => [ qw(_relations) ],
                          optional => [ qw(fmt) ],
@@ -24,37 +29,19 @@ with 'MusicBrainz::Server::WebService::Validator' =>
      defs => $ws_defs,
 };
 
-with 'MusicBrainz::Server::Controller::Role::Load' => {
-    model => 'URL'
+with 'MusicBrainz::Server::Controller::WS::2::Role::Lookup' => {
+    model => 'URL',
 };
 
 Readonly our $MAX_ITEMS => 25;
 
 sub base : Chained('root') PathPart('url') CaptureArgs(0) { }
 
-sub url : Chained('load') PathPart('')
-{
-    my ($self, $c) = @_;
-    my $url = $c->stash->{entity};
-
-    return unless defined $url;
-
-    my $stash = WebServiceStash->new;
-    my $opts = $stash->store($url);
-
-    $self->url_toplevel($c, $stash, $url);
-
-    $c->res->content_type($c->stash->{serializer}->mime_type . '; charset=utf-8');
-    $c->res->body($c->stash->{serializer}->serialize('url', $url, $c->stash->{inc}, $stash));
-}
-
 sub url_toplevel
 {
-    my ($self, $c, $stash, $url) = @_;
+    my ($self, $c, $stash, $urls) = @_;
 
-    my $opts = $stash->store($url);
-
-    $self->load_relationships($c, $stash, $url);
+    $self->load_relationships($c, $stash, @{$urls});
 }
 
 sub url_browse : Private
@@ -72,7 +59,7 @@ sub url_browse : Private
 
     my $stash = WebServiceStash->new;
 
-    $self->url_toplevel($c, $stash, $url);
+    $self->url_toplevel($c, $stash, [$url]);
 
     $c->res->content_type($c->stash->{serializer}->mime_type . '; charset=utf-8');
     $c->res->body($c->stash->{serializer}->serialize('url', $url, $c->stash->{inc}, $stash));
@@ -83,6 +70,7 @@ sub url_search : Chained('root') PathPart('url') Args(0)
     my ($self, $c) = @_;
 
     $c->detach('url_browse') if ($c->stash->{linked});
+    $self->_search($c, 'url');
 }
 
 

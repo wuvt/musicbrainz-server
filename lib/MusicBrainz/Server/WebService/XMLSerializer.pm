@@ -79,7 +79,7 @@ sub _serialize_text_representation
     if ($entity->language || $entity->script)
     {
         my @tr;
-        push @tr, $gen->language($entity->language->iso_code_3 // $entity->language->iso_code_2t)
+        push @tr, $gen->language($entity->language->alpha_3_code)
             if $entity->language;
         push @tr, $gen->script($entity->script->iso_code) if $entity->script;
         push @$data, $gen->text_representation(@tr);
@@ -219,13 +219,13 @@ sub _serialize_collection
     my %attrs;
     $attrs{id} = $collection->gid;
     $attrs{type} = $collection->type->name if ($collection->type);
-    $attrs{"entity-type"} = $collection->type->entity_type if ($collection->type);
+    $attrs{"entity-type"} = $collection->type->item_entity_type if ($collection->type);
 
     my @collection;
     push @collection, $gen->name($collection->name);
     push @collection, $gen->editor($collection->editor->name);
 
-    my $entity_type = $collection->type->entity_type;
+    my $entity_type = $collection->type->item_entity_type;
     my $plural = $ENTITIES{$entity_type}{plural};
 
     my $ser = "_serialize_${entity_type}_list";
@@ -496,7 +496,13 @@ sub _serialize_work
 
     my @list;
     push @list, $gen->title($work->name);
-    push @list, $gen->language($work->language->iso_code_3 // $work->language->iso_code_2t) if $work->language;
+
+    if ($work->all_languages) {
+        my @languages = map { $_->language->alpha_3_code } $work->all_languages;
+        # Pre-MBS-5452 element.
+        push @list, $gen->language(@languages > 1 ? 'mul' : $languages[0]);
+        push @list, $gen->language_list(map { $gen->language($_) } @languages);
+    }
 
     if ($work->all_iswcs) {
         push @list, $gen->iswc($work->iswcs->[0]->iswc);
@@ -1170,36 +1176,31 @@ sub _serialize_isrc_list
 {
     my ($self, $data, $gen, $isrcs, $inc, $stash, $toplevel) = @_;
 
-    my %uniq_isrc;
-    foreach (@$isrcs)
-    {
-        $uniq_isrc{$_->isrc} = [] unless $uniq_isrc{$_->isrc};
-        push @{$uniq_isrc{$_->isrc}}, $_;
-    }
-
     my @list;
-    foreach my $k (sort keys %uniq_isrc)
+    foreach my $isrc (sort_by { $_->isrc } @{$isrcs})
     {
-        $self->_serialize_isrc(\@list, $gen, $uniq_isrc{$k}, $inc, $stash, $toplevel);
+        $self->_serialize_isrc(\@list, $gen, $isrc, $inc, $stash, $toplevel);
     }
-    push @$data, $gen->isrc_list({ count => scalar(keys %uniq_isrc) }, @list);
+    push @$data, $gen->isrc_list({ count => scalar(@{$isrcs}) }, @list);
 }
 
 sub _serialize_isrc
 {
-    my ($self, $data, $gen, $isrcs, $inc, $stash, $toplevel) = @_;
+    my ($self, $data, $gen, $isrc, $inc, $stash, $toplevel) = @_;
 
-    my @recordings = map { $_->recording } grep { $_->recording } @$isrcs;
-    my $recordings = {
-        items => \@recordings,
-        total => scalar @recordings,
-    };
-
+    my $opts = $stash->store($isrc);
+    my @recordings = @{ $opts->{recordings}{items} // [] };
     my @list;
-    $self->_serialize_recording_list(\@list, $gen, $recordings, $inc, $stash, $toplevel)
-        if @recordings;
 
-    push @$data, $gen->isrc({ id => $isrcs->[0]->isrc }, @list);
+    if (@recordings) {
+        my $recordings = {
+            items => \@recordings,
+            total => scalar @recordings,
+        };
+        $self->_serialize_recording_list(\@list, $gen, $recordings, $inc, $stash, $toplevel)
+    }
+
+    push @$data, $gen->isrc({ id => $isrc->isrc }, @list);
 }
 
 sub _serialize_tags_and_ratings

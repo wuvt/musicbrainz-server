@@ -7,10 +7,11 @@ const ko = require('knockout');
 const _ = require('lodash');
 const React = require('react');
 
+const Frag = require('../../../../components/Frag');
 const {ENTITIES, AREA_TYPE_COUNTRY} = require('../constants');
 const {l} = require('../i18n');
 const bracketed = require('../utility/bracketed');
-const entityHREF = require('../utility/entityHREF');
+const entityHref = require('../utility/entityHref');
 const formatDatePeriod = require('../utility/formatDatePeriod');
 const isolateText = require('../utility/isolateText');
 const nonEmpty = require('../utility/nonEmpty');
@@ -29,10 +30,10 @@ const DeletedLink = ({name, allowNew}) => {
 };
 
 const Comment = ({className, comment}) => (
-  <frag>
+  <Frag>
     {' '}
     <span className={className}>({isolateText(comment)})</span>
-  </frag>
+  </Frag>
 );
 
 class EventDisambiguation extends React.Component {
@@ -43,19 +44,15 @@ class EventDisambiguation extends React.Component {
       return null;
     }
     return (
-      <frag>
-        <If condition={dates}>
-          {bracketed(dates)}
-        </If>
-        <If condition={event.cancelled}>
-          <Comment className="cancelled" comment={l('cancelled')} />
-        </If>
-      </frag>
+      <Frag>
+        {dates ? bracketed(dates) : null}
+        {event.cancelled
+          ? <Comment className="cancelled" comment={l('cancelled')} />
+          : null}
+      </Frag>
     );
   }
 }
-
-const leadingInt = /^([0-9]+)/;
 
 class AreaDisambiguation extends React.Component {
   render() {
@@ -66,8 +63,8 @@ class AreaDisambiguation extends React.Component {
     }
 
     let comment;
-    let beginYear = area.begin_date.replace(leadingInt, '$1');
-    let endYear = area.end_date.replace(leadingInt, '$1');
+    let beginYear = area.begin_date ? area.begin_date.year : null;
+    let endYear = area.end_date ? area.end_date.year : null;
 
     if (beginYear && endYear) {
       comment = l('historical, {begin}-{end}', {begin: beginYear, end: endYear});
@@ -82,11 +79,11 @@ class AreaDisambiguation extends React.Component {
 }
 
 const NoInfoURL = ({url, allowNew}) => (
-  <frag>
+  <Frag>
     <a href={url}>{url}</a>
     {' '}
     <DeletedLink name={'[' + l('info') + ']'} allowNew={allowNew} />
-  </frag>
+  </Frag>
 );
 
 const EntityLink = (props = {}) => {
@@ -110,7 +107,7 @@ const EntityLink = (props = {}) => {
   }
 
   if (entityType === 'artist' && !nonEmpty(hover)) {
-    hover = entity.sortName + bracketed(comment);
+    hover = entity.sort_name + bracketed(comment);
   }
 
   if (entityType === 'artist' || entityType === 'instrument') {
@@ -129,14 +126,14 @@ const EntityLink = (props = {}) => {
     return null;
   }
 
-  let href = entityHREF(entityType, ko.unwrap(entity.gid), subPath);
+  let href = entityHref(entity, subPath);
   let nameVariation;
   let infoLink;
 
   if (entityType === 'url' && !hasCustomContent) {
     content = entity.pretty_name;
     infoLink = href;
-    href = entity.href;
+    href = entity.href_url;
   }
 
   // TODO: support name variations for all entity types?
@@ -156,20 +153,28 @@ const EntityLink = (props = {}) => {
   if (hover) {
     anchorProps.title = hover;
   }
-  content = <a {...anchorProps}>{isolateText(content)}</a>;
+  content = <a key="link" {...anchorProps}>{isolateText(content)}</a>;
 
   if (nameVariation) {
-    content = <span className="name-variation">{content}</span>;
+    content = (
+      <span className="name-variation" key="namevar">
+        {content}
+      </span>
+    );
   }
 
   if (!subPath && entity.editsPending) {
-    content = <span className="mp">{content}</span>;
+    content = <span className="mp" key="mp">{content}</span>;
   }
 
   if (!subPath && entityType === 'area') {
     let isoCodes = entity.iso_3166_1_codes;
     if (isoCodes && isoCodes.length) {
-      content = <span className={'flag flag-' + isoCodes[0]}>{content}</span>;
+      content = (
+        <span className={'flag flag-' + isoCodes[0]} key="flag">
+          {content}
+        </span>
+      );
     }
   }
 
@@ -177,26 +182,27 @@ const EntityLink = (props = {}) => {
     return content;
   }
 
-  return (
-    <frag>
-      {content}
-      <If condition={showDisambiguation}>
-        <If condition={entityType === 'event'}>
-          <EventDisambiguation event={entity} />
-        </If>
-        <If condition={comment}>
-          <Comment className="comment" comment={comment} />
-        </If>
-        <If condition={entityType === 'area'}>
-          <AreaDisambiguation area={entity} />
-        </If>
-      </If>
-      <If condition={infoLink}>
-        {' '}
-        [<a href={infoLink}>{l('info')}</a>]
-      </If>
-    </frag>
-  );
+  const parts = [content];
+
+  if (showDisambiguation) {
+    if (entityType === 'event') {
+      parts.push(<EventDisambiguation event={entity} key="eventdisambig" />);
+    }
+    if (comment) {
+      parts.push(
+        <Comment className="comment" comment={comment} key="comment" />
+      );
+    }
+    if (entityType === 'area') {
+      parts.push(<AreaDisambiguation area={entity} key="areadisambig" />);
+    }
+  }
+
+  if (infoLink) {
+    parts.push(' [', <a href={infoLink} key="info">{l('info')}</a>, ']')
+  }
+
+  return parts;
 };
 
 module.exports = EntityLink;

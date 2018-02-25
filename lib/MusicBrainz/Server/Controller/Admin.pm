@@ -35,6 +35,7 @@ sub edit_user : Path('/admin/user/edit') Args(1) RequireAuth HiddenOnSlaves
     my $form2 = $c->form(
         form => 'User::EditProfile',
         item => {
+            username          => $user->name,
             email            => $user->email,
             skip_verification => 0,
             website            => $user->website,
@@ -43,14 +44,13 @@ sub edit_user : Path('/admin/user/edit') Args(1) RequireAuth HiddenOnSlaves
     );
 
     if ($c->form_posted) {
-        if ($form->submitted_and_valid($c->req->params )) {
+        if ($form->submitted_and_valid($c->req->params)
+            && $form2->submitted_and_valid($c->req->params )) {
             # When an admin views their own flags page the account admin checkbox will be disabled,
             # thus we need to manually insert a value here to keep the admin's privileges intact.
             $form->values->{account_admin} = 1 if ($c->user->id == $user->id);
             $c->model('Editor')->update_privileges($user, $form->values);
-        }
 
-        if ($form2->submitted_and_valid($c->req->params )) {
             $c->model('Editor')->update_profile(
                 $user,
                 $form2->value
@@ -61,7 +61,7 @@ sub edit_user : Path('/admin/user/edit') Args(1) RequireAuth HiddenOnSlaves
             my $new_email = $form2->field('email')->value || '';
             if ($old_email ne $new_email) {
                 if ($new_email) {
-                    if ($form2->field('skip_verification')->value) { 
+                    if ($form2->field('skip_verification')->value) {
                         $c->model('Editor')->update_email($user, $new_email);
                         $user->email($new_email);
                         $c->forward('/discourse/sync_sso', [$user]);
@@ -76,11 +76,11 @@ sub edit_user : Path('/admin/user/edit') Args(1) RequireAuth HiddenOnSlaves
                     $c->forward('/discourse/sync_sso', [$user]);
                 }
             }
-        }
 
-        $c->flash->{message} = l('User successfully edited.');
-        $c->response->redirect($c->uri_for_action('/user/profile', [$user->name]));
-        $c->detach;
+            $c->flash->{message} = l('User successfully edited.');
+            $c->response->redirect($c->uri_for_action('/user/profile', [$form2->field('username')->value]));
+            $c->detach;
+        }
     }
 
     $c->stash(
@@ -107,7 +107,12 @@ sub delete_user : Path('/admin/user/delete') Args(1) RequireAuth HiddenOnSlaves 
     $c->stash( user => $editor );
 
     if ($c->form_posted) {
-        $c->model('Editor')->delete($id);
+        my $allow_reuse = 0;
+        if ($id != $c->user->id && $c->user->is_account_admin) {
+            $allow_reuse = 1 if ($c->req->params->{allow_reuse} // '') eq '1';
+        }
+
+        $c->model('Editor')->delete($id, $allow_reuse);
         if ($id == $c->user->id) { # don't log out an admin deleting a different user
             MusicBrainz::Server::Controller::User->_clear_login_cookie($c);
             $c->logout;
